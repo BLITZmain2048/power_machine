@@ -1,0 +1,5574 @@
+{
+  "schema": "power_machine-model-v1",
+  "meta": {
+    "benchmark": "ieee39",
+    "source": "cases/ieee39/case39.py",
+    "source_package": "MATPOWER case39",
+    "source_note": "Data from the published MATPOWER case39, not from the PowerFactory project. MATPOWER-native IDs and source paths, not PowerFactory identifiers.",
+    "source_sha256": "708e03e1076ea1e7060e1d78da3ee96edd2056ab76d66cc817294abbea25890d",
+    "sha256_inputs": {
+      "cases/ieee39/case39.py": "708e03e1076ea1e7060e1d78da3ee96edd2056ab76d66cc817294abbea25890d"
+    },
+    "s_base_mva": 100.0,
+    "f_nom_hz": 60.0,
+    "un_base_kv": 345.0,
+    "loadflow_profile": {
+      "q_limits": false,
+      "tap_adjustment": false,
+      "load_model": "constant_pq",
+      "reference_bus": "B31",
+      "reference_gen": "G31",
+      "reference_angle_deg": 0.0
+    },
+    "generator_base_note": "sgn=100 MVA only for converting Q limits, not a physical rated power",
+    "rating_note": "rateA retained in MVA, loading calculated as max(|S_from|, |S_to|)/rateA",
+    "pf_comparison": "No comparison against PowerFactory"
+  },
+  "buses": [
+    {
+      "id": "B01",
+      "object_id": "B01",
+      "class": "ElmTerm",
+      "name": "B01",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[1]",
+      "relative_path": "cases/ieee39/case39.py#BUS[1]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 1,
+        "values": {
+          "bus": 1.0,
+          "type": 1.0,
+          "pd_mw": 97.6,
+          "qd_mvar": 44.2,
+          "area": 2.0,
+          "vm_pu": 1.0393836,
+          "va_deg": -13.536602
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0393836,
+      "published_va_deg": -13.536602
+    },
+    {
+      "id": "B02",
+      "object_id": "B02",
+      "class": "ElmTerm",
+      "name": "B02",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[2]",
+      "relative_path": "cases/ieee39/case39.py#BUS[2]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 2,
+        "values": {
+          "bus": 2.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 2.0,
+          "vm_pu": 1.0484941,
+          "va_deg": -9.7852666
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0484941,
+      "published_va_deg": -9.7852666
+    },
+    {
+      "id": "B03",
+      "object_id": "B03",
+      "class": "ElmTerm",
+      "name": "B03",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[3]",
+      "relative_path": "cases/ieee39/case39.py#BUS[3]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 3,
+        "values": {
+          "bus": 3.0,
+          "type": 1.0,
+          "pd_mw": 322.0,
+          "qd_mvar": 2.4,
+          "area": 2.0,
+          "vm_pu": 1.0307077,
+          "va_deg": -12.276384
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0307077,
+      "published_va_deg": -12.276384
+    },
+    {
+      "id": "B04",
+      "object_id": "B04",
+      "class": "ElmTerm",
+      "name": "B04",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[4]",
+      "relative_path": "cases/ieee39/case39.py#BUS[4]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 4,
+        "values": {
+          "bus": 4.0,
+          "type": 1.0,
+          "pd_mw": 500.0,
+          "qd_mvar": 184.0,
+          "area": 1.0,
+          "vm_pu": 1.00446,
+          "va_deg": -12.626734
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.00446,
+      "published_va_deg": -12.626734
+    },
+    {
+      "id": "B05",
+      "object_id": "B05",
+      "class": "ElmTerm",
+      "name": "B05",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[5]",
+      "relative_path": "cases/ieee39/case39.py#BUS[5]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 5,
+        "values": {
+          "bus": 5.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 1.0,
+          "vm_pu": 1.0060063,
+          "va_deg": -11.192339
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.0060063,
+      "published_va_deg": -11.192339
+    },
+    {
+      "id": "B06",
+      "object_id": "B06",
+      "class": "ElmTerm",
+      "name": "B06",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[6]",
+      "relative_path": "cases/ieee39/case39.py#BUS[6]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 6,
+        "values": {
+          "bus": 6.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 1.0,
+          "vm_pu": 1.0082256,
+          "va_deg": -10.40833
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.0082256,
+      "published_va_deg": -10.40833
+    },
+    {
+      "id": "B07",
+      "object_id": "B07",
+      "class": "ElmTerm",
+      "name": "B07",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[7]",
+      "relative_path": "cases/ieee39/case39.py#BUS[7]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 7,
+        "values": {
+          "bus": 7.0,
+          "type": 1.0,
+          "pd_mw": 233.8,
+          "qd_mvar": 84.0,
+          "area": 1.0,
+          "vm_pu": 0.99839728,
+          "va_deg": -12.755626
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 0.99839728,
+      "published_va_deg": -12.755626
+    },
+    {
+      "id": "B08",
+      "object_id": "B08",
+      "class": "ElmTerm",
+      "name": "B08",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[8]",
+      "relative_path": "cases/ieee39/case39.py#BUS[8]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 8,
+        "values": {
+          "bus": 8.0,
+          "type": 1.0,
+          "pd_mw": 522.0,
+          "qd_mvar": 176.6,
+          "area": 1.0,
+          "vm_pu": 0.99787232,
+          "va_deg": -13.335844
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 0.99787232,
+      "published_va_deg": -13.335844
+    },
+    {
+      "id": "B09",
+      "object_id": "B09",
+      "class": "ElmTerm",
+      "name": "B09",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[9]",
+      "relative_path": "cases/ieee39/case39.py#BUS[9]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 9,
+        "values": {
+          "bus": 9.0,
+          "type": 1.0,
+          "pd_mw": 6.5,
+          "qd_mvar": -66.6,
+          "area": 1.0,
+          "vm_pu": 1.038332,
+          "va_deg": -14.178442
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.038332,
+      "published_va_deg": -14.178442
+    },
+    {
+      "id": "B10",
+      "object_id": "B10",
+      "class": "ElmTerm",
+      "name": "B10",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[10]",
+      "relative_path": "cases/ieee39/case39.py#BUS[10]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 10,
+        "values": {
+          "bus": 10.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 1.0,
+          "vm_pu": 1.0178431,
+          "va_deg": -8.170875
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.0178431,
+      "published_va_deg": -8.170875
+    },
+    {
+      "id": "B11",
+      "object_id": "B11",
+      "class": "ElmTerm",
+      "name": "B11",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[11]",
+      "relative_path": "cases/ieee39/case39.py#BUS[11]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 11,
+        "values": {
+          "bus": 11.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 1.0,
+          "vm_pu": 1.0133858,
+          "va_deg": -8.9369663
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.0133858,
+      "published_va_deg": -8.9369663
+    },
+    {
+      "id": "B12",
+      "object_id": "B12",
+      "class": "ElmTerm",
+      "name": "B12",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[12]",
+      "relative_path": "cases/ieee39/case39.py#BUS[12]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 12,
+        "values": {
+          "bus": 12.0,
+          "type": 1.0,
+          "pd_mw": 8.53,
+          "qd_mvar": 88.0,
+          "area": 1.0,
+          "vm_pu": 1.000815,
+          "va_deg": -8.9988236
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.000815,
+      "published_va_deg": -8.9988236
+    },
+    {
+      "id": "B13",
+      "object_id": "B13",
+      "class": "ElmTerm",
+      "name": "B13",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[13]",
+      "relative_path": "cases/ieee39/case39.py#BUS[13]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 13,
+        "values": {
+          "bus": 13.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 1.0,
+          "vm_pu": 1.014923,
+          "va_deg": -8.9299272
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.014923,
+      "published_va_deg": -8.9299272
+    },
+    {
+      "id": "B14",
+      "object_id": "B14",
+      "class": "ElmTerm",
+      "name": "B14",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[14]",
+      "relative_path": "cases/ieee39/case39.py#BUS[14]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 14,
+        "values": {
+          "bus": 14.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 1.0,
+          "vm_pu": 1.012319,
+          "va_deg": -10.715295
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 1,
+      "published_vm_pu": 1.012319,
+      "published_va_deg": -10.715295
+    },
+    {
+      "id": "B15",
+      "object_id": "B15",
+      "class": "ElmTerm",
+      "name": "B15",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[15]",
+      "relative_path": "cases/ieee39/case39.py#BUS[15]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 15,
+        "values": {
+          "bus": 15.0,
+          "type": 1.0,
+          "pd_mw": 320.0,
+          "qd_mvar": 153.0,
+          "area": 3.0,
+          "vm_pu": 1.0161854,
+          "va_deg": -11.345399
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0161854,
+      "published_va_deg": -11.345399
+    },
+    {
+      "id": "B16",
+      "object_id": "B16",
+      "class": "ElmTerm",
+      "name": "B16",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[16]",
+      "relative_path": "cases/ieee39/case39.py#BUS[16]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 16,
+        "values": {
+          "bus": 16.0,
+          "type": 1.0,
+          "pd_mw": 329.0,
+          "qd_mvar": 32.3,
+          "area": 3.0,
+          "vm_pu": 1.0325203,
+          "va_deg": -10.033348
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0325203,
+      "published_va_deg": -10.033348
+    },
+    {
+      "id": "B17",
+      "object_id": "B17",
+      "class": "ElmTerm",
+      "name": "B17",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[17]",
+      "relative_path": "cases/ieee39/case39.py#BUS[17]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 17,
+        "values": {
+          "bus": 17.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 2.0,
+          "vm_pu": 1.0342365,
+          "va_deg": -11.116436
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0342365,
+      "published_va_deg": -11.116436
+    },
+    {
+      "id": "B18",
+      "object_id": "B18",
+      "class": "ElmTerm",
+      "name": "B18",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[18]",
+      "relative_path": "cases/ieee39/case39.py#BUS[18]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 18,
+        "values": {
+          "bus": 18.0,
+          "type": 1.0,
+          "pd_mw": 158.0,
+          "qd_mvar": 30.0,
+          "area": 2.0,
+          "vm_pu": 1.0315726,
+          "va_deg": -11.986168
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0315726,
+      "published_va_deg": -11.986168
+    },
+    {
+      "id": "B19",
+      "object_id": "B19",
+      "class": "ElmTerm",
+      "name": "B19",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[19]",
+      "relative_path": "cases/ieee39/case39.py#BUS[19]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 19,
+        "values": {
+          "bus": 19.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 3.0,
+          "vm_pu": 1.0501068,
+          "va_deg": -5.4100729
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0501068,
+      "published_va_deg": -5.4100729
+    },
+    {
+      "id": "B20",
+      "object_id": "B20",
+      "class": "ElmTerm",
+      "name": "B20",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[20]",
+      "relative_path": "cases/ieee39/case39.py#BUS[20]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 20,
+        "values": {
+          "bus": 20.0,
+          "type": 1.0,
+          "pd_mw": 680.0,
+          "qd_mvar": 103.0,
+          "area": 3.0,
+          "vm_pu": 0.99101054,
+          "va_deg": -6.8211783
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 0.99101054,
+      "published_va_deg": -6.8211783
+    },
+    {
+      "id": "B21",
+      "object_id": "B21",
+      "class": "ElmTerm",
+      "name": "B21",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[21]",
+      "relative_path": "cases/ieee39/case39.py#BUS[21]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 21,
+        "values": {
+          "bus": 21.0,
+          "type": 1.0,
+          "pd_mw": 274.0,
+          "qd_mvar": 115.0,
+          "area": 3.0,
+          "vm_pu": 1.0323192,
+          "va_deg": -7.6287461
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0323192,
+      "published_va_deg": -7.6287461
+    },
+    {
+      "id": "B22",
+      "object_id": "B22",
+      "class": "ElmTerm",
+      "name": "B22",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[22]",
+      "relative_path": "cases/ieee39/case39.py#BUS[22]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 22,
+        "values": {
+          "bus": 22.0,
+          "type": 1.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 3.0,
+          "vm_pu": 1.0501427,
+          "va_deg": -3.1831199
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0501427,
+      "published_va_deg": -3.1831199
+    },
+    {
+      "id": "B23",
+      "object_id": "B23",
+      "class": "ElmTerm",
+      "name": "B23",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[23]",
+      "relative_path": "cases/ieee39/case39.py#BUS[23]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 23,
+        "values": {
+          "bus": 23.0,
+          "type": 1.0,
+          "pd_mw": 247.5,
+          "qd_mvar": 84.6,
+          "area": 3.0,
+          "vm_pu": 1.0451451,
+          "va_deg": -3.3812763
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0451451,
+      "published_va_deg": -3.3812763
+    },
+    {
+      "id": "B24",
+      "object_id": "B24",
+      "class": "ElmTerm",
+      "name": "B24",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[24]",
+      "relative_path": "cases/ieee39/case39.py#BUS[24]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 24,
+        "values": {
+          "bus": 24.0,
+          "type": 1.0,
+          "pd_mw": 308.6,
+          "qd_mvar": -92.2,
+          "area": 3.0,
+          "vm_pu": 1.038001,
+          "va_deg": -9.9137585
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.038001,
+      "published_va_deg": -9.9137585
+    },
+    {
+      "id": "B25",
+      "object_id": "B25",
+      "class": "ElmTerm",
+      "name": "B25",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[25]",
+      "relative_path": "cases/ieee39/case39.py#BUS[25]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 25,
+        "values": {
+          "bus": 25.0,
+          "type": 1.0,
+          "pd_mw": 224.0,
+          "qd_mvar": 47.2,
+          "area": 2.0,
+          "vm_pu": 1.0576827,
+          "va_deg": -8.3692354
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0576827,
+      "published_va_deg": -8.3692354
+    },
+    {
+      "id": "B26",
+      "object_id": "B26",
+      "class": "ElmTerm",
+      "name": "B26",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[26]",
+      "relative_path": "cases/ieee39/case39.py#BUS[26]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 26,
+        "values": {
+          "bus": 26.0,
+          "type": 1.0,
+          "pd_mw": 139.0,
+          "qd_mvar": 17.0,
+          "area": 2.0,
+          "vm_pu": 1.0525613,
+          "va_deg": -9.4387696
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0525613,
+      "published_va_deg": -9.4387696
+    },
+    {
+      "id": "B27",
+      "object_id": "B27",
+      "class": "ElmTerm",
+      "name": "B27",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[27]",
+      "relative_path": "cases/ieee39/case39.py#BUS[27]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 27,
+        "values": {
+          "bus": 27.0,
+          "type": 1.0,
+          "pd_mw": 281.0,
+          "qd_mvar": 75.5,
+          "area": 2.0,
+          "vm_pu": 1.0383449,
+          "va_deg": -11.362152
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 2,
+      "published_vm_pu": 1.0383449,
+      "published_va_deg": -11.362152
+    },
+    {
+      "id": "B28",
+      "object_id": "B28",
+      "class": "ElmTerm",
+      "name": "B28",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[28]",
+      "relative_path": "cases/ieee39/case39.py#BUS[28]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 28,
+        "values": {
+          "bus": 28.0,
+          "type": 1.0,
+          "pd_mw": 206.0,
+          "qd_mvar": 27.6,
+          "area": 3.0,
+          "vm_pu": 1.0503737,
+          "va_deg": -5.9283592
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0503737,
+      "published_va_deg": -5.9283592
+    },
+    {
+      "id": "B29",
+      "object_id": "B29",
+      "class": "ElmTerm",
+      "name": "B29",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[29]",
+      "relative_path": "cases/ieee39/case39.py#BUS[29]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 29,
+        "values": {
+          "bus": 29.0,
+          "type": 1.0,
+          "pd_mw": 283.5,
+          "qd_mvar": 26.9,
+          "area": 3.0,
+          "vm_pu": 1.0501149,
+          "va_deg": -3.1698741
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 1,
+      "area": 3,
+      "published_vm_pu": 1.0501149,
+      "published_va_deg": -3.1698741
+    },
+    {
+      "id": "B30",
+      "object_id": "B30",
+      "class": "ElmTerm",
+      "name": "B30",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[30]",
+      "relative_path": "cases/ieee39/case39.py#BUS[30]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 30,
+        "values": {
+          "bus": 30.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 2.0,
+          "vm_pu": 1.0499,
+          "va_deg": -7.3704746
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 2,
+      "published_vm_pu": 1.0499,
+      "published_va_deg": -7.3704746
+    },
+    {
+      "id": "B31",
+      "object_id": "B31",
+      "class": "ElmTerm",
+      "name": "B31",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[31]",
+      "relative_path": "cases/ieee39/case39.py#BUS[31]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 31,
+        "values": {
+          "bus": 31.0,
+          "type": 3.0,
+          "pd_mw": 9.2,
+          "qd_mvar": 4.6,
+          "area": 1.0,
+          "vm_pu": 0.982,
+          "va_deg": 0.0
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 3,
+      "area": 1,
+      "published_vm_pu": 0.982,
+      "published_va_deg": 0.0
+    },
+    {
+      "id": "B32",
+      "object_id": "B32",
+      "class": "ElmTerm",
+      "name": "B32",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[32]",
+      "relative_path": "cases/ieee39/case39.py#BUS[32]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 32,
+        "values": {
+          "bus": 32.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 1.0,
+          "vm_pu": 0.9841,
+          "va_deg": -0.1884374
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 1,
+      "published_vm_pu": 0.9841,
+      "published_va_deg": -0.1884374
+    },
+    {
+      "id": "B33",
+      "object_id": "B33",
+      "class": "ElmTerm",
+      "name": "B33",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[33]",
+      "relative_path": "cases/ieee39/case39.py#BUS[33]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 33,
+        "values": {
+          "bus": 33.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 3.0,
+          "vm_pu": 0.9972,
+          "va_deg": -0.19317445
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 3,
+      "published_vm_pu": 0.9972,
+      "published_va_deg": -0.19317445
+    },
+    {
+      "id": "B34",
+      "object_id": "B34",
+      "class": "ElmTerm",
+      "name": "B34",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[34]",
+      "relative_path": "cases/ieee39/case39.py#BUS[34]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 34,
+        "values": {
+          "bus": 34.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 3.0,
+          "vm_pu": 1.0123,
+          "va_deg": -1.631119
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 3,
+      "published_vm_pu": 1.0123,
+      "published_va_deg": -1.631119
+    },
+    {
+      "id": "B35",
+      "object_id": "B35",
+      "class": "ElmTerm",
+      "name": "B35",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[35]",
+      "relative_path": "cases/ieee39/case39.py#BUS[35]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 35,
+        "values": {
+          "bus": 35.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 3.0,
+          "vm_pu": 1.0494,
+          "va_deg": 1.7765069
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 3,
+      "published_vm_pu": 1.0494,
+      "published_va_deg": 1.7765069
+    },
+    {
+      "id": "B36",
+      "object_id": "B36",
+      "class": "ElmTerm",
+      "name": "B36",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[36]",
+      "relative_path": "cases/ieee39/case39.py#BUS[36]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 36,
+        "values": {
+          "bus": 36.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 3.0,
+          "vm_pu": 1.0636,
+          "va_deg": 4.4684374
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 3,
+      "published_vm_pu": 1.0636,
+      "published_va_deg": 4.4684374
+    },
+    {
+      "id": "B37",
+      "object_id": "B37",
+      "class": "ElmTerm",
+      "name": "B37",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[37]",
+      "relative_path": "cases/ieee39/case39.py#BUS[37]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 37,
+        "values": {
+          "bus": 37.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 2.0,
+          "vm_pu": 1.0275,
+          "va_deg": -1.5828988
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 2,
+      "published_vm_pu": 1.0275,
+      "published_va_deg": -1.5828988
+    },
+    {
+      "id": "B38",
+      "object_id": "B38",
+      "class": "ElmTerm",
+      "name": "B38",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[38]",
+      "relative_path": "cases/ieee39/case39.py#BUS[38]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 38,
+        "values": {
+          "bus": 38.0,
+          "type": 2.0,
+          "pd_mw": 0.0,
+          "qd_mvar": 0.0,
+          "area": 3.0,
+          "vm_pu": 1.0265,
+          "va_deg": 3.8928177
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 3,
+      "published_vm_pu": 1.0265,
+      "published_va_deg": 3.8928177
+    },
+    {
+      "id": "B39",
+      "object_id": "B39",
+      "class": "ElmTerm",
+      "name": "B39",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[39]",
+      "relative_path": "cases/ieee39/case39.py#BUS[39]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "uknom": 345.0,
+        "outserv": 0
+      },
+      "units": {
+        "uknom": "kV"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 39,
+        "values": {
+          "bus": 39.0,
+          "type": 2.0,
+          "pd_mw": 1104.0,
+          "qd_mvar": 250.0,
+          "area": 1.0,
+          "vm_pu": 1.03,
+          "va_deg": -14.535256
+        }
+      },
+      "un_kv": 345.0,
+      "bus_type": 2,
+      "area": 1,
+      "published_vm_pu": 1.03,
+      "published_va_deg": -14.535256
+    }
+  ],
+  "switches": [],
+  "branches": [
+    {
+      "id": "L01-02",
+      "object_id": "L01-02",
+      "class": "ElmLne",
+      "name": "L01-02",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[1]",
+      "relative_path": "cases/ieee39/case39.py#BR[1]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 4.165875,
+        "X1": 48.919275,
+        "B1": 587.0195337114052,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 1,
+        "values": {
+          "from_bus": 1.0,
+          "to_bus": 2.0,
+          "r_pu": 0.0035,
+          "x_pu": 0.0411,
+          "b_pu": 0.6987,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B01",
+      "bus_to": "B02",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L01-39",
+      "object_id": "L01-39",
+      "class": "ElmLne",
+      "name": "L01-39",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[2]",
+      "relative_path": "cases/ieee39/case39.py#BR[2]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.19025,
+        "X1": 29.75625,
+        "B1": 630.119722747322,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 2,
+        "values": {
+          "from_bus": 1.0,
+          "to_bus": 39.0,
+          "r_pu": 0.001,
+          "x_pu": 0.025,
+          "b_pu": 0.75,
+          "rate_a_mva": 1000.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B01",
+      "bus_to": "B39",
+      "rate_a_mva": 1000.0
+    },
+    {
+      "id": "L02-03",
+      "object_id": "L02-03",
+      "class": "ElmLne",
+      "name": "L02-03",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[3]",
+      "relative_path": "cases/ieee39/case39.py#BR[3]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.5473249999999998,
+        "X1": 17.972775000000002,
+        "B1": 216.08905692081495,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 3,
+        "values": {
+          "from_bus": 2.0,
+          "to_bus": 3.0,
+          "r_pu": 0.0013,
+          "x_pu": 0.0151,
+          "b_pu": 0.2572,
+          "rate_a_mva": 500.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B02",
+      "bus_to": "B03",
+      "rate_a_mva": 500.0
+    },
+    {
+      "id": "L02-25",
+      "object_id": "L02-25",
+      "class": "ElmLne",
+      "name": "L02-25",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[4]",
+      "relative_path": "cases/ieee39/case39.py#BR[4]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 8.33175,
+        "X1": 10.23615,
+        "B1": 122.66330602814533,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 4,
+        "values": {
+          "from_bus": 2.0,
+          "to_bus": 25.0,
+          "r_pu": 0.007,
+          "x_pu": 0.0086,
+          "b_pu": 0.146,
+          "rate_a_mva": 500.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B02",
+      "bus_to": "B25",
+      "rate_a_mva": 500.0
+    },
+    {
+      "id": "T02-30",
+      "object_id": "T02-30",
+      "class": "ElmTr2",
+      "name": "T02-30",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[5]",
+      "relative_path": "cases/ieee39/case39.py#BR[5]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 16.290000000000003,
+        "pcutr": 0.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 2.499999999999991,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T02-30_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 5,
+        "values": {
+          "from_bus": 2.0,
+          "to_bus": 30.0,
+          "r_pu": 0.0,
+          "x_pu": 0.0181,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.025
+        }
+      },
+      "bus_from": "B02",
+      "bus_to": "B30",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L03-04",
+      "object_id": "L03-04",
+      "class": "ElmLne",
+      "name": "L03-04",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[6]",
+      "relative_path": "cases/ieee39/case39.py#BR[6]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.5473249999999998,
+        "X1": 25.352325,
+        "B1": 186.01134215500946,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 6,
+        "values": {
+          "from_bus": 3.0,
+          "to_bus": 4.0,
+          "r_pu": 0.0013,
+          "x_pu": 0.0213,
+          "b_pu": 0.2214,
+          "rate_a_mva": 500.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B03",
+      "bus_to": "B04",
+      "rate_a_mva": 500.0
+    },
+    {
+      "id": "L03-18",
+      "object_id": "L03-18",
+      "class": "ElmLne",
+      "name": "L03-18",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[7]",
+      "relative_path": "cases/ieee39/case39.py#BR[7]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.3092750000000002,
+        "X1": 15.830324999999998,
+        "B1": 179.62612896450324,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 7,
+        "values": {
+          "from_bus": 3.0,
+          "to_bus": 18.0,
+          "r_pu": 0.0011,
+          "x_pu": 0.0133,
+          "b_pu": 0.2138,
+          "rate_a_mva": 500.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B03",
+      "bus_to": "B18",
+      "rate_a_mva": 500.0
+    },
+    {
+      "id": "L04-05",
+      "object_id": "L04-05",
+      "class": "ElmLne",
+      "name": "L04-05",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[8]",
+      "relative_path": "cases/ieee39/case39.py#BR[8]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.9522,
+        "X1": 15.2352,
+        "B1": 112.74942239025417,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 8,
+        "values": {
+          "from_bus": 4.0,
+          "to_bus": 5.0,
+          "r_pu": 0.0008,
+          "x_pu": 0.0128,
+          "b_pu": 0.1342,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B04",
+      "bus_to": "B05",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L04-14",
+      "object_id": "L04-14",
+      "class": "ElmLne",
+      "name": "L04-14",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[9]",
+      "relative_path": "cases/ieee39/case39.py#BR[9]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.9522,
+        "X1": 15.354225,
+        "B1": 116.11006091157319,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 9,
+        "values": {
+          "from_bus": 4.0,
+          "to_bus": 14.0,
+          "r_pu": 0.0008,
+          "x_pu": 0.0129,
+          "b_pu": 0.1382,
+          "rate_a_mva": 500.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B04",
+      "bus_to": "B14",
+      "rate_a_mva": 500.0
+    },
+    {
+      "id": "L05-06",
+      "object_id": "L05-06",
+      "class": "ElmLne",
+      "name": "L05-06",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[10]",
+      "relative_path": "cases/ieee39/case39.py#BR[10]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.23805,
+        "X1": 3.0946499999999997,
+        "B1": 36.462927956311695,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 10,
+        "values": {
+          "from_bus": 5.0,
+          "to_bus": 6.0,
+          "r_pu": 0.0002,
+          "x_pu": 0.0026,
+          "b_pu": 0.0434,
+          "rate_a_mva": 1200.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B05",
+      "bus_to": "B06",
+      "rate_a_mva": 1200.0
+    },
+    {
+      "id": "L05-08",
+      "object_id": "L05-08",
+      "class": "ElmLne",
+      "name": "L05-08",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[11]",
+      "relative_path": "cases/ieee39/case39.py#BR[11]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.9522,
+        "X1": 13.3308,
+        "B1": 124.00756143667299,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 11,
+        "values": {
+          "from_bus": 5.0,
+          "to_bus": 8.0,
+          "r_pu": 0.0008,
+          "x_pu": 0.0112,
+          "b_pu": 0.1476,
+          "rate_a_mva": 900.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B05",
+      "bus_to": "B08",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L06-07",
+      "object_id": "L06-07",
+      "class": "ElmLne",
+      "name": "L06-07",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[12]",
+      "relative_path": "cases/ieee39/case39.py#BR[12]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.71415,
+        "X1": 10.9503,
+        "B1": 94.93803822726318,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 12,
+        "values": {
+          "from_bus": 6.0,
+          "to_bus": 7.0,
+          "r_pu": 0.0006,
+          "x_pu": 0.0092,
+          "b_pu": 0.113,
+          "rate_a_mva": 900.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B06",
+      "bus_to": "B07",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L06-11",
+      "object_id": "L06-11",
+      "class": "ElmLne",
+      "name": "L06-11",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[13]",
+      "relative_path": "cases/ieee39/case39.py#BR[13]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.833175,
+        "X1": 9.760050000000001,
+        "B1": 116.69817265280403,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 13,
+        "values": {
+          "from_bus": 6.0,
+          "to_bus": 11.0,
+          "r_pu": 0.0007,
+          "x_pu": 0.0082,
+          "b_pu": 0.1389,
+          "rate_a_mva": 480.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B06",
+      "bus_to": "B11",
+      "rate_a_mva": 480.0
+    },
+    {
+      "id": "T06-31",
+      "object_id": "T06-31",
+      "class": "ElmTr2",
+      "name": "T06-31",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[14]",
+      "relative_path": "cases/ieee39/case39.py#BR[14]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 1800.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 45.0,
+        "pcutr": 0.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 7.000000000000006,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T06-31_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 14,
+        "values": {
+          "from_bus": 6.0,
+          "to_bus": 31.0,
+          "r_pu": 0.0,
+          "x_pu": 0.025,
+          "b_pu": 0.0,
+          "rate_a_mva": 1800.0,
+          "tap": 1.07
+        }
+      },
+      "bus_from": "B06",
+      "bus_to": "B31",
+      "rate_a_mva": 1800.0
+    },
+    {
+      "id": "L07-08",
+      "object_id": "L07-08",
+      "class": "ElmLne",
+      "name": "L07-08",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[15]",
+      "relative_path": "cases/ieee39/case39.py#BR[15]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.4761,
+        "X1": 5.47515,
+        "B1": 65.5324511657215,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 15,
+        "values": {
+          "from_bus": 7.0,
+          "to_bus": 8.0,
+          "r_pu": 0.0004,
+          "x_pu": 0.0046,
+          "b_pu": 0.078,
+          "rate_a_mva": 900.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B07",
+      "bus_to": "B08",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L08-09",
+      "object_id": "L08-09",
+      "class": "ElmLne",
+      "name": "L08-09",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[16]",
+      "relative_path": "cases/ieee39/case39.py#BR[16]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 2.737575,
+        "X1": 43.206075,
+        "B1": 319.5967233774417,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 16,
+        "values": {
+          "from_bus": 8.0,
+          "to_bus": 9.0,
+          "r_pu": 0.0023,
+          "x_pu": 0.0363,
+          "b_pu": 0.3804,
+          "rate_a_mva": 900.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B08",
+      "bus_to": "B09",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L09-39",
+      "object_id": "L09-39",
+      "class": "ElmLne",
+      "name": "L09-39",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[17]",
+      "relative_path": "cases/ieee39/case39.py#BR[17]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.19025,
+        "X1": 29.75625,
+        "B1": 1008.1915563957152,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 17,
+        "values": {
+          "from_bus": 9.0,
+          "to_bus": 39.0,
+          "r_pu": 0.001,
+          "x_pu": 0.025,
+          "b_pu": 1.2,
+          "rate_a_mva": 900.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B09",
+      "bus_to": "B39",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L10-11",
+      "object_id": "L10-11",
+      "class": "ElmLne",
+      "name": "L10-11",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[18]",
+      "relative_path": "cases/ieee39/case39.py#BR[18]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.4761,
+        "X1": 5.118075,
+        "B1": 61.2476370510397,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 18,
+        "values": {
+          "from_bus": 10.0,
+          "to_bus": 11.0,
+          "r_pu": 0.0004,
+          "x_pu": 0.0043,
+          "b_pu": 0.0729,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B10",
+      "bus_to": "B11",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L10-13",
+      "object_id": "L10-13",
+      "class": "ElmLne",
+      "name": "L10-13",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[19]",
+      "relative_path": "cases/ieee39/case39.py#BR[19]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.4761,
+        "X1": 5.118075,
+        "B1": 61.2476370510397,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 19,
+        "values": {
+          "from_bus": 10.0,
+          "to_bus": 13.0,
+          "r_pu": 0.0004,
+          "x_pu": 0.0043,
+          "b_pu": 0.0729,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B10",
+      "bus_to": "B13",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "T10-32",
+      "object_id": "T10-32",
+      "class": "ElmTr2",
+      "name": "T10-32",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[20]",
+      "relative_path": "cases/ieee39/case39.py#BR[20]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 18.0,
+        "pcutr": 0.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 7.000000000000006,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T10-32_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 20,
+        "values": {
+          "from_bus": 10.0,
+          "to_bus": 32.0,
+          "r_pu": 0.0,
+          "x_pu": 0.02,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.07
+        }
+      },
+      "bus_from": "B10",
+      "bus_to": "B32",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "T12-11",
+      "object_id": "T12-11",
+      "class": "ElmTr2",
+      "name": "T12-11",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[21]",
+      "relative_path": "cases/ieee39/case39.py#BR[21]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 500.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 21.764707670906127,
+        "pcutr": 4000.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 0.6000000000000005,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T12-11_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 21,
+        "values": {
+          "from_bus": 12.0,
+          "to_bus": 11.0,
+          "r_pu": 0.0016,
+          "x_pu": 0.0435,
+          "b_pu": 0.0,
+          "rate_a_mva": 500.0,
+          "tap": 1.006
+        }
+      },
+      "bus_from": "B12",
+      "bus_to": "B11",
+      "rate_a_mva": 500.0
+    },
+    {
+      "id": "T12-13",
+      "object_id": "T12-13",
+      "class": "ElmTr2",
+      "name": "T12-13",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[22]",
+      "relative_path": "cases/ieee39/case39.py#BR[22]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 500.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 21.764707670906127,
+        "pcutr": 4000.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 0.6000000000000005,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T12-13_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 22,
+        "values": {
+          "from_bus": 12.0,
+          "to_bus": 13.0,
+          "r_pu": 0.0016,
+          "x_pu": 0.0435,
+          "b_pu": 0.0,
+          "rate_a_mva": 500.0,
+          "tap": 1.006
+        }
+      },
+      "bus_from": "B12",
+      "bus_to": "B13",
+      "rate_a_mva": 500.0
+    },
+    {
+      "id": "L13-14",
+      "object_id": "L13-14",
+      "class": "ElmLne",
+      "name": "L13-14",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[23]",
+      "relative_path": "cases/ieee39/case39.py#BR[23]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.0712249999999999,
+        "X1": 12.021524999999999,
+        "B1": 144.7595043058181,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 23,
+        "values": {
+          "from_bus": 13.0,
+          "to_bus": 14.0,
+          "r_pu": 0.0009,
+          "x_pu": 0.0101,
+          "b_pu": 0.1723,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B13",
+      "bus_to": "B14",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L14-15",
+      "object_id": "L14-15",
+      "class": "ElmLne",
+      "name": "L14-15",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[24]",
+      "relative_path": "cases/ieee39/case39.py#BR[24]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 2.1424499999999997,
+        "X1": 25.828425,
+        "B1": 307.49842470069314,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 24,
+        "values": {
+          "from_bus": 14.0,
+          "to_bus": 15.0,
+          "r_pu": 0.0018,
+          "x_pu": 0.0217,
+          "b_pu": 0.366,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B14",
+      "bus_to": "B15",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L15-16",
+      "object_id": "L15-16",
+      "class": "ElmLne",
+      "name": "L15-16",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[25]",
+      "relative_path": "cases/ieee39/case39.py#BR[25]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.0712249999999999,
+        "X1": 11.18835,
+        "B1": 143.66729678638941,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 25,
+        "values": {
+          "from_bus": 15.0,
+          "to_bus": 16.0,
+          "r_pu": 0.0009,
+          "x_pu": 0.0094,
+          "b_pu": 0.171,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B15",
+      "bus_to": "B16",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L16-17",
+      "object_id": "L16-17",
+      "class": "ElmLne",
+      "name": "L16-17",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[26]",
+      "relative_path": "cases/ieee39/case39.py#BR[26]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.833175,
+        "X1": 10.593225,
+        "B1": 112.74942239025417,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 26,
+        "values": {
+          "from_bus": 16.0,
+          "to_bus": 17.0,
+          "r_pu": 0.0007,
+          "x_pu": 0.0089,
+          "b_pu": 0.1342,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B16",
+      "bus_to": "B17",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L16-19",
+      "object_id": "L16-19",
+      "class": "ElmLne",
+      "name": "L16-19",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[27]",
+      "relative_path": "cases/ieee39/case39.py#BR[27]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.9044,
+        "X1": 23.209875,
+        "B1": 255.40852762024784,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 27,
+        "values": {
+          "from_bus": 16.0,
+          "to_bus": 19.0,
+          "r_pu": 0.0016,
+          "x_pu": 0.0195,
+          "b_pu": 0.304,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B16",
+      "bus_to": "B19",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L16-21",
+      "object_id": "L16-21",
+      "class": "ElmLne",
+      "name": "L16-21",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[28]",
+      "relative_path": "cases/ieee39/case39.py#BR[28]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.9522,
+        "X1": 16.068375,
+        "B1": 214.07267380802355,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 28,
+        "values": {
+          "from_bus": 16.0,
+          "to_bus": 21.0,
+          "r_pu": 0.0008,
+          "x_pu": 0.0135,
+          "b_pu": 0.2548,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B16",
+      "bus_to": "B21",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L16-24",
+      "object_id": "L16-24",
+      "class": "ElmLne",
+      "name": "L16-24",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[29]",
+      "relative_path": "cases/ieee39/case39.py#BR[29]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.357075,
+        "X1": 7.022475,
+        "B1": 57.13085486242387,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 29,
+        "values": {
+          "from_bus": 16.0,
+          "to_bus": 24.0,
+          "r_pu": 0.0003,
+          "x_pu": 0.0059,
+          "b_pu": 0.068,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B16",
+      "bus_to": "B24",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L17-18",
+      "object_id": "L17-18",
+      "class": "ElmLne",
+      "name": "L17-18",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[30]",
+      "relative_path": "cases/ieee39/case39.py#BR[30]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.833175,
+        "X1": 9.760050000000001,
+        "B1": 110.81705524049568,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 30,
+        "values": {
+          "from_bus": 17.0,
+          "to_bus": 18.0,
+          "r_pu": 0.0007,
+          "x_pu": 0.0082,
+          "b_pu": 0.1319,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B17",
+      "bus_to": "B18",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L17-27",
+      "object_id": "L17-27",
+      "class": "ElmLne",
+      "name": "L17-27",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[31]",
+      "relative_path": "cases/ieee39/case39.py#BR[31]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.5473249999999998,
+        "X1": 20.591324999999998,
+        "B1": 270.19533711405165,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 31,
+        "values": {
+          "from_bus": 17.0,
+          "to_bus": 27.0,
+          "r_pu": 0.0013,
+          "x_pu": 0.0173,
+          "b_pu": 0.3216,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B17",
+      "bus_to": "B27",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "T19-20",
+      "object_id": "T19-20",
+      "class": "ElmTr2",
+      "name": "T19-20",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[32]",
+      "relative_path": "cases/ieee39/case39.py#BR[32]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 12.435967996099057,
+        "pcutr": 5670.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 6.000000000000005,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T19-20_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 32,
+        "values": {
+          "from_bus": 19.0,
+          "to_bus": 20.0,
+          "r_pu": 0.0007,
+          "x_pu": 0.0138,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.06
+        }
+      },
+      "bus_from": "B19",
+      "bus_to": "B20",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "T19-33",
+      "object_id": "T19-33",
+      "class": "ElmTr2",
+      "name": "T19-33",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[33]",
+      "relative_path": "cases/ieee39/case39.py#BR[33]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 12.795518746811323,
+        "pcutr": 5670.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 7.000000000000006,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T19-33_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 33,
+        "values": {
+          "from_bus": 19.0,
+          "to_bus": 33.0,
+          "r_pu": 0.0007,
+          "x_pu": 0.0142,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.07
+        }
+      },
+      "bus_from": "B19",
+      "bus_to": "B33",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "T20-34",
+      "object_id": "T20-34",
+      "class": "ElmTr2",
+      "name": "T20-34",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[34]",
+      "relative_path": "cases/ieee39/case39.py#BR[34]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 16.220237359545635,
+        "pcutr": 7290.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 0.8999999999999897,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T20-34_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 34,
+        "values": {
+          "from_bus": 20.0,
+          "to_bus": 34.0,
+          "r_pu": 0.0009,
+          "x_pu": 0.018,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.009
+        }
+      },
+      "bus_from": "B20",
+      "bus_to": "B34",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L21-22",
+      "object_id": "L21-22",
+      "class": "ElmLne",
+      "name": "L21-22",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[35]",
+      "relative_path": "cases/ieee39/case39.py#BR[35]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.9522,
+        "X1": 16.6635,
+        "B1": 215.50094517958414,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 35,
+        "values": {
+          "from_bus": 21.0,
+          "to_bus": 22.0,
+          "r_pu": 0.0008,
+          "x_pu": 0.014,
+          "b_pu": 0.2565,
+          "rate_a_mva": 900.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B21",
+      "bus_to": "B22",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L22-23",
+      "object_id": "L22-23",
+      "class": "ElmLne",
+      "name": "L22-23",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[36]",
+      "relative_path": "cases/ieee39/case39.py#BR[36]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 0.71415,
+        "X1": 11.4264,
+        "B1": 155.09346775887417,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 36,
+        "values": {
+          "from_bus": 22.0,
+          "to_bus": 23.0,
+          "r_pu": 0.0006,
+          "x_pu": 0.0096,
+          "b_pu": 0.1846,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B22",
+      "bus_to": "B23",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "T22-35",
+      "object_id": "T22-35",
+      "class": "ElmTr2",
+      "name": "T22-35",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[37]",
+      "relative_path": "cases/ieee39/case39.py#BR[37]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 12.870000000000001,
+        "pcutr": 0.0,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 2.499999999999991,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T22-35_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 37,
+        "values": {
+          "from_bus": 22.0,
+          "to_bus": 35.0,
+          "r_pu": 0.0,
+          "x_pu": 0.0143,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.025
+        }
+      },
+      "bus_from": "B22",
+      "bus_to": "B35",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L23-24",
+      "object_id": "L23-24",
+      "class": "ElmLne",
+      "name": "L23-24",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[38]",
+      "relative_path": "cases/ieee39/case39.py#BR[38]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 2.6185500000000004,
+        "X1": 41.658750000000005,
+        "B1": 303.2976265490443,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 38,
+        "values": {
+          "from_bus": 23.0,
+          "to_bus": 24.0,
+          "r_pu": 0.0022,
+          "x_pu": 0.035,
+          "b_pu": 0.361,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B23",
+      "bus_to": "B24",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "T23-36",
+      "object_id": "T23-36",
+      "class": "ElmTr2",
+      "name": "T23-36",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[39]",
+      "relative_path": "cases/ieee39/case39.py#BR[39]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 24.484135680068427,
+        "pcutr": 4050.000000000001,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 0.0,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T23-36_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 39,
+        "values": {
+          "from_bus": 23.0,
+          "to_bus": 36.0,
+          "r_pu": 0.0005,
+          "x_pu": 0.0272,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.0
+        }
+      },
+      "bus_from": "B23",
+      "bus_to": "B36",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L25-26",
+      "object_id": "L25-26",
+      "class": "ElmLne",
+      "name": "L25-26",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[40]",
+      "relative_path": "cases/ieee39/case39.py#BR[40]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 3.8088,
+        "X1": 38.445075,
+        "B1": 446.124763705104,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 40,
+        "values": {
+          "from_bus": 25.0,
+          "to_bus": 26.0,
+          "r_pu": 0.0032,
+          "x_pu": 0.0323,
+          "b_pu": 0.531,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B25",
+      "bus_to": "B26",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "T25-37",
+      "object_id": "T25-37",
+      "class": "ElmTr2",
+      "name": "T25-37",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[41]",
+      "relative_path": "cases/ieee39/case39.py#BR[41]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 900.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 20.886981591412386,
+        "pcutr": 4859.999999999999,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 2.499999999999991,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T25-37_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 41,
+        "values": {
+          "from_bus": 25.0,
+          "to_bus": 37.0,
+          "r_pu": 0.0006,
+          "x_pu": 0.0232,
+          "b_pu": 0.0,
+          "rate_a_mva": 900.0,
+          "tap": 1.025
+        }
+      },
+      "bus_from": "B25",
+      "bus_to": "B37",
+      "rate_a_mva": 900.0
+    },
+    {
+      "id": "L26-27",
+      "object_id": "L26-27",
+      "class": "ElmLne",
+      "name": "L26-27",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[42]",
+      "relative_path": "cases/ieee39/case39.py#BR[42]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.66635,
+        "X1": 17.496675,
+        "B1": 201.30224742701114,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 42,
+        "values": {
+          "from_bus": 26.0,
+          "to_bus": 27.0,
+          "r_pu": 0.0014,
+          "x_pu": 0.0147,
+          "b_pu": 0.2396,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B26",
+      "bus_to": "B27",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L26-28",
+      "object_id": "L26-28",
+      "class": "ElmLne",
+      "name": "L26-28",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[43]",
+      "relative_path": "cases/ieee39/case39.py#BR[43]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 5.118075,
+        "X1": 56.417849999999994,
+        "B1": 655.4925435832808,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 43,
+        "values": {
+          "from_bus": 26.0,
+          "to_bus": 28.0,
+          "r_pu": 0.0043,
+          "x_pu": 0.0474,
+          "b_pu": 0.7802,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B26",
+      "bus_to": "B28",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L26-29",
+      "object_id": "L26-29",
+      "class": "ElmLne",
+      "name": "L26-29",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[44]",
+      "relative_path": "cases/ieee39/case39.py#BR[44]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 6.784425000000001,
+        "X1": 74.390625,
+        "B1": 864.5242596093257,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 44,
+        "values": {
+          "from_bus": 26.0,
+          "to_bus": 29.0,
+          "r_pu": 0.0057,
+          "x_pu": 0.0625,
+          "b_pu": 1.029,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B26",
+      "bus_to": "B29",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "L28-29",
+      "object_id": "L28-29",
+      "class": "ElmLne",
+      "name": "L28-29",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[45]",
+      "relative_path": "cases/ieee39/case39.py#BR[45]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "R1": 1.66635,
+        "X1": 17.972775000000002,
+        "B1": 209.1997479521109,
+        "G1": 0.0,
+        "nlnum": 1,
+        "f_nom_hz": 60.0,
+        "outserv": 0
+      },
+      "units": {
+        "R1": "Ohm",
+        "X1": "Ohm",
+        "B1": "uS",
+        "G1": "uS",
+        "nlnum": "1",
+        "f_nom_hz": "Hz"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BR",
+        "row_1based": 45,
+        "values": {
+          "from_bus": 28.0,
+          "to_bus": 29.0,
+          "r_pu": 0.0014,
+          "x_pu": 0.0151,
+          "b_pu": 0.249,
+          "rate_a_mva": 600.0,
+          "tap": 0.0
+        }
+      },
+      "bus_from": "B28",
+      "bus_to": "B29",
+      "rate_a_mva": 600.0
+    },
+    {
+      "id": "T29-38",
+      "object_id": "T29-38",
+      "class": "ElmTr2",
+      "name": "T29-38",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BR[46]",
+      "relative_path": "cases/ieee39/case39.py#BR[46]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "nntap": 1,
+        "ntnum": 1,
+        "ntrcn": 0,
+        "outserv": 0
+      },
+      "units": {},
+      "type_params": {
+        "strn": 1200.0,
+        "utrn_h": 345.0,
+        "utrn_l": 345.0,
+        "uktr": 18.744599222175967,
+        "pcutr": 11520.000000000002,
+        "pfe": 0.0,
+        "curmg": 0.0,
+        "itrdr": 0.5,
+        "itrdl": 0.5,
+        "dutap": 2.499999999999991,
+        "nntap0": 0,
+        "phitr": 0.0,
+        "tap_side": 0,
+        "nt2ag": 0.0
+      },
+      "type_units": {
+        "strn": "MVA",
+        "utrn_h": "kV",
+        "utrn_l": "kV",
+        "uktr": "%",
+        "pcutr": "kW",
+        "pfe": "kW",
+        "curmg": "%",
+        "itrdr": "1",
+        "itrdl": "1",
+        "dutap": "%",
+        "phitr": "deg",
+        "nt2ag": "*30deg"
+      },
+      "type_class": "TypTr2",
+      "type_id": "T29-38_type",
+      "source_row": {
+        "table": "BR",
+        "row_1based": 46,
+        "values": {
+          "from_bus": 29.0,
+          "to_bus": 38.0,
+          "r_pu": 0.0008,
+          "x_pu": 0.0156,
+          "b_pu": 0.0,
+          "rate_a_mva": 1200.0,
+          "tap": 1.025
+        }
+      },
+      "bus_from": "B29",
+      "bus_to": "B38",
+      "rate_a_mva": 1200.0
+    }
+  ],
+  "branches3": [],
+  "shunts": [],
+  "loads": [
+    {
+      "id": "LD01",
+      "object_id": "LD01",
+      "class": "ElmLod",
+      "name": "LD01",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[1]",
+      "relative_path": "cases/ieee39/case39.py#BUS[1]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 97.6,
+        "qlini": 44.2,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 1,
+        "values": {
+          "bus": 1.0,
+          "type": 1.0,
+          "pd_mw": 97.6,
+          "qd_mvar": 44.2,
+          "area": 2.0,
+          "vm_pu": 1.0393836,
+          "va_deg": -13.536602
+        }
+      },
+      "bus": "B01",
+      "p_mw": 97.6,
+      "q_mvar": 44.2,
+      "scale": 1.0
+    },
+    {
+      "id": "LD03",
+      "object_id": "LD03",
+      "class": "ElmLod",
+      "name": "LD03",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[3]",
+      "relative_path": "cases/ieee39/case39.py#BUS[3]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 322.0,
+        "qlini": 2.4,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 3,
+        "values": {
+          "bus": 3.0,
+          "type": 1.0,
+          "pd_mw": 322.0,
+          "qd_mvar": 2.4,
+          "area": 2.0,
+          "vm_pu": 1.0307077,
+          "va_deg": -12.276384
+        }
+      },
+      "bus": "B03",
+      "p_mw": 322.0,
+      "q_mvar": 2.4,
+      "scale": 1.0
+    },
+    {
+      "id": "LD04",
+      "object_id": "LD04",
+      "class": "ElmLod",
+      "name": "LD04",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[4]",
+      "relative_path": "cases/ieee39/case39.py#BUS[4]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 500.0,
+        "qlini": 184.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 4,
+        "values": {
+          "bus": 4.0,
+          "type": 1.0,
+          "pd_mw": 500.0,
+          "qd_mvar": 184.0,
+          "area": 1.0,
+          "vm_pu": 1.00446,
+          "va_deg": -12.626734
+        }
+      },
+      "bus": "B04",
+      "p_mw": 500.0,
+      "q_mvar": 184.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD07",
+      "object_id": "LD07",
+      "class": "ElmLod",
+      "name": "LD07",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[7]",
+      "relative_path": "cases/ieee39/case39.py#BUS[7]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 233.8,
+        "qlini": 84.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 7,
+        "values": {
+          "bus": 7.0,
+          "type": 1.0,
+          "pd_mw": 233.8,
+          "qd_mvar": 84.0,
+          "area": 1.0,
+          "vm_pu": 0.99839728,
+          "va_deg": -12.755626
+        }
+      },
+      "bus": "B07",
+      "p_mw": 233.8,
+      "q_mvar": 84.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD08",
+      "object_id": "LD08",
+      "class": "ElmLod",
+      "name": "LD08",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[8]",
+      "relative_path": "cases/ieee39/case39.py#BUS[8]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 522.0,
+        "qlini": 176.6,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 8,
+        "values": {
+          "bus": 8.0,
+          "type": 1.0,
+          "pd_mw": 522.0,
+          "qd_mvar": 176.6,
+          "area": 1.0,
+          "vm_pu": 0.99787232,
+          "va_deg": -13.335844
+        }
+      },
+      "bus": "B08",
+      "p_mw": 522.0,
+      "q_mvar": 176.6,
+      "scale": 1.0
+    },
+    {
+      "id": "LD09",
+      "object_id": "LD09",
+      "class": "ElmLod",
+      "name": "LD09",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[9]",
+      "relative_path": "cases/ieee39/case39.py#BUS[9]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 6.5,
+        "qlini": -66.6,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 9,
+        "values": {
+          "bus": 9.0,
+          "type": 1.0,
+          "pd_mw": 6.5,
+          "qd_mvar": -66.6,
+          "area": 1.0,
+          "vm_pu": 1.038332,
+          "va_deg": -14.178442
+        }
+      },
+      "bus": "B09",
+      "p_mw": 6.5,
+      "q_mvar": -66.6,
+      "scale": 1.0
+    },
+    {
+      "id": "LD12",
+      "object_id": "LD12",
+      "class": "ElmLod",
+      "name": "LD12",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[12]",
+      "relative_path": "cases/ieee39/case39.py#BUS[12]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 8.53,
+        "qlini": 88.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 12,
+        "values": {
+          "bus": 12.0,
+          "type": 1.0,
+          "pd_mw": 8.53,
+          "qd_mvar": 88.0,
+          "area": 1.0,
+          "vm_pu": 1.000815,
+          "va_deg": -8.9988236
+        }
+      },
+      "bus": "B12",
+      "p_mw": 8.53,
+      "q_mvar": 88.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD15",
+      "object_id": "LD15",
+      "class": "ElmLod",
+      "name": "LD15",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[15]",
+      "relative_path": "cases/ieee39/case39.py#BUS[15]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 320.0,
+        "qlini": 153.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 15,
+        "values": {
+          "bus": 15.0,
+          "type": 1.0,
+          "pd_mw": 320.0,
+          "qd_mvar": 153.0,
+          "area": 3.0,
+          "vm_pu": 1.0161854,
+          "va_deg": -11.345399
+        }
+      },
+      "bus": "B15",
+      "p_mw": 320.0,
+      "q_mvar": 153.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD16",
+      "object_id": "LD16",
+      "class": "ElmLod",
+      "name": "LD16",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[16]",
+      "relative_path": "cases/ieee39/case39.py#BUS[16]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 329.0,
+        "qlini": 32.3,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 16,
+        "values": {
+          "bus": 16.0,
+          "type": 1.0,
+          "pd_mw": 329.0,
+          "qd_mvar": 32.3,
+          "area": 3.0,
+          "vm_pu": 1.0325203,
+          "va_deg": -10.033348
+        }
+      },
+      "bus": "B16",
+      "p_mw": 329.0,
+      "q_mvar": 32.3,
+      "scale": 1.0
+    },
+    {
+      "id": "LD18",
+      "object_id": "LD18",
+      "class": "ElmLod",
+      "name": "LD18",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[18]",
+      "relative_path": "cases/ieee39/case39.py#BUS[18]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 158.0,
+        "qlini": 30.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 18,
+        "values": {
+          "bus": 18.0,
+          "type": 1.0,
+          "pd_mw": 158.0,
+          "qd_mvar": 30.0,
+          "area": 2.0,
+          "vm_pu": 1.0315726,
+          "va_deg": -11.986168
+        }
+      },
+      "bus": "B18",
+      "p_mw": 158.0,
+      "q_mvar": 30.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD20",
+      "object_id": "LD20",
+      "class": "ElmLod",
+      "name": "LD20",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[20]",
+      "relative_path": "cases/ieee39/case39.py#BUS[20]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 680.0,
+        "qlini": 103.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 20,
+        "values": {
+          "bus": 20.0,
+          "type": 1.0,
+          "pd_mw": 680.0,
+          "qd_mvar": 103.0,
+          "area": 3.0,
+          "vm_pu": 0.99101054,
+          "va_deg": -6.8211783
+        }
+      },
+      "bus": "B20",
+      "p_mw": 680.0,
+      "q_mvar": 103.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD21",
+      "object_id": "LD21",
+      "class": "ElmLod",
+      "name": "LD21",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[21]",
+      "relative_path": "cases/ieee39/case39.py#BUS[21]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 274.0,
+        "qlini": 115.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 21,
+        "values": {
+          "bus": 21.0,
+          "type": 1.0,
+          "pd_mw": 274.0,
+          "qd_mvar": 115.0,
+          "area": 3.0,
+          "vm_pu": 1.0323192,
+          "va_deg": -7.6287461
+        }
+      },
+      "bus": "B21",
+      "p_mw": 274.0,
+      "q_mvar": 115.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD23",
+      "object_id": "LD23",
+      "class": "ElmLod",
+      "name": "LD23",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[23]",
+      "relative_path": "cases/ieee39/case39.py#BUS[23]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 247.5,
+        "qlini": 84.6,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 23,
+        "values": {
+          "bus": 23.0,
+          "type": 1.0,
+          "pd_mw": 247.5,
+          "qd_mvar": 84.6,
+          "area": 3.0,
+          "vm_pu": 1.0451451,
+          "va_deg": -3.3812763
+        }
+      },
+      "bus": "B23",
+      "p_mw": 247.5,
+      "q_mvar": 84.6,
+      "scale": 1.0
+    },
+    {
+      "id": "LD24",
+      "object_id": "LD24",
+      "class": "ElmLod",
+      "name": "LD24",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[24]",
+      "relative_path": "cases/ieee39/case39.py#BUS[24]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 308.6,
+        "qlini": -92.2,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 24,
+        "values": {
+          "bus": 24.0,
+          "type": 1.0,
+          "pd_mw": 308.6,
+          "qd_mvar": -92.2,
+          "area": 3.0,
+          "vm_pu": 1.038001,
+          "va_deg": -9.9137585
+        }
+      },
+      "bus": "B24",
+      "p_mw": 308.6,
+      "q_mvar": -92.2,
+      "scale": 1.0
+    },
+    {
+      "id": "LD25",
+      "object_id": "LD25",
+      "class": "ElmLod",
+      "name": "LD25",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[25]",
+      "relative_path": "cases/ieee39/case39.py#BUS[25]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 224.0,
+        "qlini": 47.2,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 25,
+        "values": {
+          "bus": 25.0,
+          "type": 1.0,
+          "pd_mw": 224.0,
+          "qd_mvar": 47.2,
+          "area": 2.0,
+          "vm_pu": 1.0576827,
+          "va_deg": -8.3692354
+        }
+      },
+      "bus": "B25",
+      "p_mw": 224.0,
+      "q_mvar": 47.2,
+      "scale": 1.0
+    },
+    {
+      "id": "LD26",
+      "object_id": "LD26",
+      "class": "ElmLod",
+      "name": "LD26",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[26]",
+      "relative_path": "cases/ieee39/case39.py#BUS[26]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 139.0,
+        "qlini": 17.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 26,
+        "values": {
+          "bus": 26.0,
+          "type": 1.0,
+          "pd_mw": 139.0,
+          "qd_mvar": 17.0,
+          "area": 2.0,
+          "vm_pu": 1.0525613,
+          "va_deg": -9.4387696
+        }
+      },
+      "bus": "B26",
+      "p_mw": 139.0,
+      "q_mvar": 17.0,
+      "scale": 1.0
+    },
+    {
+      "id": "LD27",
+      "object_id": "LD27",
+      "class": "ElmLod",
+      "name": "LD27",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[27]",
+      "relative_path": "cases/ieee39/case39.py#BUS[27]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 281.0,
+        "qlini": 75.5,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 27,
+        "values": {
+          "bus": 27.0,
+          "type": 1.0,
+          "pd_mw": 281.0,
+          "qd_mvar": 75.5,
+          "area": 2.0,
+          "vm_pu": 1.0383449,
+          "va_deg": -11.362152
+        }
+      },
+      "bus": "B27",
+      "p_mw": 281.0,
+      "q_mvar": 75.5,
+      "scale": 1.0
+    },
+    {
+      "id": "LD28",
+      "object_id": "LD28",
+      "class": "ElmLod",
+      "name": "LD28",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[28]",
+      "relative_path": "cases/ieee39/case39.py#BUS[28]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 206.0,
+        "qlini": 27.6,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 28,
+        "values": {
+          "bus": 28.0,
+          "type": 1.0,
+          "pd_mw": 206.0,
+          "qd_mvar": 27.6,
+          "area": 3.0,
+          "vm_pu": 1.0503737,
+          "va_deg": -5.9283592
+        }
+      },
+      "bus": "B28",
+      "p_mw": 206.0,
+      "q_mvar": 27.6,
+      "scale": 1.0
+    },
+    {
+      "id": "LD29",
+      "object_id": "LD29",
+      "class": "ElmLod",
+      "name": "LD29",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[29]",
+      "relative_path": "cases/ieee39/case39.py#BUS[29]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 283.5,
+        "qlini": 26.9,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 29,
+        "values": {
+          "bus": 29.0,
+          "type": 1.0,
+          "pd_mw": 283.5,
+          "qd_mvar": 26.9,
+          "area": 3.0,
+          "vm_pu": 1.0501149,
+          "va_deg": -3.1698741
+        }
+      },
+      "bus": "B29",
+      "p_mw": 283.5,
+      "q_mvar": 26.9,
+      "scale": 1.0
+    },
+    {
+      "id": "LD31",
+      "object_id": "LD31",
+      "class": "ElmLod",
+      "name": "LD31",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[31]",
+      "relative_path": "cases/ieee39/case39.py#BUS[31]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 9.2,
+        "qlini": 4.6,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 31,
+        "values": {
+          "bus": 31.0,
+          "type": 3.0,
+          "pd_mw": 9.2,
+          "qd_mvar": 4.6,
+          "area": 1.0,
+          "vm_pu": 0.982,
+          "va_deg": 0.0
+        }
+      },
+      "bus": "B31",
+      "p_mw": 9.2,
+      "q_mvar": 4.6,
+      "scale": 1.0
+    },
+    {
+      "id": "LD39",
+      "object_id": "LD39",
+      "class": "ElmLod",
+      "name": "LD39",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#BUS[39]",
+      "relative_path": "cases/ieee39/case39.py#BUS[39]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "plini": 1104.0,
+        "qlini": 250.0,
+        "scale0": 1.0,
+        "mode_inp": "PQ",
+        "outserv": 0
+      },
+      "units": {
+        "plini": "MW",
+        "qlini": "Mvar",
+        "scale0": "1"
+      },
+      "type_params": {},
+      "type_units": {},
+      "type_class": null,
+      "type_id": null,
+      "source_row": {
+        "table": "BUS",
+        "row_1based": 39,
+        "values": {
+          "bus": 39.0,
+          "type": 2.0,
+          "pd_mw": 1104.0,
+          "qd_mvar": 250.0,
+          "area": 1.0,
+          "vm_pu": 1.03,
+          "va_deg": -14.535256
+        }
+      },
+      "bus": "B39",
+      "p_mw": 1104.0,
+      "q_mvar": 250.0,
+      "scale": 1.0
+    }
+  ],
+  "gens": [
+    {
+      "id": "G30",
+      "object_id": "G30",
+      "class": "ElmSym",
+      "name": "G30",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[1]",
+      "relative_path": "cases/ieee39/case39.py#GEN[1]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 250.0,
+        "qgini": 161.762,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 1.0499,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": 1.4,
+        "q_max": 4.0,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G30_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 1,
+        "values": {
+          "bus": 30.0,
+          "pg_mw": 250.0,
+          "qg_mvar": 161.762,
+          "qmax_mvar": 400.0,
+          "qmin_mvar": 140.0,
+          "vg_pu": 1.0499
+        }
+      },
+      "bus": "B30",
+      "p_mw": 250.0,
+      "q_mvar": 161.762,
+      "v_set_pu": 1.0499,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": 140.0,
+      "q_max_mvar": 400.0
+    },
+    {
+      "id": "G31",
+      "object_id": "G31",
+      "class": "ElmSym",
+      "name": "G31",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[2]",
+      "relative_path": "cases/ieee39/case39.py#GEN[2]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 677.871,
+        "qgini": 221.574,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 0.982,
+        "av_mode": "constv",
+        "ip_ctrl": 1,
+        "q_min": -1.0,
+        "q_max": 3.0,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G31_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 2,
+        "values": {
+          "bus": 31.0,
+          "pg_mw": 677.871,
+          "qg_mvar": 221.574,
+          "qmax_mvar": 300.0,
+          "qmin_mvar": -100.0,
+          "vg_pu": 0.982
+        }
+      },
+      "bus": "B31",
+      "p_mw": 677.871,
+      "q_mvar": 221.574,
+      "v_set_pu": 0.982,
+      "mode": "constv",
+      "ref": true,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": -100.0,
+      "q_max_mvar": 300.0
+    },
+    {
+      "id": "G32",
+      "object_id": "G32",
+      "class": "ElmSym",
+      "name": "G32",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[3]",
+      "relative_path": "cases/ieee39/case39.py#GEN[3]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 650.0,
+        "qgini": 206.965,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 0.9841,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": 1.5,
+        "q_max": 3.0,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G32_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 3,
+        "values": {
+          "bus": 32.0,
+          "pg_mw": 650.0,
+          "qg_mvar": 206.965,
+          "qmax_mvar": 300.0,
+          "qmin_mvar": 150.0,
+          "vg_pu": 0.9841
+        }
+      },
+      "bus": "B32",
+      "p_mw": 650.0,
+      "q_mvar": 206.965,
+      "v_set_pu": 0.9841,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": 150.0,
+      "q_max_mvar": 300.0
+    },
+    {
+      "id": "G33",
+      "object_id": "G33",
+      "class": "ElmSym",
+      "name": "G33",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[4]",
+      "relative_path": "cases/ieee39/case39.py#GEN[4]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 632.0,
+        "qgini": 108.293,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 0.9972,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": 0.0,
+        "q_max": 2.5,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G33_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 4,
+        "values": {
+          "bus": 33.0,
+          "pg_mw": 632.0,
+          "qg_mvar": 108.293,
+          "qmax_mvar": 250.0,
+          "qmin_mvar": 0.0,
+          "vg_pu": 0.9972
+        }
+      },
+      "bus": "B33",
+      "p_mw": 632.0,
+      "q_mvar": 108.293,
+      "v_set_pu": 0.9972,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": 0.0,
+      "q_max_mvar": 250.0
+    },
+    {
+      "id": "G34",
+      "object_id": "G34",
+      "class": "ElmSym",
+      "name": "G34",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[5]",
+      "relative_path": "cases/ieee39/case39.py#GEN[5]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 508.0,
+        "qgini": 166.688,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 1.0123,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": 0.0,
+        "q_max": 1.67,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G34_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 5,
+        "values": {
+          "bus": 34.0,
+          "pg_mw": 508.0,
+          "qg_mvar": 166.688,
+          "qmax_mvar": 167.0,
+          "qmin_mvar": 0.0,
+          "vg_pu": 1.0123
+        }
+      },
+      "bus": "B34",
+      "p_mw": 508.0,
+      "q_mvar": 166.688,
+      "v_set_pu": 1.0123,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": 0.0,
+      "q_max_mvar": 167.0
+    },
+    {
+      "id": "G35",
+      "object_id": "G35",
+      "class": "ElmSym",
+      "name": "G35",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[6]",
+      "relative_path": "cases/ieee39/case39.py#GEN[6]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 650.0,
+        "qgini": 210.661,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 1.0494,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": -1.0,
+        "q_max": 3.0,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G35_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 6,
+        "values": {
+          "bus": 35.0,
+          "pg_mw": 650.0,
+          "qg_mvar": 210.661,
+          "qmax_mvar": 300.0,
+          "qmin_mvar": -100.0,
+          "vg_pu": 1.0494
+        }
+      },
+      "bus": "B35",
+      "p_mw": 650.0,
+      "q_mvar": 210.661,
+      "v_set_pu": 1.0494,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": -100.0,
+      "q_max_mvar": 300.0
+    },
+    {
+      "id": "G36",
+      "object_id": "G36",
+      "class": "ElmSym",
+      "name": "G36",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[7]",
+      "relative_path": "cases/ieee39/case39.py#GEN[7]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 560.0,
+        "qgini": 100.165,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 1.0636,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": 0.0,
+        "q_max": 2.4,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G36_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 7,
+        "values": {
+          "bus": 36.0,
+          "pg_mw": 560.0,
+          "qg_mvar": 100.165,
+          "qmax_mvar": 240.0,
+          "qmin_mvar": 0.0,
+          "vg_pu": 1.0636
+        }
+      },
+      "bus": "B36",
+      "p_mw": 560.0,
+      "q_mvar": 100.165,
+      "v_set_pu": 1.0636,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": 0.0,
+      "q_max_mvar": 240.0
+    },
+    {
+      "id": "G37",
+      "object_id": "G37",
+      "class": "ElmSym",
+      "name": "G37",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[8]",
+      "relative_path": "cases/ieee39/case39.py#GEN[8]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 540.0,
+        "qgini": -1.36945,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 1.0275,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": 0.0,
+        "q_max": 2.5,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G37_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 8,
+        "values": {
+          "bus": 37.0,
+          "pg_mw": 540.0,
+          "qg_mvar": -1.36945,
+          "qmax_mvar": 250.0,
+          "qmin_mvar": 0.0,
+          "vg_pu": 1.0275
+        }
+      },
+      "bus": "B37",
+      "p_mw": 540.0,
+      "q_mvar": -1.36945,
+      "v_set_pu": 1.0275,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": 0.0,
+      "q_max_mvar": 250.0
+    },
+    {
+      "id": "G38",
+      "object_id": "G38",
+      "class": "ElmSym",
+      "name": "G38",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[9]",
+      "relative_path": "cases/ieee39/case39.py#GEN[9]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 830.0,
+        "qgini": 21.7327,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 1.0265,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": -1.5,
+        "q_max": 3.0,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G38_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 9,
+        "values": {
+          "bus": 38.0,
+          "pg_mw": 830.0,
+          "qg_mvar": 21.7327,
+          "qmax_mvar": 300.0,
+          "qmin_mvar": -150.0,
+          "vg_pu": 1.0265
+        }
+      },
+      "bus": "B38",
+      "p_mw": 830.0,
+      "q_mvar": 21.7327,
+      "v_set_pu": 1.0265,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": -150.0,
+      "q_max_mvar": 300.0
+    },
+    {
+      "id": "G39",
+      "object_id": "G39",
+      "class": "ElmSym",
+      "name": "G39",
+      "scope": "ieee39",
+      "path": "cases/ieee39/case39.py#GEN[10]",
+      "relative_path": "cases/ieee39/case39.py#GEN[10]",
+      "origin": "matpower",
+      "outserv": 0,
+      "params": {
+        "pgini": 1000.0,
+        "qgini": 78.4674,
+        "ngnum": 1,
+        "scale0": 1.0,
+        "usetp": 1.03,
+        "av_mode": "constv",
+        "ip_ctrl": 0,
+        "q_min": -1.0,
+        "q_max": 3.0,
+        "outserv": 0
+      },
+      "units": {
+        "pgini": "MW",
+        "qgini": "Mvar",
+        "usetp": "p.u.",
+        "q_min": "p.u.",
+        "q_max": "p.u.",
+        "scale0": "1",
+        "ngnum": "1"
+      },
+      "type_params": {
+        "sgn": 100.0
+      },
+      "type_units": {
+        "sgn": "MVA"
+      },
+      "type_class": "TypSym",
+      "type_id": "G39_type",
+      "source_row": {
+        "table": "GEN",
+        "row_1based": 10,
+        "values": {
+          "bus": 39.0,
+          "pg_mw": 1000.0,
+          "qg_mvar": 78.4674,
+          "qmax_mvar": 300.0,
+          "qmin_mvar": -100.0,
+          "vg_pu": 1.03
+        }
+      },
+      "bus": "B39",
+      "p_mw": 1000.0,
+      "q_mvar": 78.4674,
+      "v_set_pu": 1.03,
+      "mode": "constv",
+      "ref": false,
+      "n_units": 1,
+      "s_rated_mva": null,
+      "q_min_mvar": -100.0,
+      "q_max_mvar": 300.0
+    }
+  ],
+  "controllers": [],
+  "interface": [],
+  "other_elements": [],
+  "warnings": [
+    "Data from the published MATPOWER case39, not from the PowerFactory project. MATPOWER-native IDs and source paths, not PowerFactory identifiers.",
+    "Q limits disabled, the published case violates Qmin at G37.",
+    "Balanced AC load flow only; dynamic and zero-sequence data are unavailable."
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "ieee39-classical-dynamics-v1",
+  "datos_dinamicos": "no_verificados_contra_PF",
+  "label": "NO VERIFICADOS contra PowerFactory",
+  "s_base_mva": 100.0,
+  "f_nom_hz": 60.0,
+  "model": "classical_two_state_constant_emf_constant_pm_D0",
+  "base_note": "H y Xd prima están expresados sobre 100 MVA. H representa energía cinética nominal dividida por 100 MVA, no H en una potencia nominal física desconocida. No se usa sgn del modelo LF como dato físico.",
+  "sources": {
+    "new_england_39_classical_parameters": {
+      "reference": "Classical New England 39 data set. Candidate primary references: Athay, Podmore and Virmani (1979), A Practical Method for the Direct Analysis of Transient Stability, and M. A. Pai (1989), Energy Function Analysis for Power System Stability.",
+      "access": "Provisional transcription. Primary-source edition, table and page have not been checked.",
+      "status": "provisional_transcription_pending_primary_check",
+      "note": "The values match the classical New England 39 data set on a 100 MVA system base. The edition, table and page in Athay et al. (1979) and Pai (1989) still require primary-source verification. These values are not PowerFactory exports."
+    },
+    "assignment": {"reference": "Solicitud IEEE39-B del usuario, modelo clásico con D igual a cero", "status": "decision_de_modelado"}
+  },
+  "machines": [
+    {"object_id": "G30", "bus_id": "B30", "relative_path": "cases/ieee39/case39.py#GEN[1]", "h_system_s": 42.0, "xd_prime_system_pu": 0.031, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G31", "bus_id": "B31", "relative_path": "cases/ieee39/case39.py#GEN[2]", "h_system_s": 30.3, "xd_prime_system_pu": 0.0697, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G32", "bus_id": "B32", "relative_path": "cases/ieee39/case39.py#GEN[3]", "h_system_s": 35.8, "xd_prime_system_pu": 0.0531, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G33", "bus_id": "B33", "relative_path": "cases/ieee39/case39.py#GEN[4]", "h_system_s": 28.6, "xd_prime_system_pu": 0.0436, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G34", "bus_id": "B34", "relative_path": "cases/ieee39/case39.py#GEN[5]", "h_system_s": 26.0, "xd_prime_system_pu": 0.132, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G35", "bus_id": "B35", "relative_path": "cases/ieee39/case39.py#GEN[6]", "h_system_s": 34.8, "xd_prime_system_pu": 0.05, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G36", "bus_id": "B36", "relative_path": "cases/ieee39/case39.py#GEN[7]", "h_system_s": 26.4, "xd_prime_system_pu": 0.049, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G37", "bus_id": "B37", "relative_path": "cases/ieee39/case39.py#GEN[8]", "h_system_s": 24.3, "xd_prime_system_pu": 0.057, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G38", "bus_id": "B38", "relative_path": "cases/ieee39/case39.py#GEN[9]", "h_system_s": 34.5, "xd_prime_system_pu": 0.057, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}},
+    {"object_id": "G39", "bus_id": "B39", "relative_path": "cases/ieee39/case39.py#GEN[10]", "h_system_s": 500.0, "xd_prime_system_pu": 0.006, "d_system_pu": 0.0, "provenance": {"h_system_s": "new_england_39_classical_parameters", "xd_prime_system_pu": "new_england_39_classical_parameters", "d_system_pu": "assignment"}}
+  ]
+}

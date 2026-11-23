@@ -1,0 +1,243 @@
+{
+  "ldf_code": 0,
+  "inc_code": 0,
+  "sim_code": 0,
+  "is_sim_valid": 1,
+  "export_code": 0,
+  "log": [
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - The slack model 'Grid\\G 02.ElmSym' controls the angle of the remote reference bus 'Grid\\Bus 31.ElmTerm'.",
+    "info - Calculating load flow...",
+    "info - -------------------------------------------------------------------------------------",
+    "info - Start Newton-Raphson Algorithm...",
+    "info - Load flow iteration: 0",
+    "info - Load flow iteration: 1",
+    "info - Load flow iteration: 2",
+    "info - Load flow iteration: 3",
+    "info - Load flow iteration: 4",
+    "info - Newton-Raphson converged with 4 iterations.",
+    "info - Load flow calculation successful.",
+    "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+    "info - Control conditions for all controllers of interest are fulfilled.",
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - Element 'G 02' is reference in 60,0 Hz-system",
+    "info - (t=000:000 ms) Initial conditions calculated.",
+    "evt  - (t=01:000 s) Grid\\Load 04.ElmLod:\n                    Load Event: 'Incremental Change' - Active Power changed by 10,000 %. Reactive Power changed by 0,000 %.",
+    "info - (t=10:000 s) Simulation successfully executed."
+  ],
+  "events": [
+    {
+      "name": "Aumento 10 por ciento P carga B4",
+      "cls": "EvtLod",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-03.IntCase\\E39-DIN-03 Events.IntEvt\\Aumento 10 por ciento P carga B4.EvtLod",
+      "attributes": {
+        "cAbsP": {
+          "value": 10.0,
+          "unit": "MW",
+          "description": "New Load Value: Active Power"
+        },
+        "cAbsQ": {
+          "value": 0.0,
+          "unit": "Mvar",
+          "description": "New Load Value: Reactive Power"
+        },
+        "charact": {
+          "value": [],
+          "unit": " ",
+          "description": "Charact."
+        },
+        "chr_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Characteristic Name"
+        },
+        "contents": {
+          "value": [],
+          "unit": " ",
+          "description": "Loads"
+        },
+        "cpHeadFold": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-03.IntCase",
+          "unit": " ",
+          "description": "Head Folder"
+        },
+        "dP": {
+          "value": 10.0,
+          "unit": "%",
+          "description": "Proportional Load Step: Active Power"
+        },
+        "dQ": {
+          "value": 0.0,
+          "unit": "%",
+          "description": "Proportional Load Step: Reactive Power"
+        },
+        "dat_src": {
+          "value": "MAN",
+          "unit": " ",
+          "description": "Data source"
+        },
+        "dhrtime": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Relative"
+        },
+        "dmtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Relative"
+        },
+        "dtime": {
+          "value": 1.0,
+          "unit": "s",
+          "description": "Execution Time: Relative"
+        },
+        "fold_id": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-03.IntCase\\E39-DIN-03 Events.IntEvt",
+          "unit": " ",
+          "description": "In Folder"
+        },
+        "for_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Foreign Key"
+        },
+        "gnrl_modby": {
+          "value": "",
+          "unit": " ",
+          "description": "Object modified by"
+        },
+        "gnrl_modif": {
+          "value": 1791784423,
+          "unit": " ",
+          "description": "Object modified"
+        },
+        "hrtact": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Now"
+        },
+        "hrtime": {
+          "value": 0,
+          "unit": "h",
+          "description": "Execution Time: Absolute"
+        },
+        "iSchemeStatus": {
+          "value": 0,
+          "unit": " ",
+          "description": "Scheme Status"
+        },
+        "iStage": {
+          "value": 0,
+          "unit": " ",
+          "description": "Event for: Stage"
+        },
+        "iopt_load": {
+          "value": 0,
+          "unit": " ",
+          "description": "Event for"
+        },
+        "iopt_src": {
+          "value": 0,
+          "unit": " ",
+          "description": "Source:Default:Load Shedding:Load Transfer"
+        },
+        "iopt_type": {
+          "value": 0,
+          "unit": " ",
+          "description": "Event of Load"
+        },
+        "loc_name": {
+          "value": "Aumento 10 por ciento P carga B4",
+          "unit": " ",
+          "description": "Name"
+        },
+        "mtact": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Now"
+        },
+        "mtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Absolute"
+        },
+        "newP": {
+          "value": 100.0,
+          "unit": "%Pnom.",
+          "description": "New Load Value: Active Power"
+        },
+        "newQ": {
+          "value": 100.0,
+          "unit": "%Qnom.",
+          "description": "New Load Value: Reactive Power"
+        },
+        "oid_": {
+          "value": 190107355,
+          "unit": " ",
+          "description": "ObjectID"
+        },
+        "opt_evt": {
+          "value": 0,
+          "unit": " ",
+          "description": "Type of Event"
+        },
+        "outserv": {
+          "value": 0,
+          "unit": " ",
+          "description": "Out of Service"
+        },
+        "p_from": {
+          "value": null,
+          "unit": "Elm*",
+          "description": "Event defined by:"
+        },
+        "p_target": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Load 04.ElmLod",
+          "unit": "ElmLod*,SetSelect",
+          "description": "Event for: Load"
+        },
+        "pid_": {
+          "value": 190103003,
+          "unit": " ",
+          "description": "ProjectID"
+        },
+        "root_id": {
+          "value": null,
+          "unit": " ",
+          "description": "Original Location"
+        },
+        "tDateTime": {
+          "value": -1,
+          "unit": " ",
+          "description": "Execution Time"
+        },
+        "t_ramp": {
+          "value": 1.0,
+          "unit": "s",
+          "description": "Event of Load: Ramp Duration"
+        },
+        "tact": {
+          "value": 10.0,
+          "unit": "s",
+          "description": "Execution Time: Now"
+        },
+        "tid_": {
+          "value": 4294967294,
+          "unit": " ",
+          "description": "TimeID"
+        },
+        "time": {
+          "value": 1.0,
+          "unit": "s",
+          "description": "Execution Time: Absolute"
+        },
+        "tottime": {
+          "value": 1.0,
+          "unit": " ",
+          "description": "Time"
+        }
+      }
+    }
+  ],
+  "base_restore_code": 0
+}

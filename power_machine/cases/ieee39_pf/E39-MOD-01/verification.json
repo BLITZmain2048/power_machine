@@ -1,0 +1,141 @@
+{
+  "result": {
+    "test_id": "E39-MOD-01",
+    "case": {
+      "name": "E39-MOD-01 Classical 10 machines",
+      "cls": "IntCase",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-MOD-01 Classical 10 machines.IntCase"
+    },
+    "ldf_rc": 0,
+    "initial_rc": 0,
+    "modal_rc": 0,
+    "native_files": {
+      "Amat.mtl": {
+        "bytes": 4262,
+        "rows": 128,
+        "parse_errors": []
+      },
+      "EVals.mtl": {
+        "bytes": 1179,
+        "rows": 20,
+        "parse_errors": []
+      },
+      "Jacobian.mtl": {
+        "bytes": 39526,
+        "rows": 1121,
+        "parse_errors": []
+      },
+      "lEV_Amat.mtl": {
+        "bytes": 22520,
+        "rows": 381,
+        "parse_errors": []
+      },
+      "M.mtl": {
+        "bytes": 698,
+        "rows": 21,
+        "parse_errors": []
+      },
+      "PartFacs.mtl": {
+        "bytes": 21420,
+        "rows": 362,
+        "parse_errors": []
+      },
+      "rEV_Amat.mtl": {
+        "bytes": 22472,
+        "rows": 381,
+        "parse_errors": []
+      }
+    },
+    "result": {
+      "name": "E39-MOD-01 Modal Results(1)",
+      "cls": "ElmRes",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-MOD-01 Classical 10 machines.IntCase\\E39-MOD-01 Modal Results(1).ElmRes"
+    },
+    "files": [
+      "Amat.csv",
+      "Amat.mtl",
+      "command_options.json",
+      "configuration.json",
+      "EVals.csv",
+      "EVals.mtl",
+      "Jacobian.csv",
+      "Jacobian.mtl",
+      "LEEME.txt",
+      "lEV_Amat.csv",
+      "lEV_Amat.mtl",
+      "M.csv",
+      "M.mtl",
+      "operating_point.json",
+      "PartFacs.csv",
+      "PartFacs.mtl",
+      "rEV_Amat.csv",
+      "rEV_Amat.mtl",
+      "run.json",
+      "VariableToIdx_Amat.txt",
+      "VariableToIdx_Jacobian.txt",
+      "variation.json"
+    ],
+    "state_listing": "\n Matrix column index; Model name; State variable\n     1    Grid\\G 01.ElmSym    \"speed\" \n     2    Grid\\G 01.ElmSym    \"phi\" \n     3    Grid\\G 02.ElmSym    \"speed\" \n     4    Grid\\G 02.ElmSym    \"phi\" \n     5    Grid\\G 03.ElmSym    \"speed\" \n     6    Grid\\G 03.ElmSym    \"phi\" \n     7    Grid\\G 04.ElmSym    \"speed\" \n     8    Grid\\G 04.ElmSym    \"phi\" \n     9    Grid\\G 05.ElmSym    \"speed\" \n    10    Grid\\G 05.ElmSym    \"phi\" \n    11    Grid\\G 06.ElmSym    \"speed\" \n    12    Grid\\G 06.ElmSym    \"phi\" \n    13    Grid\\G 07.ElmSym    \"speed\" \n    14    Grid\\G 07.ElmSym    \"phi\" \n    15    Grid\\G 08.ElmSym    \"speed\" \n    16    Grid\\G 08.ElmSym    \"phi\" \n    17    Grid\\G 09.ElmSym    \"speed\" \n    18    Grid\\G 09.ElmSym    \"phi\" \n    19    Grid\\G 10.ElmSym    \"speed\" \n    20    Grid\\G 10.ElmSym    \"phi\" \n"
+  },
+  "log": [
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "err  - Problem to convert parameter of Study Cases\\E39-MOD-01 Classical 10 machines\\Modal/Eigenvalue Analysis.ComMod:\n       Inconsistent data. Violated condition(s):\n       Please select a Modal/Eigenvalue Analysis result file.",
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - The slack model 'Grid\\G 02.ElmSym' controls the angle of the remote reference bus 'Grid\\Bus 31.ElmTerm'.",
+    "info - Calculating load flow...",
+    "info - -------------------------------------------------------------------------------------",
+    "info - Start Newton-Raphson Algorithm...",
+    "info - Load flow iteration: 0",
+    "info - Load flow iteration: 1",
+    "info - Load flow iteration: 2",
+    "info - Load flow iteration: 3",
+    "info - Load flow iteration: 4",
+    "info - Newton-Raphson converged with 4 iterations.",
+    "info - Load flow calculation successful.",
+    "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+    "info - Control conditions for all controllers of interest are fulfilled.",
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - Element 'G 02' is reference in 60,0 Hz-system",
+    "info - (t=-100:000 ms) Initial conditions calculated.",
+    "info - Starting Modal/Eigenvalue Analysis...",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Initialising Modal/Eigenvalue Analysis...",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Input signal check...",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Checking models for buffers, time-discrete variables or external function usage...",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Computing eigenvalues/eigenvectors...",
+    "info - System dimensions: 20 state variables, 258 load flow variables.",
+    "info - Dimension of eigenvalue problem: 20.",
+    "info - Starting QR-algorithm...",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Computing Participation factors...",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Checking for state variables, that were assumed to be constant at current operating point...",
+    "info - The state variables of the following models were assumed to be constant at current operating point:\n       G 02 [Grid]: phi",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Writing result file...",
+    "-------------------------------------------------------------------------------------------------------------------",
+    "info - Modal/Eigenvalue Analysis successfully executed."
+  ],
+  "speed_variation": "Neglected: i_speedVar=2; observed localized enum labels saved in evidence"
+}

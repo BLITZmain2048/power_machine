@@ -1,0 +1,926 @@
+{
+  "schema": "power-machine-standard-parameter-map-v1",
+  "scope": "Attribute names only. No instance values, identities, paths or automatic binding.",
+  "parameters": [
+    {
+      "module": "generator",
+      "pf_attribute": "Tg",
+      "standard_symbol": "T_g",
+      "status": "confirmed",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.4.4",
+      "figure": "24",
+      "evidence": "Public Table 19/20 text, nominal correspondence only"
+    },
+    {
+      "module": "generator",
+      "pf_attribute": "dipmax",
+      "standard_symbol": "di_pmax",
+      "status": "confirmed",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.4.4",
+      "figure": "24",
+      "evidence": "Public Table 19/20 text, nominal correspondence only"
+    },
+    {
+      "module": "generator",
+      "pf_attribute": "diqmin",
+      "standard_symbol": "di_qmin",
+      "status": "confirmed",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.4.4",
+      "figure": "24",
+      "evidence": "Public Table 19/20 text, nominal correspondence only"
+    },
+    {
+      "module": "generator",
+      "pf_attribute": "diqmax",
+      "standard_symbol": "di_qmax",
+      "status": "confirmed",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.4.4",
+      "figure": "24",
+      "evidence": "Public Table 19/20 text, nominal correspondence only"
+    },
+    {
+      "module": "pll",
+      "pf_attribute": "TPLL",
+      "standard_symbol": "T_PLL",
+      "status": "confirmed",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.4.5",
+      "figure": "25",
+      "evidence": "Public Table 19/20 text, nominal correspondence only"
+    },
+    {
+      "module": "pll",
+      "pf_attribute": "uPLL1",
+      "standard_symbol": "u_PLL1",
+      "status": "confirmed",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.4.5",
+      "figure": "25",
+      "evidence": "Public Table 19/20 text, nominal correspondence only"
+    },
+    {
+      "module": "pll",
+      "pf_attribute": "uPLL2",
+      "standard_symbol": "u_PLL2",
+      "status": "confirmed",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.4.5",
+      "figure": "25",
+      "evidence": "Public Table 19/20 text, nominal correspondence only"
+    },
+    {
+      "module": "p_control",
+      "pf_attribute": "Tpordp4A",
+      "standard_symbol": "T_pordp4A",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.3",
+      "figure": "32",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "p_control",
+      "pf_attribute": "TpWTref4A",
+      "standard_symbol": "T_pWTref4A",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.3",
+      "figure": "32",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "p_control",
+      "pf_attribute": "MpUscale",
+      "standard_symbol": "M_pUscale",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.3",
+      "figure": "32",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "p_control",
+      "pf_attribute": "updip",
+      "standard_symbol": "u_pdip",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.3",
+      "figure": "32",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "p_control",
+      "pf_attribute": "dprefmin4A",
+      "standard_symbol": "dp_refmin4A",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.3",
+      "figure": "32",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "p_control",
+      "pf_attribute": "dprefmax4A",
+      "standard_symbol": "dp_refmax4A",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.3",
+      "figure": "32",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "p_control",
+      "pf_attribute": "dpmaxp4A",
+      "standard_symbol": "dp_maxp4A",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.3",
+      "figure": "32",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "MqG",
+      "standard_symbol": "M_qG",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "KPq",
+      "standard_symbol": "K_Pq",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "KIq",
+      "standard_symbol": "K_Iq",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "KPu",
+      "standard_symbol": "K_Pu",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "KIu",
+      "standard_symbol": "K_Iu",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "KPuFRT",
+      "standard_symbol": "K_PuFRT",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "Kqv",
+      "standard_symbol": "K_qv",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "MqFRT",
+      "standard_symbol": "M_qFRT",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "iqpost",
+      "standard_symbol": "i_qpost",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "deltaudb1",
+      "standard_symbol": "delta_u_db1",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "deltaudb2",
+      "standard_symbol": "delta_u_db2",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "uqdip",
+      "standard_symbol": "u_qdip",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "uqrise",
+      "standard_symbol": "u_qrise",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "Tpost",
+      "standard_symbol": "T_post",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "Tqord",
+      "standard_symbol": "T_qord",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "Tuss",
+      "standard_symbol": "T_uss",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "rdrop",
+      "standard_symbol": "r_drop",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "xdrop",
+      "standard_symbol": "x_drop",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "uref0",
+      "standard_symbol": "u_ref0",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "umin",
+      "standard_symbol": "u_min",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "umax",
+      "standard_symbol": "u_max",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "iqmin",
+      "standard_symbol": "i_qmin",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "iqmax",
+      "standard_symbol": "i_qmax",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "iqh1",
+      "standard_symbol": "i_qh1",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "xWTref_min",
+      "standard_symbol": "x_WTref_min",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_control",
+      "pf_attribute": "xWTref_max",
+      "standard_symbol": "x_WTref_max",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.5",
+      "figure": "34",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "imax",
+      "standard_symbol": "i_max",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "imaxdip",
+      "standard_symbol": "i_maxdip",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "MDFSLim",
+      "standard_symbol": "M_DFSLim",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "Mqpri",
+      "standard_symbol": "M_qpri",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "upqumax",
+      "standard_symbol": "u_pqumax",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "Kpqu",
+      "standard_symbol": "K_pqu",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "oarray_ipmaxuWT",
+      "standard_symbol": "i_pmax(u_WT)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "current_limitation",
+      "pf_attribute": "oarray_iqmaxuWT",
+      "standard_symbol": "i_qmax(u_WT)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.6",
+      "figure": "35",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_limitation",
+      "pf_attribute": "oarray_qmaxpp",
+      "standard_symbol": "q_max(p)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.8",
+      "figure": "37",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_limitation",
+      "pf_attribute": "oarray_qminpp",
+      "standard_symbol": "q_min(p)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.8",
+      "figure": "37",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_limitation",
+      "pf_attribute": "oarray_qmaxuu",
+      "standard_symbol": "q_max(u)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.8",
+      "figure": "37",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "q_limitation",
+      "pf_attribute": "oarray_qminuu",
+      "standard_symbol": "q_min(u)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.7.8",
+      "figure": "37",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "measurement",
+      "pf_attribute": "Tufilt",
+      "standard_symbol": "T_ufilt",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.2",
+      "figure": "39",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "measurement",
+      "pf_attribute": "Tifilt",
+      "standard_symbol": "T_ifilt",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.2",
+      "figure": "39",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "measurement",
+      "pf_attribute": "Tpfilt",
+      "standard_symbol": "T_pfilt",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.2",
+      "figure": "39",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "measurement",
+      "pf_attribute": "Tqfilt",
+      "standard_symbol": "T_qfilt",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.2",
+      "figure": "39",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "measurement",
+      "pf_attribute": "Tffilt",
+      "standard_symbol": "T_ffilt",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.2",
+      "figure": "39",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "measurement",
+      "pf_attribute": "dPhimax",
+      "standard_symbol": "delta_phi_max",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.2",
+      "figure": "39",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "uover",
+      "standard_symbol": "u_over",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "uunder",
+      "standard_symbol": "u_under",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "fover",
+      "standard_symbol": "f_over",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "funder",
+      "standard_symbol": "f_under",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "oarray_TuoveruWT",
+      "standard_symbol": "T_uover(u_WT)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "oarray_TuunderuWT",
+      "standard_symbol": "T_uunder(u_WT)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "oarray_TfoverfWT",
+      "standard_symbol": "T_fover(f_WT)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "protection",
+      "pf_attribute": "oarray_TfunderfWT",
+      "standard_symbol": "T_funder(f_WT)",
+      "status": "candidate",
+      "standard": "IEC 61400-27-1:2020",
+      "clause": "7.8.1",
+      "figure": "38",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Ks1",
+      "standard_symbol": "K_S1",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Ks2",
+      "standard_symbol": "K_S2",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Ks3",
+      "standard_symbol": "K_S3",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Tw1",
+      "standard_symbol": "T_w1",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Tw2",
+      "standard_symbol": "T_w2",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Tw3",
+      "standard_symbol": "T_w3",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Tw4",
+      "standard_symbol": "T_w4",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T1",
+      "standard_symbol": "T_1",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T2",
+      "standard_symbol": "T_2",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T3",
+      "standard_symbol": "T_3",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T4",
+      "standard_symbol": "T_4",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T6",
+      "standard_symbol": "T_6",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T7",
+      "standard_symbol": "T_7",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T8",
+      "standard_symbol": "T_8",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T9",
+      "standard_symbol": "T_9",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T10",
+      "standard_symbol": "T_10",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "T11",
+      "standard_symbol": "T_11",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "N",
+      "standard_symbol": "N",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "M",
+      "standard_symbol": "M",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Vst_min",
+      "standard_symbol": "V_STmin",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Vst_max",
+      "standard_symbol": "V_STmax",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Vsi_in",
+      "standard_symbol": "input_selector",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "dW_Min",
+      "standard_symbol": "speed_min",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "dW_Max",
+      "standard_symbol": "speed_max",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Pe_Min",
+      "standard_symbol": "power_min",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    },
+    {
+      "module": "pss2b",
+      "pf_attribute": "Pe_Max",
+      "standard_symbol": "power_max",
+      "status": "candidate",
+      "standard": "IEEE 421.5-2005",
+      "clause": "8.2",
+      "figure": "8-2",
+      "evidence": "Nominal correspondence, diagram and PF semantics require verification"
+    }
+  ]
+}

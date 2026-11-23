@@ -1,0 +1,39 @@
+﻿E39-DIN-02 — Pérdida de generación
+
+Simulación RMS de la desconexión solicitada; se registran tensión, frecuencia y variables de las máquinas y ramas seleccionadas.
+
+EVIDENCIA DISPONIBLE
+Estado vigente según assessment.json: Ejecutado y auditado.
+Desconexión G32 a 1 s. Simulación 0–10 s, integración fija 1 ms, salida 10 ms: 1001 muestras y las 25 señales solicitadas.
+Corridas registradas: 1 de 1 previstas.
+Limitación vigente: Referencia PowerFactory exportada; la comparación con power_machine queda fuera de esta ejecución.
+assessment.json y los archivos de verificación vigentes establecen el estado de este ensayo. Los registros de fallos, sondeos o configuraciones previas conservan la historia de trabajo y no revierten ese estado.
+report.json: ldf_code=0; inc_code=0; sim_code=0; export_code=0; is_sim_valid=1; base_restore_code=0.
+
+LECTURA DE LOS DATOS
+signals_native.csv procede del comando nativo ComRes sobre ElmRes. Conserva dos filas de cabecera: objetos y variables con unidades; el separador es punto y coma y el decimal es punto.
+La columna b:tnow está en segundos. m:phiu está en grados; s:phi está en radianes; s:speed está en p.u.; m:fehz está en Hz. No mezclar estos ángulos ni convertir velocidad de rotor en frecuencia medida de barra sin explicitar la definición.
+ComInc expresa dtgrd, dtout, tstart y syncperiod en milisegundos en esta instalación. Evt*.time y ComSim.tstop se leen con sus propias unidades, habitualmente segundos. Las unidades vivas de los JSON prevalecen sobre nombres abreviados.
+ComInc.dtgrd=1 ms.
+ComInc.dtout=10 ms.
+ComInc.tstart=0 ms.
+ComInc.syncperiod=10 ms.
+ComInc.iopt_adapt=0.
+ComInc.iopt_sample=0.
+ComInc.syncresult=1.
+ComSim.tstop=10 s.
+Un código de ejecución 0 confirma la ejecución del comando; la validez de la trayectoria exige revisar señales, eventos, horizonte temporal y cualquier validación numérica adjunta. No certifica concordancia con power_machine.
+
+ALCANCE Y LIMITACIONES
+Se usó PowerFactory 2024 en modo engine mediante su API Python. No fue posible obtener capturas de los diálogos de la GUI. Se entregan opciones leídas del motor, rutas de objetos, valores con unidades y logs de cálculo; la ausencia de capturas es una desviación explícita del formato del protocolo.
+No se certifica paridad con power_machine: no se suministró su batería de resultados para comparación. Los datos MATPOWER del protocolo son una referencia externa y el benchmark oficial PF conserva sus propios datos.
+
+ARCHIVOS Y ACCESOS
+- assessment.json
+- channel_units.json
+- configuration.json
+- effective_command_options.json
+- report.json
+- signals_native.csv
+
+Nota generada a partir de los archivos presentes: 2026-10-12T03:18:54-03:00. El estado final del paquete lo establece el informe general de cierre, no la mera presencia de estos archivos.

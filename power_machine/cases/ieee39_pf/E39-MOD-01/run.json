@@ -1,0 +1,77 @@
+{
+  "test_id": "E39-MOD-01",
+  "case": {
+    "name": "E39-MOD-01 Classical 10 machines",
+    "cls": "IntCase",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-MOD-01 Classical 10 machines.IntCase"
+  },
+  "ldf_rc": 0,
+  "initial_rc": 0,
+  "modal_rc": 0,
+  "native_files": {
+    "Amat.mtl": {
+      "bytes": 4262,
+      "rows": 128,
+      "parse_errors": []
+    },
+    "EVals.mtl": {
+      "bytes": 1179,
+      "rows": 20,
+      "parse_errors": []
+    },
+    "Jacobian.mtl": {
+      "bytes": 39526,
+      "rows": 1121,
+      "parse_errors": []
+    },
+    "lEV_Amat.mtl": {
+      "bytes": 22520,
+      "rows": 381,
+      "parse_errors": []
+    },
+    "M.mtl": {
+      "bytes": 698,
+      "rows": 21,
+      "parse_errors": []
+    },
+    "PartFacs.mtl": {
+      "bytes": 21420,
+      "rows": 362,
+      "parse_errors": []
+    },
+    "rEV_Amat.mtl": {
+      "bytes": 22472,
+      "rows": 381,
+      "parse_errors": []
+    }
+  },
+  "result": {
+    "name": "E39-MOD-01 Modal Results(1)",
+    "cls": "ElmRes",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-MOD-01 Classical 10 machines.IntCase\\E39-MOD-01 Modal Results(1).ElmRes"
+  },
+  "files": [
+    "Amat.csv",
+    "Amat.mtl",
+    "command_options.json",
+    "configuration.json",
+    "EVals.csv",
+    "EVals.mtl",
+    "Jacobian.csv",
+    "Jacobian.mtl",
+    "LEEME.txt",
+    "lEV_Amat.csv",
+    "lEV_Amat.mtl",
+    "M.csv",
+    "M.mtl",
+    "operating_point.json",
+    "PartFacs.csv",
+    "PartFacs.mtl",
+    "rEV_Amat.csv",
+    "rEV_Amat.mtl",
+    "run.json",
+    "VariableToIdx_Amat.txt",
+    "VariableToIdx_Jacobian.txt",
+    "variation.json"
+  ]
+}

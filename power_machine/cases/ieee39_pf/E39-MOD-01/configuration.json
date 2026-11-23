@@ -1,0 +1,947 @@
+{
+  "variation": {
+    "name": "PAR MOD01 Classical machines and Z loads",
+    "cls": "IntScheme",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Variations.IntPrjfolder\\PAR MOD01 Classical machines and Z loads.IntScheme"
+  },
+  "generators": [
+    {
+      "name": "G 02",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 02.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 02",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 02.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 4.328999996185303,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 700.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.4878999888896942,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.4878999888896942,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 10",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 10.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 10",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 10.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 4.199999809265137,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 1000.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.3100000023841858,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.3100000023841858,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 03",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 03.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 03",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 03.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 4.474999904632568,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 800.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.42480000853538513,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.42480000853538513,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 04",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 04.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 04",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 04.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 3.5749998092651367,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 800.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.34880000352859497,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.34880000352859497,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 05",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 05.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 05",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 05.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 4.333000183105469,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 300.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.3959999978542328,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.3959999978542328,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 06",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 06.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 06",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 06.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 4.349999904632568,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 800.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.4000000059604645,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.4000000059604645,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 07",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 07.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 07",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 07.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 3.7710001468658447,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 700.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.34299999475479126,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.34299999475479126,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 08",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 08.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 08",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 08.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 3.4710001945495605,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 700.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.39899998903274536,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.39899998903274536,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 09",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 09.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 09",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 09.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 3.450000047683716,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 1000.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.5699999928474426,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.5699999928474426,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    },
+    {
+      "name": "G 01",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 01.ElmSym",
+      "type": {
+        "name": "PAR_CLASSICAL_Type Gen 01",
+        "cls": "TypSym",
+        "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Generator Types.IntPrjfolder\\PAR_CLASSICAL_Type Gen 01.TypSym"
+      },
+      "parameters": {
+        "model_inp": {
+          "value": "cls",
+          "unit": " ",
+          "description": "Model"
+        },
+        "h": {
+          "value": 5.0,
+          "unit": "s",
+          "description": "Inertia: Inertia constant H (rated to Sgn)"
+        },
+        "sgn": {
+          "value": 10000.0,
+          "unit": "MVA",
+          "description": "Rated apparent power"
+        },
+        "xds": {
+          "value": 0.6000000238418579,
+          "unit": "p.u.",
+          "description": "Transient reactances: xd'"
+        },
+        "xstr": {
+          "value": 0.6000000238418579,
+          "unit": "p.u.",
+          "description": "xstr"
+        },
+        "rstr": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Stator parameters: rstr"
+        },
+        "dkd": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient"
+        },
+        "dpe": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Damping torque coefficient based on power"
+        },
+        "dpu": {
+          "value": 0.0,
+          "unit": " ",
+          "description": "Turbine shaft friction torque coefficient"
+        },
+        "i_speedVar": {
+          "value": 0,
+          "unit": " ",
+          "description": "Effect of speed variation"
+        }
+      }
+    }
+  ],
+  "load_type": {
+    "Prp": {
+      "value": 100.0,
+      "unit": "%",
+      "description": "Static portion"
+    },
+    "aP": {
+      "value": 0.0,
+      "unit": " ",
+      "description": "Voltage dependence P: Coefficient aP"
+    },
+    "aQ": {
+      "value": 0.0,
+      "unit": " ",
+      "description": "Voltage dependence of Q: Coefficient aQ"
+    },
+    "appr_modby": {
+      "value": "",
+      "unit": " ",
+      "description": "Approval Information: Modified by"
+    },
+    "appr_modif": {
+      "value": 0,
+      "unit": " ",
+      "description": "Approval Information: Modified"
+    },
+    "appr_status": {
+      "value": 0,
+      "unit": " ",
+      "description": "Approval Information: Status"
+    },
+    "bP": {
+      "value": 0.0,
+      "unit": " ",
+      "description": "Voltage dependence P: Coefficient bP"
+    },
+    "bQ": {
+      "value": 0.0,
+      "unit": " ",
+      "description": "Voltage dependence of Q: Coefficient bQ"
+    },
+    "cP": {
+      "value": 1.0,
+      "unit": " ",
+      "description": "Voltage dependence P: Coefficient cP"
+    },
+    "cQ": {
+      "value": 1.0,
+      "unit": " ",
+      "description": "Voltage dependence of Q: Coefficient cQ"
+    },
+    "charact": {
+      "value": [],
+      "unit": " ",
+      "description": "Charact."
+    },
+    "chr_name": {
+      "value": "",
+      "unit": " ",
+      "description": "Characteristic Name"
+    },
+    "cloddy": {
+      "value": 0,
+      "unit": "%",
+      "description": "Percentage: Dynamic"
+    },
+    "clodst": {
+      "value": 100,
+      "unit": "%",
+      "description": "Percentage: Static (const z)"
+    },
+    "cnm": {
+      "value": "D",
+      "unit": " ",
+      "description": "Connection:YN:D"
+    },
+    "cpHeadFold": {
+      "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Load Types.IntPrjfolder",
+      "unit": " ",
+      "description": "Head Folder"
+    },
+    "dat_src": {
+      "value": "MAN",
+      "unit": " ",
+      "description": "Data source"
+    },
+    "dataExtDesc": {
+      "value": [],
+      "unit": " ",
+      "description": "Description"
+    },
+    "dataExtUnit": {
+      "value": [],
+      "unit": " ",
+      "description": "Unit"
+    },
+    "desc": {
+      "value": [],
+      "unit": " ",
+      "description": "Description"
+    },
+    "doc_id": {
+      "value": null,
+      "unit": " ",
+      "description": "Additional Data"
+    },
+    "emtRLCSig": {
+      "value": 0,
+      "unit": " ",
+      "description": "Variable resistance, inductance and capacitance via input signals"
+    },
+    "fold_id": {
+      "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\Equipment Type Library.IntPrjfolder\\Load Types.IntPrjfolder",
+      "unit": " ",
+      "description": "In Folder"
+    },
+    "for_name": {
+      "value": "",
+      "unit": " ",
+      "description": "Foreign Key"
+    },
+    "gnrl_modby": {
+      "value": "",
+      "unit": " ",
+      "description": "Object modified by"
+    },
+    "gnrl_modif": {
+      "value": 1791784722,
+      "unit": " ",
+      "description": "Object modified"
+    },
+    "iSchemeStatus": {
+      "value": 0,
+      "unit": " ",
+      "description": "Scheme Status"
+    },
+    "i_csrc": {
+      "value": 0,
+      "unit": " ",
+      "description": "Load model"
+    },
+    "i_nln": {
+      "value": 1,
+      "unit": " ",
+      "description": "Model dependence:&0&Linear:&1&Nonlinear voltage, linear frequency:&2&Nonlinear:&3&Nonlinear, regulated"
+    },
+    "i_pure": {
+      "value": 0,
+      "unit": " ",
+      "description": "Load model"
+    },
+    "iintgnd": {
+      "value": 0,
+      "unit": " ",
+      "description": "External star point"
+    },
+    "kpf": {
+      "value": 0.0,
+      "unit": "%/%",
+      "description": "Frequency dependence: Coefficient kpf"
+    },
+    "kpu": {
+      "value": 2.0,
+      "unit": " ",
+      "description": "Voltage dependence P: Exponent e_cP"
+    },
+    "kpu0": {
+      "value": 0.0,
+      "unit": " ",
+      "description": "Voltage dependence P: Exponent e_aP"
+    },
+    "kpu1": {
+      "value": 1.0,
+      "unit": " ",
+      "description": "Voltage dependence P: Exponent e_bP"
+    },
+    "kqf": {
+      "value": 0.0,
+      "unit": "%/%",
+      "description": "Frequency dependence: Coefficient kqf"
+    },
+    "kqu": {
+      "value": 2.0,
+      "unit": " ",
+      "description": "Voltage dependence of Q: Exponent e_cQ"
+    },
+    "kqu0": {
+      "value": 0.0,
+      "unit": " ",
+      "description": "Voltage dependence of Q: Exponent e_aQ"
+    },
+    "kqu1": {
+      "value": 1.0,
+      "unit": " ",
+      "description": "Voltage dependence of Q: Exponent e_bQ"
+    },
+    "loc_name": {
+      "value": "PAR_CONST_Z_General Load Type",
+      "unit": " ",
+      "description": "Name"
+    },
+    "loddy": {
+      "value": 0,
+      "unit": "%",
+      "description": "Percentage: Dynamic"
+    },
+    "lodst": {
+      "value": 100,
+      "unit": "%",
+      "description": "Percentage: Static (const Z)"
+    },
+    "manuf": {
+      "value": "",
+      "unit": " ",
+      "description": "Manufacturer"
+    },
+    "nlnph": {
+      "value": 3,
+      "unit": " ",
+      "description": "Phases:1:2:3"
+    },
+    "oid_": {
+      "value": 190107988,
+      "unit": " ",
+      "description": "ObjectID"
+    },
+    "pfc": {
+      "value": 0.0,
+      "unit": "%",
+      "description": "Power factor correction"
+    },
+    "pgrd": {
+      "value": 200.0,
+      "unit": "%",
+      "description": "Capacitive/Inductive reactive power: QL/QC"
+    },
+    "phtech": {
+      "value": 0,
+      "unit": " ",
+      "description": "Technology"
+    },
+    "pid_": {
+      "value": 190103003,
+      "unit": " ",
+      "description": "ProjectID"
+    },
+    "qcq": {
+      "value": 100.0,
+      "unit": "%",
+      "description": "Capacitive/Inductive reactive power: QC/Q"
+    },
+    "root_id": {
+      "value": null,
+      "unit": " ",
+      "description": "Original Location"
+    },
+    "systp": {
+      "value": 0,
+      "unit": " ",
+      "description": "System type:AC:DC"
+    },
+    "t1": {
+      "value": 0.10000000149011612,
+      "unit": "s",
+      "description": "Time constants: Delay"
+    },
+    "tid_": {
+      "value": 4294967294,
+      "unit": " ",
+      "description": "TimeID"
+    },
+    "tpf": {
+      "value": 0.0,
+      "unit": "s",
+      "description": "Time constants: P frequency dep."
+    },
+    "tpu": {
+      "value": 0.0,
+      "unit": "s",
+      "description": "Time constants: P voltage dep."
+    },
+    "tqf": {
+      "value": 0.0,
+      "unit": "s",
+      "description": "Time constants: Q frequency dep."
+    },
+    "tqu": {
+      "value": 0.0,
+      "unit": "s",
+      "description": "Time constants: Q voltage dep."
+    },
+    "typemetadata_changeLog": {
+      "value": [],
+      "unit": " ",
+      "description": "Change Log"
+    },
+    "typemetadata_key": {
+      "value": [],
+      "unit": " ",
+      "description": "Type Key"
+    },
+    "typemetadata_version": {
+      "value": [],
+      "unit": " ",
+      "description": "Version"
+    },
+    "udmax": {
+      "value": 1.2,
+      "unit": "p.u.",
+      "description": "Voltage limits: Upper"
+    },
+    "udmin": {
+      "value": 0.8,
+      "unit": "p.u.",
+      "description": "Voltage limits: Lower"
+    }
+  },
+  "note": "Constant admittance cP,cQ are derived as 1-aP-bP and 1-aQ-bQ, not writable."
+}

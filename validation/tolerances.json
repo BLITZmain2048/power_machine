@@ -1,0 +1,43 @@
+{
+  "schema": "power-machine-validation-tolerances-v1",
+  "declared_before_run": true,
+  "load_flow": {
+    "voltage_pu": 0.0001,
+    "angle_deg": 0.01,
+    "active_power_mw": 0.05,
+    "reactive_power_mvar": 0.05,
+    "loss_active_power_mw": 0.01
+  },
+  "short_circuit_iec_pf2016_c1": {
+    "ikss_relative": 0.005,
+    "ip_relative": 0.01,
+    "ib_relative": 0.01,
+    "angle_deg": 0.5,
+    "contribution_fraction": 0.01,
+    "kcl_relative": 0.000001
+  },
+  "native_rms": {
+    "maximum_normalized_error": 0.02,
+    "first_peak_delay_relative": 0.01,
+    "initial_absolute_by_unit": {
+      "p.u.": 0.00001,
+      "MW": 0.001,
+      "Mvar": 0.001,
+      "Hz": 0.00001,
+      "deg": 0.001
+    },
+    "horizon_s": 1.2,
+    "step_s": 0.001
+  },
+  "analytical": {
+    "absolute": 1e-09,
+    "relative": 1e-09
+  },
+  "temporal_convergence": {
+    "comparison_time_s": 0.9,
+    "steps_s": [0.002, 0.001, 0.0005],
+    "minimum_observed_order_classical_rk4": 3.0,
+    "minimum_observed_order_native_trapezoidal": 1.5,
+    "note": "Orders are evaluated only on a smooth pre-event interval. CCT is reported as a resolution study, not as a global order claim."
+  }
+}

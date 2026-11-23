@@ -1,0 +1,30 @@
+E39-CC-01 — Fallas trifásicas en 39 barras
+
+IEC 60909 edición 2016, cortocircuito sólido, cmax 1,1 y tiempo de apertura 0,10 s. Cada barra se calcula de forma individual para conservar sus aportes.
+
+EVIDENCIA DISPONIBLE
+Estado vigente según assessment.json: Ejecutado.
+39 fallas trifásicas sólidas, IEC 60909:2016, máximo, c=1,1 y tiempo de apertura de evaluación 0,1 s. Corrientes de barra y contribuciones exportadas.
+Corridas registradas: 39 de 39 previstas.
+Limitación vigente: Referencia PowerFactory exportada; la comparación con otro motor queda fuera de esta ejecución.
+Limitación vigente: κ efectivo se obtiene de ip/(√2·Ikss), identificado como derivado. Se conservan advertencias IEC sobre resistencia estatórica.
+assessment.json y los archivos de verificación vigentes establecen el estado de este ensayo. Los registros de fallos, sondeos o configuraciones previas conservan la historia de trabajo y no revierten ese estado.
+completion.json: recorded_faults=39; expected_faults=39.
+
+LECTURA DE LOS DATOS
+Corrientes en kA, fases en grados y fasores complejos en componentes real/imaginaria de kA. Los JSON incluyen valores, unidades y descripciones nativas; los CSV usan 17 cifras significativas para doubles.
+Convención verificada mediante sondeos B31 y B16: los fasores de línea/transformador se multiplican por −1 para orientarlos hacia la barra fallada; los generadores por +1. Se usa una regla fija por clase, no un signo escogido para minimizar el residuo.
+Residuo KCL=|suma de aportes hacia la falla−fasor total de barra|/|fasor total de barra|; tolerancia 1e−6. La suma de módulos se entrega separadamente y no sustituye a la suma fasorial.
+kappa_effective_derived=ip/(raíz(2)·Ikss) es una magnitud derivada de los resultados nativos del sistema de máquinas rotantes; no es un atributo m:kappa de PF. R/X se exporta desde m:RtoX.
+ComShc.iopt_mde=1 selecciona IEC 60909; 0 corresponde a VDE/DIN. La edición es 2016, iopt_peak=C(1), cmax se verifica en m:cfac de cada barra y Ta=0,10 s.
+Los logs conservan el aviso de PowerFactory de que resistencias de estator demasiado bajas se sustituyen para el cálculo según IEC. Ese tratamiento normativo debe reproducirse si se comparan resultados con otro programa.
+
+ALCANCE Y LIMITACIONES
+Se usó PowerFactory 2024 en modo engine mediante su API Python. No fue posible obtener capturas de los diálogos de la GUI. Se entregan opciones leídas del motor, rutas de objetos, valores con unidades y logs de cálculo; la ausencia de capturas es una desviación explícita del formato del protocolo.
+No se certifica paridad con otro motor: no se suministró su batería de resultados para comparación. Los datos MATPOWER del protocolo son una referencia externa y el benchmark oficial PF conserva sus propios datos.
+
+ARCHIVOS Y ACCESOS
+Archivos: 46. Entradas principales: all_element_end_currents.csv, assessment.json, completion.json, fault_summary.csv, initial_load_flow.json, settings.json, settings_before.json.
+fault_B01.json…fault_B39.json: instantáneas por barra, opciones/resultados y mensajes de cálculo.
+
+Nota generada a partir de los archivos presentes: 2026-10-12T03:18:54-03:00. El estado final del paquete lo establece el informe general de cierre, no la mera presencia de estos archivos.

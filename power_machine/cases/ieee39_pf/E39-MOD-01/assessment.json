@@ -1,0 +1,12 @@
+{
+  "status": "Ejecutado; comparación independiente",
+  "summary": "Modelo clásico nativo de 20 estados, D=0, cargas de admitancia constante. Autovalores, estados, participación y parámetros exportados. Comparación NumPy con la convención documentada de potencia/par de PowerFactory.",
+  "runs_expected": 1,
+  "runs_completed": 1,
+  "limitations": [
+    "La convención nativa introduce un término diagonal por Pm/velocidad: un autovalor nulo, uno real negativo y nueve pares. No se afirma que sean dos ceros del modelo ideal simplificado.",
+    "configuration_final.json es la configuración vigente; resultados anteriores se conservan en history."
+  ],
+  "evaluated_at": "2026-10-12T03:12:55.721002-03:00",
+  "powerfactory_version": "24.0.2.0"
+}

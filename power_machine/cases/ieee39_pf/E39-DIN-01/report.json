@@ -1,0 +1,1018 @@
+{
+  "ldf_code": 0,
+  "inc_code": 0,
+  "sim_code": 0,
+  "is_sim_valid": 1,
+  "export_code": 0,
+  "log": [
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - The slack model 'Grid\\G 02.ElmSym' controls the angle of the remote reference bus 'Grid\\Bus 31.ElmTerm'.",
+    "info - Calculating load flow...",
+    "info - -------------------------------------------------------------------------------------",
+    "info - Start Newton-Raphson Algorithm...",
+    "info - Load flow iteration: 0",
+    "info - Load flow iteration: 1",
+    "info - Load flow iteration: 2",
+    "info - Load flow iteration: 3",
+    "info - Load flow iteration: 4",
+    "info - Newton-Raphson converged with 4 iterations.",
+    "info - Load flow calculation successful.",
+    "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+    "info - Control conditions for all controllers of interest are fulfilled.",
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - The slack model 'Grid\\G 02.ElmSym' controls the angle of the remote reference bus 'Grid\\Bus 31.ElmTerm'.",
+    "info - Calculating load flow...",
+    "info - -------------------------------------------------------------------------------------",
+    "info - Start Newton-Raphson Algorithm...",
+    "info - Load flow iteration: 0",
+    "info - Load flow iteration: 1",
+    "info - Load flow iteration: 2",
+    "info - Load flow iteration: 3",
+    "info - Load flow iteration: 4",
+    "info - Newton-Raphson converged with 4 iterations.",
+    "info - Load flow calculation successful.",
+    "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+    "info - Control conditions for all controllers of interest are fulfilled.",
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - Element 'G 02' is reference in 60,0 Hz-system",
+    "info - (t=000:000 ms) Initial conditions calculated.",
+    "evt  - (t=01:000 s) Grid\\Line 16 - 17.ElmLne:\n                    Short-circuit with Fault Impedance Rf = 0,000000 Ohm Xf = 0,000000 Ohm\n                    Fault Location: 0,0000 % from 'Grid\\Bus 16.ElmTerm'",
+    "evt  - (t=01:100 s) Grid\\Bus 16\\Cub_7\\Switch.StaSwitch:\n                    Circuit-Breaker Action: 'Open' - 'All phases'.",
+    "evt  - (t=01:100 s) Grid\\Bus 17\\Cub_5\\Switch.StaSwitch:\n                    Circuit-Breaker Action: 'Open' - 'All phases'.",
+    "evt  - (t=01:100 s) Grid\\Line 16 - 17.ElmLne:\n                    Clear Short-Circuit. ",
+    "info - (t=01:100 s) Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - (t=01:100 s) Element 'G 02' is reference in 60,0 Hz-system",
+    "info - (t=10:000 s) Simulation successfully executed."
+  ],
+  "events": [
+    {
+      "name": "Abrir extremo B16",
+      "cls": "EvtSwitch",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt\\Abrir extremo B16.EvtSwitch",
+      "attributes": {
+        "Ilim": {
+          "value": 0.0,
+          "unit": "A",
+          "description": "Current threshold (abs.)"
+        },
+        "Ulim": {
+          "value": 0.0,
+          "unit": "kV",
+          "description": "Voltage threshold (abs.)"
+        },
+        "charact": {
+          "value": [],
+          "unit": " ",
+          "description": "Charact."
+        },
+        "chr_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Characteristic Name"
+        },
+        "cpHeadFold": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase",
+          "unit": " ",
+          "description": "Head Folder"
+        },
+        "ctrl_type": {
+          "value": 0,
+          "unit": " ",
+          "description": "Used in Step:Unknown:Maintenance:Protection:Substation Automation:Remote Controlled (Stage 1):Indicator of Short Circuit (Stage 2):Manual (Stage 3)"
+        },
+        "d_2ndph": {
+          "value": 0.0,
+          "unit": "ms",
+          "description": "Scheme: Second phase trigger"
+        },
+        "d_3rdph": {
+          "value": 0.0,
+          "unit": "ms",
+          "description": "Scheme: Third phase trigger"
+        },
+        "d_nph": {
+          "value": 0.0,
+          "unit": "ms",
+          "description": "Scheme: Neutral delay"
+        },
+        "dat_src": {
+          "value": "MAN",
+          "unit": " ",
+          "description": "Data source"
+        },
+        "dhrtime": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Relative"
+        },
+        "dmtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Relative"
+        },
+        "dtime": {
+          "value": 1.1,
+          "unit": "s",
+          "description": "Execution Time: Relative"
+        },
+        "fold_id": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt",
+          "unit": " ",
+          "description": "In Folder"
+        },
+        "for_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Foreign Key"
+        },
+        "gnrl_modby": {
+          "value": "",
+          "unit": " ",
+          "description": "Object modified by"
+        },
+        "gnrl_modif": {
+          "value": 1791784421,
+          "unit": " ",
+          "description": "Object modified"
+        },
+        "hrtact": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Now"
+        },
+        "hrtime": {
+          "value": 0,
+          "unit": "h",
+          "description": "Execution Time: Absolute"
+        },
+        "iSchemeStatus": {
+          "value": 0,
+          "unit": " ",
+          "description": "Scheme Status"
+        },
+        "i_a": {
+          "value": 1,
+          "unit": " ",
+          "description": "Phase a"
+        },
+        "i_allph": {
+          "value": 1,
+          "unit": " ",
+          "description": "All phases"
+        },
+        "i_b": {
+          "value": 1,
+          "unit": " ",
+          "description": "Phase b"
+        },
+        "i_c": {
+          "value": 1,
+          "unit": " ",
+          "description": "Phase c"
+        },
+        "i_halfw": {
+          "value": 0,
+          "unit": " ",
+          "description": "Consider half wave:Positive and negative:Positive only:Negative only"
+        },
+        "i_inst": {
+          "value": 0,
+          "unit": " ",
+          "description": "Trigger closing at"
+        },
+        "i_larlow": {
+          "value": 0,
+          "unit": " ",
+          "description": "Larger or lower than threshold:Larger:Lower"
+        },
+        "i_n": {
+          "value": 1,
+          "unit": " ",
+          "description": "Neutral"
+        },
+        "i_open": {
+          "value": 0,
+          "unit": " ",
+          "description": "Trigger opening at"
+        },
+        "i_phase": {
+          "value": 0,
+          "unit": " ",
+          "description": "Scheme: Trigger on phase"
+        },
+        "i_scheme": {
+          "value": 1,
+          "unit": " ",
+          "description": "Scheme"
+        },
+        "i_switch": {
+          "value": 0,
+          "unit": " ",
+          "description": "Action"
+        },
+        "loc_name": {
+          "value": "Abrir extremo B16",
+          "unit": " ",
+          "description": "Name"
+        },
+        "mtact": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Now"
+        },
+        "mtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Absolute"
+        },
+        "oid_": {
+          "value": 190107210,
+          "unit": " ",
+          "description": "ObjectID"
+        },
+        "outserv": {
+          "value": 0,
+          "unit": " ",
+          "description": "Out of Service"
+        },
+        "p_from": {
+          "value": null,
+          "unit": "Elm*",
+          "description": "Event defined by:"
+        },
+        "p_switch": {
+          "value": null,
+          "unit": "StaSwitch*",
+          "description": "Circuit-Breaker"
+        },
+        "p_target": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 16.ElmTerm\\Cub_7.StaCubic",
+          "unit": "StaSwitch,StaCubic,RelFuse,Elm*",
+          "description": "Breaker or Element"
+        },
+        "pid_": {
+          "value": 190103003,
+          "unit": " ",
+          "description": "ProjectID"
+        },
+        "root_id": {
+          "value": null,
+          "unit": " ",
+          "description": "Original Location"
+        },
+        "tDateTime": {
+          "value": -1,
+          "unit": " ",
+          "description": "Execution Time"
+        },
+        "tact": {
+          "value": 10.0,
+          "unit": "s",
+          "description": "Execution Time: Now"
+        },
+        "target": {
+          "value": "",
+          "unit": " ",
+          "description": "Breaker or Element found in Slot"
+        },
+        "tid_": {
+          "value": 4294967294,
+          "unit": " ",
+          "description": "TimeID"
+        },
+        "time": {
+          "value": 1.1,
+          "unit": "s",
+          "description": "Execution Time: Absolute"
+        },
+        "tottime": {
+          "value": 1.1,
+          "unit": " ",
+          "description": "Time"
+        },
+        "v_lim": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Amplitude threshold"
+        }
+      }
+    },
+    {
+      "name": "Abrir extremo B17",
+      "cls": "EvtSwitch",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt\\Abrir extremo B17.EvtSwitch",
+      "attributes": {
+        "Ilim": {
+          "value": 0.0,
+          "unit": "A",
+          "description": "Current threshold (abs.)"
+        },
+        "Ulim": {
+          "value": 0.0,
+          "unit": "kV",
+          "description": "Voltage threshold (abs.)"
+        },
+        "charact": {
+          "value": [],
+          "unit": " ",
+          "description": "Charact."
+        },
+        "chr_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Characteristic Name"
+        },
+        "cpHeadFold": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase",
+          "unit": " ",
+          "description": "Head Folder"
+        },
+        "ctrl_type": {
+          "value": 0,
+          "unit": " ",
+          "description": "Used in Step:Unknown:Maintenance:Protection:Substation Automation:Remote Controlled (Stage 1):Indicator of Short Circuit (Stage 2):Manual (Stage 3)"
+        },
+        "d_2ndph": {
+          "value": 0.0,
+          "unit": "ms",
+          "description": "Scheme: Second phase trigger"
+        },
+        "d_3rdph": {
+          "value": 0.0,
+          "unit": "ms",
+          "description": "Scheme: Third phase trigger"
+        },
+        "d_nph": {
+          "value": 0.0,
+          "unit": "ms",
+          "description": "Scheme: Neutral delay"
+        },
+        "dat_src": {
+          "value": "MAN",
+          "unit": " ",
+          "description": "Data source"
+        },
+        "dhrtime": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Relative"
+        },
+        "dmtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Relative"
+        },
+        "dtime": {
+          "value": 1.1,
+          "unit": "s",
+          "description": "Execution Time: Relative"
+        },
+        "fold_id": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt",
+          "unit": " ",
+          "description": "In Folder"
+        },
+        "for_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Foreign Key"
+        },
+        "gnrl_modby": {
+          "value": "",
+          "unit": " ",
+          "description": "Object modified by"
+        },
+        "gnrl_modif": {
+          "value": 1791784421,
+          "unit": " ",
+          "description": "Object modified"
+        },
+        "hrtact": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Now"
+        },
+        "hrtime": {
+          "value": 0,
+          "unit": "h",
+          "description": "Execution Time: Absolute"
+        },
+        "iSchemeStatus": {
+          "value": 0,
+          "unit": " ",
+          "description": "Scheme Status"
+        },
+        "i_a": {
+          "value": 1,
+          "unit": " ",
+          "description": "Phase a"
+        },
+        "i_allph": {
+          "value": 1,
+          "unit": " ",
+          "description": "All phases"
+        },
+        "i_b": {
+          "value": 1,
+          "unit": " ",
+          "description": "Phase b"
+        },
+        "i_c": {
+          "value": 1,
+          "unit": " ",
+          "description": "Phase c"
+        },
+        "i_halfw": {
+          "value": 0,
+          "unit": " ",
+          "description": "Consider half wave:Positive and negative:Positive only:Negative only"
+        },
+        "i_inst": {
+          "value": 0,
+          "unit": " ",
+          "description": "Trigger closing at"
+        },
+        "i_larlow": {
+          "value": 0,
+          "unit": " ",
+          "description": "Larger or lower than threshold:Larger:Lower"
+        },
+        "i_n": {
+          "value": 1,
+          "unit": " ",
+          "description": "Neutral"
+        },
+        "i_open": {
+          "value": 0,
+          "unit": " ",
+          "description": "Trigger opening at"
+        },
+        "i_phase": {
+          "value": 0,
+          "unit": " ",
+          "description": "Scheme: Trigger on phase"
+        },
+        "i_scheme": {
+          "value": 1,
+          "unit": " ",
+          "description": "Scheme"
+        },
+        "i_switch": {
+          "value": 0,
+          "unit": " ",
+          "description": "Action"
+        },
+        "loc_name": {
+          "value": "Abrir extremo B17",
+          "unit": " ",
+          "description": "Name"
+        },
+        "mtact": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Now"
+        },
+        "mtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Absolute"
+        },
+        "oid_": {
+          "value": 190107211,
+          "unit": " ",
+          "description": "ObjectID"
+        },
+        "outserv": {
+          "value": 0,
+          "unit": " ",
+          "description": "Out of Service"
+        },
+        "p_from": {
+          "value": null,
+          "unit": "Elm*",
+          "description": "Event defined by:"
+        },
+        "p_switch": {
+          "value": null,
+          "unit": "StaSwitch*",
+          "description": "Circuit-Breaker"
+        },
+        "p_target": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 17.ElmTerm\\Cub_5.StaCubic",
+          "unit": "StaSwitch,StaCubic,RelFuse,Elm*",
+          "description": "Breaker or Element"
+        },
+        "pid_": {
+          "value": 190103003,
+          "unit": " ",
+          "description": "ProjectID"
+        },
+        "root_id": {
+          "value": null,
+          "unit": " ",
+          "description": "Original Location"
+        },
+        "tDateTime": {
+          "value": -1,
+          "unit": " ",
+          "description": "Execution Time"
+        },
+        "tact": {
+          "value": 10.0,
+          "unit": "s",
+          "description": "Execution Time: Now"
+        },
+        "target": {
+          "value": "",
+          "unit": " ",
+          "description": "Breaker or Element found in Slot"
+        },
+        "tid_": {
+          "value": 4294967294,
+          "unit": " ",
+          "description": "TimeID"
+        },
+        "time": {
+          "value": 1.1,
+          "unit": "s",
+          "description": "Execution Time: Absolute"
+        },
+        "tottime": {
+          "value": 1.1,
+          "unit": " ",
+          "description": "Time"
+        },
+        "v_lim": {
+          "value": 0.0,
+          "unit": "p.u.",
+          "description": "Amplitude threshold"
+        }
+      }
+    },
+    {
+      "name": "Despeje de falla",
+      "cls": "EvtShc",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt\\Despeje de falla.EvtShc",
+      "attributes": {
+        "L_f": {
+          "value": 0.0,
+          "unit": "mH",
+          "description": "Fault Impedance: Inductance"
+        },
+        "R2X_f": {
+          "value": 9999999999.0,
+          "unit": " ",
+          "description": "Fault Impedance: R/X ratio"
+        },
+        "R_f": {
+          "value": 0.0,
+          "unit": "Ohm",
+          "description": "Fault Impedance: Resistance"
+        },
+        "X2R_f": {
+          "value": 9999999999.0,
+          "unit": " ",
+          "description": "Fault Impedance: X/R ratio"
+        },
+        "X_f": {
+          "value": 0.0,
+          "unit": "Ohm",
+          "description": "Fault Impedance: Reactance"
+        },
+        "Z_f": {
+          "value": 0.0,
+          "unit": "Ohm",
+          "description": "Fault Impedance: Impedance"
+        },
+        "ZfaultInp": {
+          "value": 0,
+          "unit": " ",
+          "description": "Fault Impedance: Input:Resistance, Reactance:Impedance, Angle:Impedance, X/R:Impedance, R/X"
+        },
+        "ang_f": {
+          "value": 0.0,
+          "unit": "deg",
+          "description": "Fault Impedance: Angle"
+        },
+        "charact": {
+          "value": [],
+          "unit": " ",
+          "description": "Charact."
+        },
+        "chr_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Characteristic Name"
+        },
+        "cpHeadFold": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase",
+          "unit": " ",
+          "description": "Head Folder"
+        },
+        "dat_src": {
+          "value": "MAN",
+          "unit": " ",
+          "description": "Data source"
+        },
+        "dhrtime": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Relative"
+        },
+        "dmtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Relative"
+        },
+        "dtime": {
+          "value": 1.1,
+          "unit": "s",
+          "description": "Execution Time: Relative"
+        },
+        "effectedLne": {
+          "value": null,
+          "unit": " ",
+          "description": "Affected line"
+        },
+        "fold_id": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt",
+          "unit": " ",
+          "description": "In Folder"
+        },
+        "for_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Foreign Key"
+        },
+        "gnrl_modby": {
+          "value": "",
+          "unit": " ",
+          "description": "Object modified by"
+        },
+        "gnrl_modif": {
+          "value": 1791784421,
+          "unit": " ",
+          "description": "Object modified"
+        },
+        "hrtact": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Now"
+        },
+        "hrtime": {
+          "value": 0,
+          "unit": "h",
+          "description": "Execution Time: Absolute"
+        },
+        "iApplyShc": {
+          "value": 0,
+          "unit": " ",
+          "description": "Apply Fault"
+        },
+        "iSchemeStatus": {
+          "value": 0,
+          "unit": " ",
+          "description": "Scheme Status"
+        },
+        "i_clearShc": {
+          "value": 0,
+          "unit": " ",
+          "description": "For EMT-Simulation only: Clear Short-Circuit"
+        },
+        "i_p2pgf": {
+          "value": 0,
+          "unit": " ",
+          "description": "Phases:a,b:b,c:c,a"
+        },
+        "i_p2psc": {
+          "value": 0,
+          "unit": " ",
+          "description": "Phases:a-b:b-c:c-a"
+        },
+        "i_pspgf": {
+          "value": 0,
+          "unit": " ",
+          "description": "Phase:a:b:c"
+        },
+        "i_shc": {
+          "value": 4,
+          "unit": " ",
+          "description": "Fault Type"
+        },
+        "lneshcbus": {
+          "value": 2,
+          "unit": " ",
+          "description": "Bus index for shc at line"
+        },
+        "loc_name": {
+          "value": "Despeje de falla",
+          "unit": " ",
+          "description": "Name"
+        },
+        "mtact": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Now"
+        },
+        "mtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Absolute"
+        },
+        "oid_": {
+          "value": 190107209,
+          "unit": " ",
+          "description": "ObjectID"
+        },
+        "outserv": {
+          "value": 0,
+          "unit": " ",
+          "description": "Out of Service"
+        },
+        "p_from": {
+          "value": null,
+          "unit": "Elm*",
+          "description": "Event defined by:"
+        },
+        "p_target": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Line 16 - 17.ElmLne",
+          "unit": " ",
+          "description": "Object"
+        },
+        "pid_": {
+          "value": 190103003,
+          "unit": " ",
+          "description": "ProjectID"
+        },
+        "root_id": {
+          "value": null,
+          "unit": " ",
+          "description": "Original Location"
+        },
+        "shcLocation": {
+          "value": 0.0,
+          "unit": "%",
+          "description": "Fault Location"
+        },
+        "tDateTime": {
+          "value": -1,
+          "unit": " ",
+          "description": "Execution Time"
+        },
+        "tact": {
+          "value": 10.0,
+          "unit": "s",
+          "description": "Execution Time: Now"
+        },
+        "tid_": {
+          "value": 4294967294,
+          "unit": " ",
+          "description": "TimeID"
+        },
+        "time": {
+          "value": 1.1,
+          "unit": "s",
+          "description": "Execution Time: Absolute"
+        },
+        "tottime": {
+          "value": 1.1,
+          "unit": " ",
+          "description": "Time"
+        }
+      }
+    },
+    {
+      "name": "Falla trifasica B16 lado L16-17",
+      "cls": "EvtShc",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt\\Falla trifasica B16 lado L16-17.EvtShc",
+      "attributes": {
+        "L_f": {
+          "value": 0.0,
+          "unit": "mH",
+          "description": "Fault Impedance: Inductance"
+        },
+        "R2X_f": {
+          "value": 9999999999.0,
+          "unit": " ",
+          "description": "Fault Impedance: R/X ratio"
+        },
+        "R_f": {
+          "value": 0.0,
+          "unit": "Ohm",
+          "description": "Fault Impedance: Resistance"
+        },
+        "X2R_f": {
+          "value": 9999999999.0,
+          "unit": " ",
+          "description": "Fault Impedance: X/R ratio"
+        },
+        "X_f": {
+          "value": 0.0,
+          "unit": "Ohm",
+          "description": "Fault Impedance: Reactance"
+        },
+        "Z_f": {
+          "value": 0.0,
+          "unit": "Ohm",
+          "description": "Fault Impedance: Impedance"
+        },
+        "ZfaultInp": {
+          "value": 0,
+          "unit": " ",
+          "description": "Fault Impedance: Input:Resistance, Reactance:Impedance, Angle:Impedance, X/R:Impedance, R/X"
+        },
+        "ang_f": {
+          "value": 0.0,
+          "unit": "deg",
+          "description": "Fault Impedance: Angle"
+        },
+        "charact": {
+          "value": [],
+          "unit": " ",
+          "description": "Charact."
+        },
+        "chr_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Characteristic Name"
+        },
+        "cpHeadFold": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase",
+          "unit": " ",
+          "description": "Head Folder"
+        },
+        "dat_src": {
+          "value": "MAN",
+          "unit": " ",
+          "description": "Data source"
+        },
+        "dhrtime": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Relative"
+        },
+        "dmtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Relative"
+        },
+        "dtime": {
+          "value": 1.0,
+          "unit": "s",
+          "description": "Execution Time: Relative"
+        },
+        "effectedLne": {
+          "value": null,
+          "unit": " ",
+          "description": "Affected line"
+        },
+        "fold_id": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-DIN-01.IntCase\\E39-DIN-01 Events.IntEvt",
+          "unit": " ",
+          "description": "In Folder"
+        },
+        "for_name": {
+          "value": "",
+          "unit": " ",
+          "description": "Foreign Key"
+        },
+        "gnrl_modby": {
+          "value": "",
+          "unit": " ",
+          "description": "Object modified by"
+        },
+        "gnrl_modif": {
+          "value": 1791784421,
+          "unit": " ",
+          "description": "Object modified"
+        },
+        "hrtact": {
+          "value": 0.0,
+          "unit": "h",
+          "description": "Execution Time: Now"
+        },
+        "hrtime": {
+          "value": 0,
+          "unit": "h",
+          "description": "Execution Time: Absolute"
+        },
+        "iApplyShc": {
+          "value": 0,
+          "unit": " ",
+          "description": "Apply Fault"
+        },
+        "iSchemeStatus": {
+          "value": 0,
+          "unit": " ",
+          "description": "Scheme Status"
+        },
+        "i_clearShc": {
+          "value": 0,
+          "unit": " ",
+          "description": "For EMT-Simulation only: Clear Short-Circuit"
+        },
+        "i_p2pgf": {
+          "value": 0,
+          "unit": " ",
+          "description": "Phases:a,b:b,c:c,a"
+        },
+        "i_p2psc": {
+          "value": 0,
+          "unit": " ",
+          "description": "Phases:a-b:b-c:c-a"
+        },
+        "i_pspgf": {
+          "value": 0,
+          "unit": " ",
+          "description": "Phase:a:b:c"
+        },
+        "i_shc": {
+          "value": 0,
+          "unit": " ",
+          "description": "Fault Type"
+        },
+        "lneshcbus": {
+          "value": 2,
+          "unit": " ",
+          "description": "Bus index for shc at line"
+        },
+        "loc_name": {
+          "value": "Falla trifasica B16 lado L16-17",
+          "unit": " ",
+          "description": "Name"
+        },
+        "mtact": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Now"
+        },
+        "mtime": {
+          "value": 0,
+          "unit": "min",
+          "description": "Execution Time: Absolute"
+        },
+        "oid_": {
+          "value": 190107208,
+          "unit": " ",
+          "description": "ObjectID"
+        },
+        "outserv": {
+          "value": 0,
+          "unit": " ",
+          "description": "Out of Service"
+        },
+        "p_from": {
+          "value": null,
+          "unit": "Elm*",
+          "description": "Event defined by:"
+        },
+        "p_target": {
+          "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Line 16 - 17.ElmLne",
+          "unit": " ",
+          "description": "Object"
+        },
+        "pid_": {
+          "value": 190103003,
+          "unit": " ",
+          "description": "ProjectID"
+        },
+        "root_id": {
+          "value": null,
+          "unit": " ",
+          "description": "Original Location"
+        },
+        "shcLocation": {
+          "value": 0.0,
+          "unit": "%",
+          "description": "Fault Location"
+        },
+        "tDateTime": {
+          "value": -1,
+          "unit": " ",
+          "description": "Execution Time"
+        },
+        "tact": {
+          "value": 10.0,
+          "unit": "s",
+          "description": "Execution Time: Now"
+        },
+        "tid_": {
+          "value": 4294967294,
+          "unit": " ",
+          "description": "TimeID"
+        },
+        "time": {
+          "value": 1.0,
+          "unit": "s",
+          "description": "Execution Time: Absolute"
+        },
+        "tottime": {
+          "value": 1.0,
+          "unit": " ",
+          "description": "Time"
+        }
+      }
+    }
+  ],
+  "base_restore_code": 0
+}

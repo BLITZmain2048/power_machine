@@ -1,0 +1,16 @@
+{
+  "origin": "Windows Python 3.10 pre-change numerical baseline",
+  "numpy": "2.2.6",
+  "rms_sha256": "876642fee7df93d61607620b53ae3690acf0d17437ae7c04a3e33441a5c52123",
+  "cct_sha256": "5d1ec1898125563b813539473379c5a9c7eb321a328057ff1adc2133c1323121",
+  "rtol": 1e-09,
+  "atol": 1e-12,
+  "rms_shape": [
+    318477
+  ],
+  "cct_shape": [
+    10,
+    3
+  ],
+  "npz_bytes": 1192418
+}

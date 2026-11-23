@@ -1,0 +1,1381 @@
+[
+  {
+    "name": "AVR 02",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 02.ElmComp\\AVR 02.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          6.2,
+          0.05,
+          -0.633,
+          0.405,
+          0.057,
+          0.5,
+          3.036437,
+          0.66,
+          4.048583,
+          0.88,
+          -1.0,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 02",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 02.ElmComp\\GOV 02.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 02",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 02.ElmComp\\PSS 02.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.5,
+          10.0,
+          5.0,
+          0.4,
+          1.0,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 03",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 03.ElmComp\\AVR 03.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          5.0,
+          0.06,
+          -0.0198,
+          0.5,
+          0.08,
+          1.0,
+          2.342286,
+          0.13,
+          3.123048,
+          0.34,
+          -1.0,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 03",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 03.ElmComp\\GOV 03.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 03",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 03.ElmComp\\PSS 03.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.5,
+          10.0,
+          3.0,
+          0.2,
+          2.0,
+          0.2,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 04",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 04.ElmComp\\AVR 04.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          5.0,
+          0.06,
+          -0.0525,
+          0.5,
+          0.08,
+          1.0,
+          2.868069,
+          0.08,
+          3.824092,
+          0.314,
+          -1.0,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 04",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 04.ElmComp\\GOV 04.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 04",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 04.ElmComp\\PSS 04.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          2.0,
+          10.0,
+          1.0,
+          0.1,
+          1.0,
+          0.3,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 05",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 05.ElmComp\\AVR 05.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          40.0,
+          0.02,
+          1.0,
+          0.785,
+          0.03,
+          1.0,
+          3.926702,
+          0.07,
+          5.235602,
+          0.91,
+          -10.0,
+          10.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 05",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 05.ElmComp\\GOV 05.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 05",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 05.ElmComp\\PSS 05.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          1.0,
+          10.0,
+          1.5,
+          0.2,
+          1.0,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 06",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 06.ElmComp\\AVR 06.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          5.0,
+          0.02,
+          -0.0419,
+          0.471,
+          0.0754,
+          1.246,
+          3.586801,
+          0.064,
+          4.782401,
+          0.251,
+          -1.0,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 06",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 06.ElmComp\\GOV 06.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 06",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 06.ElmComp\\PSS 06.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          4.0,
+          10.0,
+          0.5,
+          0.1,
+          0.5,
+          0.05,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 07",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 07.ElmComp\\AVR 07.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          40.0,
+          0.02,
+          1.0,
+          0.73,
+          0.03,
+          1.0,
+          2.801724,
+          0.53,
+          3.735632,
+          0.74,
+          -6.5,
+          6.5
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 07",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 07.ElmComp\\GOV 07.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 07",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 07.ElmComp\\PSS 07.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          7.5,
+          10.0,
+          0.2,
+          0.02,
+          0.5,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 08",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 08.ElmComp\\AVR 08.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          5.0,
+          0.02,
+          -0.047,
+          0.528,
+          0.0854,
+          1.26,
+          3.191489,
+          0.072,
+          4.255319,
+          0.282,
+          -1.0,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 08",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 08.ElmComp\\GOV 08.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 08",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 08.ElmComp\\PSS 08.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          2.0,
+          10.0,
+          1.0,
+          0.2,
+          1.0,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 09",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 09.ElmComp\\AVR 09.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          40.0,
+          0.02,
+          1.0,
+          1.4,
+          0.03,
+          1.0,
+          4.256757,
+          0.62,
+          5.675676,
+          0.85,
+          -10.5,
+          10.5
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 09",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 09.ElmComp\\GOV 09.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          5.0,
+          0.2,
+          1.0,
+          0.6,
+          0.3,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.8,
+          0.3,
+          0.0,
+          0.6,
+          1.0,
+          0.15,
+          0.0,
+          0.0,
+          0.0,
+          -0.3,
+          0.0,
+          0.3,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "K,T1,T2,T3,K1,K2,T5,K3,K4,T6,K5,K6,T4,T7,K7,K8,PNhp,PNlp"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 09",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 09.ElmComp\\PSS 09.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          2.0,
+          10.0,
+          1.0,
+          0.5,
+          2.0,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "AVR 10",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 10.ElmComp\\AVR 10.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.0,
+          5.0,
+          0.06,
+          -0.0485,
+          0.25,
+          0.04,
+          1.0,
+          3.546099,
+          0.08,
+          4.728132,
+          0.26,
+          -1.0,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\avr_IEEET1.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tr,Ka,Ta,Ke,Te,Kf,Tf,E1,Se1,E2,Se2"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "avr_IEEET1",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "GOV 10",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 10.ElmComp\\GOV 10.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 0,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          0.05,
+          0.04,
+          0.04,
+          0.2,
+          10.0,
+          0.5,
+          1.0,
+          1.5,
+          1.0,
+          0.75,
+          0.0,
+          -0.1,
+          0.0,
+          0.1,
+          1.0
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\gov_IEEEG3.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Tg,Tp,Sigma,Delta,Tr,a11,a13,a21,a23,Tw,PN"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "gov_IEEEG3",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  },
+  {
+    "name": "PSS 10",
+    "cls": "ElmDsl",
+    "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Power Plant 10.ElmComp\\PSS 10.ElmDsl",
+    "fields": {
+      "outserv": {
+        "value": 1,
+        "unit": " ",
+        "description": "Out of Service"
+      },
+      "params": {
+        "value": [
+          1.0,
+          10.0,
+          1.0,
+          0.05,
+          3.0,
+          0.5,
+          -0.2,
+          0.2
+        ],
+        "unit": " ",
+        "description": "Parameter"
+      },
+      "typ_id": {
+        "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Library.IntPrjfolder\\User Defined Models.IntPrjfolder\\pss_CONV.BlkDef",
+        "unit": "BlkDef*",
+        "description": "Type"
+      }
+    },
+    "type_fields": {
+      "sParams": {
+        "value": [
+          "Kpss,Tw,T1,T2,T3,T4"
+        ],
+        "unit": " ",
+        "description": "Variables: Parameters"
+      },
+      "loc_name": {
+        "value": "pss_CONV",
+        "unit": " ",
+        "description": "Name"
+      }
+    }
+  }
+]

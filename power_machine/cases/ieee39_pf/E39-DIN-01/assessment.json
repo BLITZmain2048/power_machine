@@ -1,0 +1,12 @@
+{
+  "status": "Ejecutado y auditado",
+  "summary": "Falla a 1 s y despeje de L16–17 por ambos extremos a 1,1 s. Simulación 0–10 s, integración fija 1 ms, salida 10 ms: 1001 muestras y las 25 señales solicitadas.",
+  "runs_expected": 1,
+  "runs_completed": 1,
+  "limitations": [
+    "Referencia PowerFactory exportada; la comparación con power_machine queda fuera de esta ejecución.",
+    "La falla se aplicó en el extremo B16 de L16–17 (posición 0 %), seguida de eliminación de falla y apertura de ambos extremos."
+  ],
+  "evaluated_at": "2026-10-12T03:12:55.720002-03:00",
+  "powerfactory_version": "24.0.2.0"
+}

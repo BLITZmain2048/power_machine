@@ -1,0 +1,12 @@
+{
+  "status": "Ejecutado y auditado",
+  "summary": "Flujo AC convergente; pérdidas 43,711063 MW, referencia G31 520,811072 MW. Balances de potencia auditados.",
+  "runs_expected": 1,
+  "runs_completed": 1,
+  "limitations": [
+    "Referencia PowerFactory exportada; la comparación con power_machine queda fuera de esta ejecución.",
+    "Los valores MATPOWER no constituyen tolerancias de aceptación para este modelo con datos distintos."
+  ],
+  "evaluated_at": "2026-10-12T03:12:55.718023-03:00",
+  "powerfactory_version": "24.0.2.0"
+}

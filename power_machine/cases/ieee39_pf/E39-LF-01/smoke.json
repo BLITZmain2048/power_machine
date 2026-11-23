@@ -1,0 +1,1702 @@
+{
+  "code": 0,
+  "options": {
+    "PostContTime": {
+      "value": 9999.0,
+      "unit": "min",
+      "description": "Time Phase: Post Contingency Time (End of Time Phase)"
+    },
+    "Sfix": {
+      "value": 0.0,
+      "unit": "kVA",
+      "description": "Fixed Load"
+    },
+    "Sin": {
+      "value": 40.0,
+      "unit": "kVA",
+      "description": "Installed Power"
+    },
+    "Svar": {
+      "value": 0.0,
+      "unit": "kVA",
+      "description": "Max. Power per Customer"
+    },
+    "addoptions": {
+      "value": "",
+      "unit": " ",
+      "description": "Additional Parameters"
+    },
+    "allowedBusErrLv": {
+      "value": 1.0,
+      "unit": "kVA",
+      "description": "Max. Acceptable Load Flow Error: Bus Equations (LV)"
+    },
+    "allowedBusErrMv": {
+      "value": 1.0,
+      "unit": "kVA",
+      "description": "Max. Acceptable Load Flow Error: Bus Equations (MV)"
+    },
+    "bPlim4constP": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Limit active power also for const. P machines"
+    },
+    "bPlimAsm": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Asynchronous machine"
+    },
+    "bPlimGenst": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Static generator"
+    },
+    "bPlimPWM": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: PWM converter"
+    },
+    "bPlimSym": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Synchronous machine"
+    },
+    "bQlim4constQ": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Limit reactive power also for const. Q machines"
+    },
+    "bQlimAsm": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Asynchronous machine"
+    },
+    "bQlimGenst": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Static generator"
+    },
+    "bQlimPWM": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: PWM converter"
+    },
+    "bQlimSlack": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Reference machine"
+    },
+    "bQlimSvs": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Static Var system"
+    },
+    "bQlimSym": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Synchronous machine"
+    },
+    "bQlimXnet": {
+      "value": 1,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: External grid"
+    },
+    "cLimScaleOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Consider reactive power limits scaling factor"
+    },
+    "cPbalancing": {
+      "value": 0,
+      "unit": " ",
+      "description": "Balancing"
+    },
+    "cPlim4constPOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Limit active power also for const. P machines"
+    },
+    "cPlimAsmOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Asynchronous machine"
+    },
+    "cPlimGenstOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Static generator"
+    },
+    "cPlimPWMOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: PWM converter"
+    },
+    "cPlimSymOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Active Power Limits: Synchronous machine"
+    },
+    "cQlim4constQOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Limit reactive power also for const. Q machines"
+    },
+    "cQlimAsmOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Asynchronous machine"
+    },
+    "cQlimGenstOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Static generator"
+    },
+    "cQlimPWMOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: PWM converter"
+    },
+    "cQlimSlackOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Reference machine"
+    },
+    "cQlimSvsOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Static Var system"
+    },
+    "cQlimSymOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: Synchronous machine"
+    },
+    "cQlimXnetOff": {
+      "value": 0,
+      "unit": " ",
+      "description": "Considered Models for Reactive Power Limits: External grid"
+    },
+    "cSav": {
+      "value": 0.0,
+      "unit": "kVA",
+      "description": "Average Power"
+    },
+    "charact": {
+      "value": [],
+      "unit": " ",
+      "description": "Charact."
+    },
+    "chr_name": {
+      "value": "",
+      "unit": " ",
+      "description": "Characteristic Name"
+    },
+    "codePlim": {
+      "value": -1,
+      "unit": " ",
+      "description": "P limits"
+    },
+    "codeQlim": {
+      "value": -1,
+      "unit": " ",
+      "description": "Q limits"
+    },
+    "copt_apdist": {
+      "value": 0,
+      "unit": " ",
+      "description": "Active Power Control"
+    },
+    "copt_net": {
+      "value": 0,
+      "unit": " ",
+      "description": "Calculation Method"
+    },
+    "copt_tem": {
+      "value": 0,
+      "unit": " ",
+      "description": "Temperature Dependency: Line/Cable Resistances: at"
+    },
+    "cosfix": {
+      "value": 0.9,
+      "unit": " ",
+      "description": "Power Factor of Fixed Load"
+    },
+    "cosvar": {
+      "value": 0.95,
+      "unit": " ",
+      "description": "Power Factor of Variable Part"
+    },
+    "cpHeadFold": {
+      "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-LF-01 Base PAR.IntCase",
+      "unit": " ",
+      "description": "Head Folder"
+    },
+    "ctemperature": {
+      "value": 80.0,
+      "unit": "degC",
+      "description": "Temperature Dependency: Line/Cable Resistances: Temperature"
+    },
+    "cvoltLevHv": {
+      "value": 66.0,
+      "unit": "kV",
+      "description": "Max. Acceptable Load Flow Error: >"
+    },
+    "cvoltLevLv": {
+      "value": 0.0,
+      "unit": "kV",
+      "description": "Max. Acceptable Load Flow Error: >"
+    },
+    "cvoltLevMv": {
+      "value": 1.0,
+      "unit": "kV",
+      "description": "Max. Acceptable Load Flow Error: >"
+    },
+    "dat_src": {
+      "value": "MAN",
+      "unit": " ",
+      "description": "Data source"
+    },
+    "dataExtDesc": {
+      "value": [],
+      "unit": " ",
+      "description": "Description"
+    },
+    "dataExtUnit": {
+      "value": [],
+      "unit": " ",
+      "description": "Unit"
+    },
+    "erreq": {
+      "value": 0.10000000149011612,
+      "unit": "%",
+      "description": "Max. Acceptable Load Flow Error: Model Equations"
+    },
+    "errlf": {
+      "value": 0.0010000000474974513,
+      "unit": "kVA",
+      "description": "Max. Acceptable Load Flow Error: Bus Equations (HV)"
+    },
+    "fa": {
+      "value": 0.3,
+      "unit": " ",
+      "description": "Utilisation Factor"
+    },
+    "fold_id": {
+      "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Study Cases.IntPrjfolder\\E39-LF-01 Base PAR.IntCase",
+      "unit": " ",
+      "description": "In Folder"
+    },
+    "for_name": {
+      "value": "",
+      "unit": " ",
+      "description": "Foreign Key"
+    },
+    "ginf": {
+      "value": 0.1,
+      "unit": " ",
+      "description": "Coincidence Factor (ginf)"
+    },
+    "gnrl_modby": {
+      "value": "",
+      "unit": " ",
+      "description": "Object modified by"
+    },
+    "gnrl_modif": {
+      "value": 1791784047,
+      "unit": " ",
+      "description": "Object modified"
+    },
+    "iFromSaved": {
+      "value": 0,
+      "unit": " ",
+      "description": "Starting point: Start from saved results"
+    },
+    "iInterChg": {
+      "value": 0,
+      "unit": " ",
+      "description": "Interchange Schedule"
+    },
+    "iInterType": {
+      "value": 0,
+      "unit": " ",
+      "description": "Interchange Schedule: Consider Interchange Schedules for..."
+    },
+    "iItAlgStag": {
+      "value": 10,
+      "unit": " ",
+      "description": "Iteration step size: Break if no progress in X iterations"
+    },
+    "iKeepCalc": {
+      "value": 0,
+      "unit": " ",
+      "description": "Maintain load flow results if calculation fails"
+    },
+    "iPST_at": {
+      "value": 0,
+      "unit": " ",
+      "description": "Active Power Regulation: Automatic tap adjustment of phase shifters"
+    },
+    "iPbalancing": {
+      "value": 0,
+      "unit": " ",
+      "description": "Balancing"
+    },
+    "iPostCont": {
+      "value": 0,
+      "unit": " ",
+      "description": "Time Phase"
+    },
+    "iResType": {
+      "value": 0,
+      "unit": " ",
+      "description": "Starting point: Source:from memory:from a file"
+    },
+    "iSchemeStatus": {
+      "value": 0,
+      "unit": " ",
+      "description": "Scheme Status"
+    },
+    "iShowOutLoopMsg": {
+      "value": 1,
+      "unit": " ",
+      "description": "Show 'Outer Loop' messages"
+    },
+    "iStepAdapt": {
+      "value": 0,
+      "unit": " ",
+      "description": "Iteration step size"
+    },
+    "iTempLoads": {
+      "value": 0,
+      "unit": " ",
+      "description": "Temperature Dependent Load Scaling"
+    },
+    "iTrimStep": {
+      "value": 1,
+      "unit": " ",
+      "description": "Iteration step size: Trim unreasonable Newton-Raphson steps"
+    },
+    "i_power": {
+      "value": 1,
+      "unit": " ",
+      "description": "Load Flow Method"
+    },
+    "i_volt": {
+      "value": 0,
+      "unit": " ",
+      "description": "Consider coincidence of low-voltage loads: Voltage Drop Analysis"
+    },
+    "iavailfact": {
+      "value": 0,
+      "unit": " ",
+      "description": "Consider Availability Factors"
+    },
+    "ictrlx": {
+      "value": 20,
+      "unit": " ",
+      "description": "Max. Number of Iterations: Outer Loop"
+    },
+    "ign_comp": {
+      "value": 0,
+      "unit": " ",
+      "description": "Ignore Composite Elements"
+    },
+    "ign_mdb": {
+      "value": [],
+      "unit": " ",
+      "description": "OoS Objects"
+    },
+    "imaxPHSstep": {
+      "value": 0,
+      "unit": " ",
+      "description": "Max. tap changes per iteration: for phase shifting transformers:oo:1:2:3:4:5:6:7:8:9:10"
+    },
+    "imaxtstep": {
+      "value": 0,
+      "unit": " ",
+      "description": "Max. tap changes per iteration: for transformers, shunts:oo:1:2:3:4:5:6:7:8:9:10"
+    },
+    "iopt_apdist": {
+      "value": 0,
+      "unit": " ",
+      "description": "Active Power Control"
+    },
+    "iopt_asht": {
+      "value": 0,
+      "unit": " ",
+      "description": "Voltage and Reactive Power Regulation: Automatic tap adjustment of shunts"
+    },
+    "iopt_at": {
+      "value": 0,
+      "unit": " ",
+      "description": "Voltage and Reactive Power Regulation: Automatic tap adjustment of transformers"
+    },
+    "iopt_chctr": {
+      "value": 2,
+      "unit": " ",
+      "description": "Check Control Conditions"
+    },
+    "iopt_check": {
+      "value": 0,
+      "unit": " ",
+      "description": "Reports"
+    },
+    "iopt_fl": {
+      "value": 0,
+      "unit": " ",
+      "description": "Flat Start"
+    },
+    "iopt_fls": {
+      "value": 0,
+      "unit": " ",
+      "description": "Load Options: Feeder Load Scaling"
+    },
+    "iopt_igntow": {
+      "value": 2,
+      "unit": " ",
+      "description": "Modelling Method of Towers:with in/output signals:ignore couplings:equation in lines"
+    },
+    "iopt_initOPF": {
+      "value": 0,
+      "unit": " ",
+      "description": "Use this load flow for initialisation of OPF"
+    },
+    "iopt_iph": {
+      "value": 0,
+      "unit": " ",
+      "description": "Ignore transformer phase shift"
+    },
+    "iopt_lev": {
+      "value": 0,
+      "unit": " ",
+      "description": "Automatic Model Adaptation for Convergence"
+    },
+    "iopt_lim": {
+      "value": 0,
+      "unit": " ",
+      "description": "Voltage and Reactive Power Regulation: Consider reactive power limits"
+    },
+    "iopt_limScale": {
+      "value": 0,
+      "unit": " ",
+      "description": "Consider reactive power limits scaling factor"
+    },
+    "iopt_lod": {
+      "value": 1,
+      "unit": " ",
+      "description": "Voltage dependent loads in Post Fault analysis"
+    },
+    "iopt_maxibus": {
+      "value": 0,
+      "unit": " ",
+      "description": "Calculate max. current at busbars"
+    },
+    "iopt_net": {
+      "value": 0,
+      "unit": " ",
+      "description": "Calculation Method"
+    },
+    "iopt_noinit": {
+      "value": 0,
+      "unit": " ",
+      "description": "Starting point: Start from last calculated results if available"
+    },
+    "iopt_notopo": {
+      "value": 0,
+      "unit": " ",
+      "description": "No Topology Rebuild"
+    },
+    "iopt_optaplim": {
+      "value": 1,
+      "unit": " ",
+      "description": "Consider operational limits for tap changer"
+    },
+    "iopt_plim": {
+      "value": 0,
+      "unit": " ",
+      "description": "Active Power Regulation: Consider active power limits"
+    },
+    "iopt_pq": {
+      "value": 0,
+      "unit": " ",
+      "description": "Load Options: Consider Voltage Dependency of Loads"
+    },
+    "iopt_prot": {
+      "value": 1,
+      "unit": " ",
+      "description": "Consider Protection Devices:none:all:main:backup"
+    },
+    "iopt_show": {
+      "value": 0,
+      "unit": " ",
+      "description": "Show Convergence Progress Report"
+    },
+    "iopt_sim": {
+      "value": 0,
+      "unit": " ",
+      "description": "Consider coincidence of low-voltage loads"
+    },
+    "iopt_spar": {
+      "value": 0,
+      "unit": " ",
+      "description": "Calculate Power at Risk"
+    },
+    "iopt_stamode": {
+      "value": 0,
+      "unit": " ",
+      "description": "Station Controller:Standard:Gen HV-Ctrl:Gen LV-Ctrl"
+    },
+    "iopt_tem": {
+      "value": 0,
+      "unit": " ",
+      "description": "Temperature Dependency: Line/Cable Resistances: at"
+    },
+    "iopt_trainsim": {
+      "value": 0,
+      "unit": " ",
+      "description": "Train simulation"
+    },
+    "iprimctrl": {
+      "value": 0,
+      "unit": " ",
+      "description": "Consider Primary Controllers"
+    },
+    "itapopt": {
+      "value": 0,
+      "unit": " ",
+      "description": "Method:direct:stepped"
+    },
+    "itrlx": {
+      "value": 25,
+      "unit": " ",
+      "description": "Max. Number of Iterations: Newton-Raphson Iteration"
+    },
+    "krelax": {
+      "value": 1.0,
+      "unit": " ",
+      "description": "Min. Controller Relaxation Factor"
+    },
+    "loadmax": {
+      "value": 80.0,
+      "unit": "%",
+      "description": "Max. Loading of Edge Element"
+    },
+    "loc_name": {
+      "value": "Load Flow Calculation",
+      "unit": " ",
+      "description": "Name"
+    },
+    "maxDivOuterLoops": {
+      "value": 2,
+      "unit": " ",
+      "description": "Break, if Newton-Raphson diverges in first X outer loops"
+    },
+    "maxPhaseShift": {
+      "value": 20.0,
+      "unit": "deg",
+      "description": "Max. transformer phase shift"
+    },
+    "maxQlimTrans": {
+      "value": 3,
+      "unit": " ",
+      "description": "Automatic detection of repeated reactive power limitations: Number of transitions"
+    },
+    "maxTapTrans": {
+      "value": 3,
+      "unit": " ",
+      "description": "Automatic detection of tap hunting: Number of transitions"
+    },
+    "modelLevel": {
+      "value": 0,
+      "unit": " ",
+      "description": "Model level"
+    },
+    "nsteps": {
+      "value": 1,
+      "unit": " ",
+      "description": "Max. Number of Iterations: Number of Steps"
+    },
+    "numNewtonIters": {
+      "value": [
+        4
+      ],
+      "unit": " ",
+      "description": "Number of Newton iterations"
+    },
+    "numOuterLoops": {
+      "value": 1,
+      "unit": " ",
+      "description": "Number of outer loops"
+    },
+    "num_conv": {
+      "value": 1,
+      "unit": " ",
+      "description": "Show Convergence Progress Report: Number of reported buses/models per iteration"
+    },
+    "oid_": {
+      "value": 190106592,
+      "unit": " ",
+      "description": "ObjectID"
+    },
+    "order": {
+      "value": -1000000.0,
+      "unit": " ",
+      "description": "Order"
+    },
+    "p_event": {
+      "value": null,
+      "unit": "IntEvt*",
+      "description": "Events"
+    },
+    "phiini": {
+      "value": 0.0,
+      "unit": "deg",
+      "description": "Reference Bus: Angle"
+    },
+    "pid_": {
+      "value": 190103003,
+      "unit": " ",
+      "description": "ProjectID"
+    },
+    "relax": {
+      "value": 1.0,
+      "unit": " ",
+      "description": "Iteration step size: Relaxation Factor"
+    },
+    "rembar": {
+      "value": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 31.ElmTerm",
+      "unit": "StaBar*,ElmTerm*",
+      "description": "Reference Bus: Reference Busbar"
+    },
+    "resFile": {
+      "value": "",
+      "unit": " ",
+      "description": "Starting point: File"
+    },
+    "root_id": {
+      "value": null,
+      "unit": " ",
+      "description": "Original Location"
+    },
+    "scGenFac": {
+      "value": 100.0,
+      "unit": "%",
+      "description": "Scaling by category: Generation"
+    },
+    "scLoadFac": {
+      "value": 100.0,
+      "unit": "%",
+      "description": "Scaling by category: Loads"
+    },
+    "scMotFac": {
+      "value": 100.0,
+      "unit": "%",
+      "description": "Scaling by category: Motors"
+    },
+    "scPnight": {
+      "value": 100.0,
+      "unit": "%",
+      "description": "Scaling by category: Night storage heaters"
+    },
+    "temperature": {
+      "value": 80.0,
+      "unit": "degC",
+      "description": "Temperature Dependency: Line/Cable Resistances: Temperature"
+    },
+    "tid_": {
+      "value": 4294967294,
+      "unit": " ",
+      "description": "TimeID"
+    },
+    "totNumNewtonIters": {
+      "value": 4,
+      "unit": " ",
+      "description": "Sum of Newton iterations (of all outer loops)"
+    },
+    "tres": {
+      "value": 0.1,
+      "unit": "s",
+      "description": "Event-Resolution"
+    },
+    "utr_init": {
+      "value": 1,
+      "unit": " ",
+      "description": "Voltage magnitude initialisation: Voltage magnitude initialisation:Use voltage setpoint at reference busbar:Consider ratio of rated to nominal voltage:Consider ratio of rated to nominal voltage for all branches except transformers:Consider ratio of rated to nominal voltage for transformers only"
+    },
+    "vlmax": {
+      "value": 1.0499999523162842,
+      "unit": "p.u.",
+      "description": "Upper Limit of Allowed Voltage"
+    },
+    "vlmin": {
+      "value": 0.949999988079071,
+      "unit": "p.u.",
+      "description": "Lower Limit of Allowed Voltage"
+    },
+    "zoneScale": {
+      "value": 0,
+      "unit": " ",
+      "description": "Zone scaling"
+    }
+  },
+  "log": [
+    "info - Element 'G 02' is local reference in separated area of 'Bus 31'",
+    "info - The slack model 'Grid\\G 02.ElmSym' controls the angle of the remote reference bus 'Grid\\Bus 31.ElmTerm'.",
+    "info - Calculating load flow...",
+    "info - -------------------------------------------------------------------------------------",
+    "info - Start Newton-Raphson Algorithm...",
+    "info - Load flow iteration: 0",
+    "info - Load flow iteration: 1",
+    "info - Load flow iteration: 2",
+    "info - Load flow iteration: 3",
+    "info - Load flow iteration: 4",
+    "info - Newton-Raphson converged with 4 iterations.",
+    "info - Load flow calculation successful.",
+    "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+    "info - Control conditions for all controllers of interest are fulfilled."
+  ],
+  "grid": {
+    "frnom": {
+      "value": 60.0,
+      "unit": "Hz",
+      "description": "Nominal Frequency"
+    }
+  },
+  "buses": [
+    {
+      "name": "Bus 01",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 01.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0473563520211382,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -8.438684746208391,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 02",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 02.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0487362565969118,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -5.753762098909429,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 03",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 03.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0301728596309794,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -8.598549215516368,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 04",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 04.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.003862752891835,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -9.606667396453638,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 05",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 05.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0053108481369495,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -8.61186302217246,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 06",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 06.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0076724411453932,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -7.9496830326216665,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 07",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 07.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 0.9970012472402288,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -10.123823278602542,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 08",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 08.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 0.9960198677998394,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -10.615380836610429,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 09",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 09.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0282261048136396,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -10.321986693826421,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 10",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 10.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0171505957218576,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -5.4271260146460545,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 11",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 11.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0126936803308952,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -6.284262298239476,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 12",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 12.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0001514620595884,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -6.243642169767963,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 13",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 13.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0143070890422108,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -6.097717703458774,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 14",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 14.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0117331975131922,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -7.656410600400898,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 15",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 15.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0153835870879984,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -7.736092330835322,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 16",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 16.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0317737931625668,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -6.18750881683571,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 17",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 17.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0335552811078208,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -7.3012853977398215,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 18",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 18.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0309312560132935,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -8.22385781204964,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 19",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 19.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0498608946140573,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -1.0227678930966246,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 20",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 20.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 0.9911765392614942,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -2.014675969139591,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 21",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 21.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0317604498310207,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -3.7805335801594335,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 22",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 22.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0497949284407615,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 0.6683057575065898,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 23",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 23.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0447886611748545,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 0.4700279680379491,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 24",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 24.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0373111133803807,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -6.0679068045645845,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 25",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 25.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0575676154714915,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -4.36339140735177,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 26",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 26.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0520754219905009,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -5.526724525860839,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 27",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 27.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0377412959196826,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -7.495422777272797,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 28",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 28.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.050122182288455,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -2.0148856925473684,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 29",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 29.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0499423756286481,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 0.7443554713175499,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 30",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 30.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0475000143077804,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -3.3339931812725503,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 31",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 31.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 0.9819999933242798,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 0.0,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 32",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 32.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 0.9830999970440826,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 2.5689602102253253,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 33",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 33.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 0.9972000122099188,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 4.194689323548898,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 34",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 34.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0123000144989633,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 3.174992120354937,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 35",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 35.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0492999553700846,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 5.630053976377853,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 36",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 36.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0635000467313276,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 8.322917775662972,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 37",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 37.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0277999639538207,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 2.4211069407870425,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 38",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 38.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0264999866511255,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": 7.807727011201094,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    },
+    {
+      "name": "Bus 39",
+      "cls": "ElmTerm",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\Bus 39.ElmTerm",
+      "values": {
+        "m:u": {
+          "value": 1.0299999713912134,
+          "unit": "p.u.",
+          "description": "Voltage, Magnitude"
+        },
+        "m:phiu": {
+          "value": -10.052961456167521,
+          "unit": "deg",
+          "description": "Voltage, Angle"
+        }
+      }
+    }
+  ],
+  "generators": [
+    {
+      "name": "G 01",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 01.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 1000.0000000044744,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 88.2814146403073,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 1000.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 02",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 02.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 520.8110721498872,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 198.2517844987133,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 0.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 03",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 03.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 650.0000000040932,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 205.14437083018146,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 650.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 04",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 04.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 632.0000000133651,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 109.90598138917011,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 632.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 05",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 05.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 508.0000000058832,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 165.7636490602743,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 254.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 2,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 06",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 06.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 650.0000000068778,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 212.41182687187566,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 650.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 07",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 07.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 560.0000000012865,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 101.17500985230745,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 560.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 08",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 08.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 540.0000000049454,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 0.4399264024099807,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 540.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 09",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 09.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 830.0000000050056,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 22.84162464093977,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 830.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    },
+    {
+      "name": "G 10",
+      "cls": "ElmSym",
+      "path": "\\usuario.IntUser\\IEEE39_PAR_20261012_0245\\IEEE39_NewEngland_PAR_20261012.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\G 10.ElmSym",
+      "values": {
+        "m:P:bus1": {
+          "value": 250.0000000053884,
+          "unit": "MW",
+          "description": "Active Power"
+        },
+        "m:Q:bus1": {
+          "value": 146.15817815359034,
+          "unit": "Mvar",
+          "description": "Reactive Power"
+        },
+        "pgini": {
+          "value": 250.0,
+          "unit": "MW",
+          "description": "Dispatch: Active Power"
+        },
+        "ngnum": {
+          "value": 1,
+          "unit": " ",
+          "description": "Number of: parallel Machines"
+        }
+      }
+    }
+  ]
+}

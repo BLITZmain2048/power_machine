@@ -1,0 +1,38 @@
+IEEE 39 case provenance and use
+
+Source: MATPOWER/matpower, data/case39.m
+https://github.com/MATPOWER/matpower/blob/b6c85b0323d20fb801cab3377c803a285d730847/data/case39.m
+Commit: b6c85b0323d20fb801cab3377c803a285d730847
+Upstream file SHA-256: 440833f998d1d8768c620477dacb6afd4e03f25f394bb0d200524513ad3fdc3c
+Consulted and numerically checked by the coordinator on 2026-11-18.
+The 39 buses, 10 generators and 46 branches used here have maximum numerical
+difference 0 from the source file. This attribution records that check rather
+than claiming a new independent upstream verification.
+
+Transcribed columns in case39.py:
+BUS: bus number, bus type, Pd [MW], Qd [Mvar], area, Vm [p.u.], Va [degrees].
+GEN: bus, Pg [MW], Qg [Mvar], Qmax [Mvar], Qmin [Mvar], Vg [p.u.].
+BR: from bus, to bus, r [p.u.], x [p.u.], b [p.u.], rateA [MVA], tap ratio.
+A zero tap denotes an ordinary branch. The stored numerical columns retain
+their MATPOWER values. The file does not transcribe unused case columns.
+
+model.json is produced by power_machine/benchmarks/ieee39.py from these tables.
+The model uses a 100 MVA system base and a nominal frequency of 60 Hz.
+For lines, Zbase = Ubase^2 / Sbase, R1 = r * Zbase, X1 = x * Zbase,
+and total B1 [microSiemens] = b / Zbase * 1e6. Transformer impedance is
+converted from the system base to the equipment rating base, and nonzero
+ratios are represented as fixed tap ratios. Element IDs and source-row
+mappings retain the correspondence to the transcribed rows. Published Vm/Va
+are reference values and are not used as the Newton initial voltage state.
+
+Load the case with power_machine.load_case("ieee39"). See docs/validation.md
+for comparison coverage and limits. Classical dynamic parameters in
+dynamic_data.json have separate provisional provenance, described in
+validation/DYNAMIC_DATA_PROVENANCE.md, and are not part of the static MATPOWER
+column transcription. Native RMS reference comparisons have partial coverage.
+These comparisons do not establish global equivalence with PowerFactory.
+
+Case data are not covered by this repository's MIT License. See NOTICE for
+provenance, the separate status of data and models, and distribution conditions.
+
+Local power_machine/cases/ieee39/case39.py SHA-256: 708e03e1076ea1e7060e1d78da3ee96edd2056ab76d66cc817294abbea25890d

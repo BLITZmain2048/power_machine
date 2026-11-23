@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "power-machine"
+dynamic = ["version"]
+description = "Power-system studies in Python"
+requires-python = ">=3.10"
+dependencies = ["numpy"]
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "BLITZmain2048" }]
+readme = "README.md"
+keywords = ["power systems", "load flow", "contingency analysis", "short circuit", "dynamic simulation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://github.com/BLITZmain2048/power_machine"
+Repository = "https://github.com/BLITZmain2048/power_machine"
+Issues = "https://github.com/BLITZmain2048/power_machine/issues"
+
+[project.optional-dependencies]
+fast = ["scipy"]
+gui = ["matplotlib"]
+tables = ["pandas"]
+dev = ["pytest"]
+
+[project.scripts]
+power-machine = "power_machine.cli:main"
+power-machine-mcp = "power_machine.mcp:main"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {attr = "power_machine.__version__"}
+
+[tool.setuptools.packages.find]
+namespaces = false
+include = ["power_machine*"]
+
+[tool.setuptools.package-data]
+power_machine = [
+    "dynamics/iec_pf_parameters.json",
+    "gui/assets/*",
+    "gui/locale/*.json",
+    "cases/ieee39/case39.py",
+    "cases/ieee39/model.json",
+    "cases/ieee39/dynamic_data.json",
+    "cases/ieee39/LEEME.txt",
+    "cases/ieee39/results/CC/supplemental_data.json",
+    "cases/ieee39_pf/model.json",
+    "cases/ieee39_pf/modelo/*.json",
+    "cases/ieee39_pf/E39-DIN-01/configuration.json",
+    "cases/ieee39_pf/E39-DIN-01/effective_command_options.json",
+    "cases/ieee39_pf/E39-DIN-01/report.json",
+    "cases/ieee39_pf/E39-DIN-01/assessment.json",
+    "cases/ieee39_pf/E39-DIN-02/configuration.json",
+    "cases/ieee39_pf/E39-DIN-02/effective_command_options.json",
+    "cases/ieee39_pf/E39-DIN-02/report.json",
+    "cases/ieee39_pf/E39-DIN-02/assessment.json",
+    "cases/ieee39_pf/E39-DIN-03/configuration.json",
+    "cases/ieee39_pf/E39-DIN-03/effective_command_options.json",
+    "cases/ieee39_pf/E39-DIN-03/report.json",
+    "cases/ieee39_pf/E39-DIN-03/assessment.json",
+    "cases/ieee39_pf/E39-LF-01/*.csv",
+    "cases/ieee39_pf/E39-LF-01/*.json",
+    "cases/ieee39_pf/E39-CC-01/*.csv",
+    "cases/ieee39_pf/E39-CC-01/*.json",
+    "cases/ieee39_pf/E39-CC-01/*.txt",
+    "cases/ieee39_pf/E39-CC-02/*.json",
+    "cases/ieee39_pf/E39-CC-03/*.json",
+]

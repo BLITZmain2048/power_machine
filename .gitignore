@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+power_machine_resultados/
+build/
+dist/
+*.egg-info/
