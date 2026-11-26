@@ -1,8 +1,10 @@
+import pytest
 """Optional PF campaigns do not require folders or create partial NET outputs."""
 from pathlib import Path
 from power_machine.pfcompare import lf, net
 
 
+@pytest.mark.pfdata
 def test_lf_runs_base_and_reports_missing_contingency_campaigns(monkeypatch,tmp_path):
     import power_machine.benchmarks.ieee39_pf as benchmark
     import importlib
@@ -28,3 +30,4 @@ def test_net_reports_missing_reference_before_model_reads_or_outputs(monkeypatch
     assert result['E39-NET-01']['status']=='reference_not_included'
     assert result['E39-NET-01']['pass'] is None
     assert not output.exists()
+

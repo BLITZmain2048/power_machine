@@ -115,7 +115,7 @@ def test_window_preferences_and_capability_details(gui):
     app.save_window_preferences()
     value=json.loads(app.workspace_preferences_path().read_text(encoding='utf-8'))
     assert value['main_geometry'].startswith('1100x700')
-    assert value['panel_options']['workspace']['sidebar']==280
+    assert value['panel_options']['workspace_v3']['sidebar']==280
     app.geometry('1000x600')
     app.restore_window()
     app.update()

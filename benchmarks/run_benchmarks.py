@@ -61,7 +61,7 @@ def make_job(study, size, backend, island_reference):
     if study == "sc":
         from power_machine.sc_sweep import run_sweep
         from power_machine.resources import required_readonly_path, output_root
-        data = json.loads(required_readonly_path("cases", "ieee39", "results", "CC", "supplemental_data.json").read_text(encoding="utf-8"))
+        data = json.loads(required_readonly_path("cases", "ieee39", "shortcircuit_data.json").read_text(encoding="utf-8"))
         options = {"method": "iec60909", "case": "maximum", "frequency_hz": 60.,
                    "profile": "iec_radial_v1", "fault_kind": "3ph", "backend": backend}
         return lambda: run_sweep(model, {}, options, data, root=output_root())

@@ -280,7 +280,7 @@ def run_comparisons(pf_dir, output_dir=None, *, model=None):
                               "included":False, "pass":None,
                               "limitation":"The reference export does not include E39-NET-01."}}
     target = Path(output_dir).resolve() if output_dir is not None else writable_root() / "comparacion_pf" / "red"
-    base_bytes = MODEL_PATH.read_bytes() if model is None else canonical_json(model).encode("utf-8")
+    base_bytes = (source / "model.json").read_bytes() if model is None else canonical_json(model).encode("utf-8")
     base = json.loads(base_bytes.decode("utf-8-sig"))
     base_result = run_loadflow(base, options=LDF_OPTIONS)
     base_comparison = compare_loadflow(base, base_result, read_reference(source / "E39-LF-01"))
@@ -317,7 +317,7 @@ def run_comparisons(pf_dir, output_dir=None, *, model=None):
         restored = materialize_variant(base, load_variant(target / tag / "variant.json"))
         checks["variant_storage_bits"] = bit_fingerprint(restored) == bit_fingerprint(model)
         checks.update(export_roundtrip(model, mappings, target / tag / "model_export.json"))
-        checks["base_file_unchanged"] = MODEL_PATH.read_bytes() == base_bytes
+        checks["base_file_unchanged"] = (source / "model.json").read_bytes() == base_bytes
         if tag == "B":
             completion = json.loads((folder / "export_completion.json").read_text(encoding="utf-8-sig"))
             view = canonical_reference_model(comparison_model(model, mappings), reference)

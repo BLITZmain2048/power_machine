@@ -7,6 +7,8 @@ def is_native_case(model, study):
     from power_machine.modal.results import fingerprint
     if model.get('meta', {}).get('benchmark') != 'ieee39_pf' or any(study.get('scenario', {}).values()):
         return False
+    from power_machine.resources import pf_data_available, PFReferenceDataError
+    if not pf_data_available(): raise PFReferenceDataError()
     reference = json.loads(readonly_path('cases', 'ieee39_pf', 'model.json').read_text(encoding='utf-8-sig'))
     try:
         return fingerprint(model) == fingerprint(reference)

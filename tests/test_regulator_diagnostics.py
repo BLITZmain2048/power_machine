@@ -13,7 +13,12 @@ from power_machine.dynamics.native_registry import CONTROLLER_MODELS
 from power_machine.pfcompare.regulator_experiment import build_variant, comparator_options, fresh_output
 from power_machine.pfcompare import rms_network as rms_replay, modal_network as mod
 
-PARAMS = [0., 5., .06, -.0198, .5, .08, 1., 2.342286, .13, 3.123048, .34, -1., 1.]
+import json
+from power_machine.resources import pf_data_available
+_private = json.loads((DEFAULT_PF_DIR / "avr_regression.json").read_text()) if pf_data_available() else {}
+PARAMS = _private.get("params")
+PF_EFD = _private.get("efd")
+PF_VOLTAGE = _private.get("voltage")
 
 
 def test_exponential_passes_exported_points_without_free_parameters():
@@ -24,10 +29,10 @@ def test_exponential_passes_exported_points_without_free_parameters():
     assert CONTROLLER_MODELS["avr_IEEET1.BlkDef"] is IEEET1AVR
 
 
-@pytest.mark.parametrize("efd", [.1, 1.2, 2.2318306, 4.])
+@pytest.mark.parametrize("efd", [.1, 1.2, PF_EFD, 4.])
 def test_drop_derivative_and_complete_jacobian_by_independent_stencil(efd):
     c = ExponentialIEEET1AVR("id", "path", PARAMS)
-    x,u = c.initialize({"Efd": 2.2318306, "Vt": .9831})
+    x,u = c.initialize({"Efd": PF_EFD, "Vt": PF_VOLTAGE})
     x[2] = efd
     h = 1e-6
     numerical = (c._saturation_drop(efd+h)[0]-c._saturation_drop(efd-h)[0])/(2*h)
@@ -50,7 +55,7 @@ def test_drop_derivative_and_complete_jacobian_by_independent_stencil(efd):
 def test_frozen_auxiliary_independent_of_physical_avr_and_positive_tr():
     lag = ExponentialIEEET1AVR("id", "path", PARAMS)
     frozen = ExponentialIEEET1AVR("id", "path", PARAMS, frozen_measurement=True)
-    x,u=lag.initialize({"Efd":2.2318306,"Vt":.9831})
+    x,u=lag.initialize({"Efd":PF_EFD,"Vt":PF_VOLTAGE})
     u["Vt"] = .9
     y,dx=lag.evaluate(0.,x,u)
     yf,dxf=frozen.evaluate(0.,x,u)
@@ -61,7 +66,7 @@ def test_frozen_auxiliary_independent_of_physical_avr_and_positive_tr():
     positive=PARAMS.copy()
     positive[0]=.02
     c=ExponentialIEEET1AVR("id","path",positive,frozen_measurement=True)
-    assert c.evaluate(0.,x,u)[1][0] == pytest.approx((.9-.9831)/.02)
+    assert c.evaluate(0.,x,u)[1][0] == pytest.approx((.9-PF_VOLTAGE)/.02)
 
 
 @pytest.mark.parametrize("s1,s2", [(-.1,.3),(0.,.3),(.3,.1)])
@@ -162,3 +167,6 @@ def test_full_variant_equilibrium_only_avr_changed_and_transform_bijective(offli
     xr=[i for i,r in enumerate(states) if "\\AVR " in r["model"] and r["state"]=="xr"]
     np.testing.assert_allclose(ma[xr],0.,atol=1e-9)
 
+
+import pytest
+pytestmark = [pytest.mark.pfdata]

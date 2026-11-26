@@ -8,18 +8,12 @@ Preliminary release **0.1.0**. [Spanish version](README.es.md).
 ![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%20to%203.13-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-![Native RMS compared with a PowerFactory reference for IEEE 39](docs/images/05_rms_falla.png)
 
-*IEEE 39 native RMS, 166 states, 1 ms step and a 1.2 s comparison window. The plot shows two channels that meet their published criteria.*
+![IEEE 39](docs/images/01_ieee39.png)
 
 ## Highlights
 
-- Imports PowerFactory CSV exports while retaining stable element identity and provenance.
-- Runs AC load flow, N-1 and N-2 contingencies, profile-based IEC 60909 short circuit, RMS, CCT, modal, PV/QV, and quasi-dynamic studies.
-- The included IEEE 39 comparisons show maximum errors of approximately 1.215e-9 p.u. for load-flow voltage and 2.600e-8 relative for Ik''. See the [validation evidence](docs/validation.md).
-- Runs reproducible parallel campaigns with deterministic seeds, checkpoints, and resume support.
-- Provides an MCP server with 23 tools, resources, and prompts for agents, alongside a typed API, CLI, and desktop GUI.
-- Uses only the Python standard library and NumPy for the core path, with SciPy available as an optional acceleration extra.
+AC load flow, contingency analysis, short circuit with explicit source data, classical RMS, and a desktop GUI. The default IEEE 39 network is derived from MATPOWER case39.
 
 ## Install
 
@@ -105,12 +99,6 @@ server  before_status: completed, after_status: completed
 
 The desktop application keeps the network, study document, and stale results visibly separate. It offers load flow, contingency ranking, short-circuit input, RMS workflows, and batch controls where the study profile permits them.
 
-| IEEE 39 network | Load flow | Short circuit | N-1 ranking |
-| --- | --- | --- | --- |
-| ![Network](docs/images/01_ieee39.png) | ![Load flow](docs/images/02_flujo.png) | ![Short circuit](docs/images/03_cortocircuito.png) | ![N-1](docs/images/04_n1.png) |
-
-See [GUI use and limits](docs/gui.md). The five-step [GUI tour](docs/images/recorrido.gif) is a recording of these views.
-
 ## Parallel batches
 
 Independent load-flow and contingency scenarios can run through a persistent spawned worker pool. Inputs, seeds, checkpoints, cancellation, and per-scenario failures are explicit. A worker prepares its own model snapshot and limits BLAS threads. See [batch campaigns](docs/batch.md) for the reproducible API and CLI manifest.
@@ -126,19 +114,6 @@ Independent load-flow and contingency scenarios can run through a persistent spa
 | PV, QV, sensitivities | Implemented | Explicit study inputs are required |
 | CSV import | Partial | Imports documented export fields only, never inferred electrical data |
 | GUI, CLI, MCP, batches | Implemented | GUI remains Spanish in this release |
-
-## IEEE 39 comparison evidence
-
-| Study and profile | Evidence | Published result |
-| --- | --- | --- |
-| AC load flow | Included IEEE 39 PowerFactory comparison | 39 buses, 46 branches, 10 generators. Maximum errors: 1.215e-9 p.u. voltage, 4.237e-7 degrees, 4.205e-6 Mvar branch reactive flow |
-| Network editing | No included export | Not compared |
-| 3-phase short circuit `iec_pf2016_c1_v1` | Included 39-bus comparison | Maximum relative errors: 2.600e-8 Ik'', 2.587e-8 ip, 7.176e-8 Ib. 102 contributions per quantity and 39 KCL residuals pass |
-| Classical RMS IEEE 39 | Internal parity and analytical balance | Not compared with PowerFactory. It is a 20-state model distinct from native RMS |
-| Native RMS IEEE 39, 166 states | Three included comparisons to 1.2 s | Partial evidence: 26/29, 26/29, and 27/29 channels meet their published maximum criterion in E39-DIN-01/02/03 |
-| RMS resolution and analytical cases | h, h/2, h/4 checks and closed-form cases | Declared smooth-interval checks and seven analytical cases pass. This is not a global order claim across events |
-
-Run `python -m validation` to reproduce the included comparison report. Details are in [validation](docs/validation.md).
 
 ## Performance measurements
 
@@ -170,7 +145,6 @@ All completed load-flow runs converged. The 5,000- and 10,000-bus sparse runs us
 
 ## Limits
 
-- IEEE 39 comparison evidence is study-specific. Network editing has no included comparison and native RMS has incomplete or out-of-criterion channels.
 - Imported CSV data must contain the electrical, sequence, control, and dynamic information required by the requested study. Missing data remains missing.
 - Short circuit, RMS, and CCT are limited to their declared source data and profiles.
 - N-1 ranking reports calculated constraints and topology outcomes. It does not establish operating feasibility, protection coordination, frequency response, or reserves.
@@ -192,4 +166,7 @@ Run `python -m pytest -m "not gui"` for the non-GUI suite and `python -m validat
 
 ## License, data notice, and citation
 
-The source code is MIT licensed. IEEE 39 case data and comparison exports have separate provenance and terms described in [NOTICE](NOTICE). They are not covered by the code license. Cite the software using [CITATION.cff](CITATION.cff).
+The source code is MIT licensed. IEEE 39 case data  have separate provenance and terms described in [NOTICE](NOTICE). They are not covered by the code license. Cite the software using [CITATION.cff](CITATION.cff).
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

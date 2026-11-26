@@ -4,7 +4,7 @@ Power Machine exposes a stdio Model Context Protocol server through `power-machi
 
 ## MCP client configuration
 
-After installing the package into the selected Python environment, add this to Claude Desktop:
+After installing the package into the selected Python environment, add this to your desktop MCP client:
 
 ```json
 {
@@ -16,10 +16,10 @@ After installing the package into the selected Python environment, add this to C
 }
 ```
 
-For Claude Code:
+For a command-line MCP client:
 
 ```console
-claude mcp add power-machine -- power-machine-mcp
+power-machine-mcp
 ```
 
 For an uninstalled checkout, replace `power-machine-mcp` with the absolute path to the intended Python interpreter followed by `-m power_machine.mcp`, and set `PYTHONPATH` to the checkout root. Do not put a personal or project-workspace path in shared configuration.
@@ -41,3 +41,6 @@ Call `study_capabilities` before an unfamiliar study. It reports missing data ra
 5. Create an alternative with `copy_network`, edit only explicit attributes, then use `compare_results`.
 
 The server keeps open networks in its session and never treats a comparison as engineering acceptance. Close a network when it is no longer needed.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

@@ -73,11 +73,11 @@ def advance(solver, state, end):
 
 @pytest.mark.parametrize('mode', range(5))
 def test_loadflow_equilibrium_modes_and_bases(mode):
-    d, g, sol, state = setup(.01, mode)
-    v = state.v[sol.network.index_of_bus('gen')]
+    d, g, solver, state = setup(.01, mode)
+    v = state.v[solver.network.index_of_bus('gen')]
     assert np.max(abs(d.f(0., state.x, [], v))) < 1e-8
     assert v*d.current_injection(state.x, v).conjugate()*200 == pytest.approx(60+5j)
-    end = advance(sol, state.copy(), .1)
+    end = advance(solver, state.copy(), .1)
     np.testing.assert_allclose(end.x, state.x, atol=1e-9)
 
 
@@ -85,7 +85,7 @@ def test_loadflow_equilibrium_modes_and_bases(mode):
 def test_network_events_and_halving(event):
     results = []
     for h in (.004, .002, .001):
-        d, g, sol, state = setup(h)
+        d, g, solver, state = setup(h)
         before_q = d.xWTref
         if event == 'qref':
             d.xWTref += .1
@@ -93,9 +93,9 @@ def test_network_events_and_halving(event):
             g.emf = .95+0j
         else:
             g.emf = .2+0j
-        state, _ = sol.solve_algebraic(state)
-        state = advance(sol, state, .12)
-        v = state.v[sol.network.index_of_bus('gen')]
+        state, _ = solver.solve_algebraic(state)
+        state = advance(solver, state, .12)
+        v = state.v[solver.network.index_of_bus('gen')]
         y, _, _ = d.signals(state.t, state.x, v)
         assert np.isfinite(state.x).all()
         assert abs(d.current_injection(state.x, v))*2 <= 1.2+1e-10
@@ -106,9 +106,9 @@ def test_network_events_and_halving(event):
             assert y['qWT'] > 0
             assert state.x[14] == pytest.approx(d.pWTref)
             g.emf = 1.+0j
-            state, _ = sol.solve_algebraic(state)
-            state = advance(sol, state, .3)
-            v = state.v[sol.network.index_of_bus('gen')]
+            state, _ = solver.solve_algebraic(state)
+            state = advance(solver, state, .3)
+            v = state.v[solver.network.index_of_bus('gen')]
             assert d.signals(state.t, state.x, v)[0]['FFRT'] == 0
         results.append(np.r_[state.x, state.v.real, state.v.imag])
     coarse, fine = np.max(abs(results[0]-results[1])), np.max(abs(results[1]-results[2]))

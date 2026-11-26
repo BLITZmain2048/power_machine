@@ -3,7 +3,7 @@ from collections import defaultdict
 from queue import SimpleQueue,Empty
 import threading
 
-TOPICS=('selection.changed','element.open','network.edited','results.updated','results.stale','theme.changed','language.changed','study.event.requested','diagram.overlay.changed')
+TOPICS=('selection.changed','element.open','network.edited','results.updated','results.stale','theme.changed','language.changed','study.event.requested','diagram.overlay.changed','diagram.mode.changed','time.cursor')
 class EventBus:
     def __init__(self,root=None):
         self._callbacks=defaultdict(dict)

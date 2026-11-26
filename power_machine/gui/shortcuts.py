@@ -5,7 +5,7 @@ from .i18n import tr
 
 
 STUDY_KEYS = {
-    '<F10>':'run_loadflow', '<F11>':'initial_conditions', '<F12>':'simulation_dialog',
+    '<F11>':'initial_conditions', '<F12>':'simulation_dialog',
     '<Escape>':'stop', '<F9>':'focus_other', '<Control-s>':'save_case',
     '<Control-o>':'open_case', '<Control-n>':'new_case', '<Control-z>':'undo', '<Control-y>':'redo',
 }

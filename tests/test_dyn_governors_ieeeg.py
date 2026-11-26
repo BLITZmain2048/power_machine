@@ -5,6 +5,10 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+import json
+from power_machine.resources import pf_data_root, pf_data_available
+_private = json.loads((pf_data_root() / "governor_regression.json").read_text()) if pf_data_available() else {}
+pytestmark = pytest.mark.pfdata
 
 from power_machine.dynamics.controllers import ControlledSynchronousMachine
 from power_machine.dynamics.governors_ieeeg import (
@@ -13,21 +17,11 @@ from power_machine.dynamics.governors_ieeeg import (
 from power_machine.dynamics.interfaces import finite_difference_jacobian
 
 
-# Vectores completos de controllers.json IEEE 39 reference export.
-# GOV 02..09 tienen el mismo vector. Sin lectura externa en las pruebas.
-PF_G1 = (5, .2, 1, .6, .3, 0, .5, .25, 0, .8, .3, 0, .6, 1, .15, 0,
-         0, 0, -.3, 0, .3, 1)
-PF_G3 = (.05, .04, .04, .2, 10, .5, 1, 1.5, 1, .75, 0, -.1, 0, .1, 1)
+PF_G1 = _private.get("PF_G1")
+PF_G3 = _private.get("PF_G3")
 
-# E39-LF-01/generators.csv y TypSym del mismo export. Sgn es por unidad,
 # la potencia LF es total. Rstr=dpu=0 en estas nueve máquinas.
-PF_LF = (
-    (2, 700, 1, 520.8110721498872), (3, 800, 1, 650.0000000040932),
-    (4, 800, 1, 632.0000000133651), (5, 300, 2, 508.0000000058832),
-    (6, 800, 1, 650.0000000068778), (7, 700, 1, 560.0000000012865),
-    (8, 700, 1, 540.0000000049454), (9, 1000, 1, 830.0000000050056),
-    (10, 1000, 1, 250.0000000053884),
-)
+PF_LF = _private.get("PF_LF")
 
 
 def _governor(family, *, pgn_mw=500, turbine="HP", **changes):
@@ -345,31 +339,21 @@ def test_exported_native_local_blocks_and_similarity_coordinates():
     x, u = g1.initialize({"pm": .5})
     df = g1.jacobian(0, x, u)[0]
     # La coordenada PF x0 es -K*speed_lag, las demás conservan escala.
-    scale = np.diag([-5, 1, 1, 1, 1, 1])
-    native_g1 = np.array([
-        [-5, 0, 0, 0, 0, 0],
-        [-20/3, -5/3, 0, 0, 0, 0],
-        [0, 5/3, -5/3, 0, 0, 0],
-        [0, 0, 2, -2, 0, 0],
-        [0, 0, 0, 1.25, -1.25, 0],
-        [0, 0, 0, 0, 1, -1],
-    ])
+    scale = np.diag(_private["coordinate_scale"])
+    native_g1 = np.array(_private["native_g1"])
     np.testing.assert_allclose(scale@df[:, :6]@np.linalg.inv(scale), native_g1, atol=1e-11)
-    np.testing.assert_allclose(scale@df[:, 7], [-25, -125/3, 0, 0, 0, 0], atol=1e-11)
+    np.testing.assert_allclose(scale@df[:, 7], _private["input_column_g1"], atol=1e-11)
     g3 = _governor("G3")
     x, u = g3.initialize({"pm": .5})
     df = g3.jacobian(0, x, u)[0]
-    native_g3 = np.array([
-        [0, 0, 1, 0], [8/3, -8/3, 0, 0],
-        [-120, 0, -25, 100], [.1, 0, 0, -.1],
-    ])
+    native_g3 = np.array(_private["native_g3"])
     np.testing.assert_allclose(df[:, :4], native_g3, atol=1e-11)
-    np.testing.assert_allclose(df[:, 5], [0, 0, -500, 0], atol=1e-11)
+    np.testing.assert_allclose(df[:, 5], _private["input_column_g3"], atol=1e-11)
 
 
 def test_backward_initialization_at_all_nine_exported_loadflow_powers():
     for index, sgn_mva, n_units, p_total_mw in PF_LF:
-        pgn_mw = sgn_mva*.8500000238418579
+        pgn_mw = sgn_mva*_private["cosn"]
         family = "G1" if index < 10 else "G3"
         gov = _governor(family, pgn_mw=pgn_mw)
         pm_machine_pu = p_total_mw/(n_units*pgn_mw)

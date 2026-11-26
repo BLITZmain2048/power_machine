@@ -102,7 +102,7 @@ class PanelCoordination:
         configure = getattr(panel, 'configure_case', None)
         if not callable(configure):
             return
-        path = self.model_path.parent / 'results/CC/supplemental_data.json'
+        path = self.model_path.parent / 'shortcircuit_data.json'
         config = dict(frequency_hz=self.model['meta']['f_nom_hz'],
                       q_limits=self.document.study.ldf_options.get('q_limits', False),
                       supplemental_path=str(path) if path.is_file() else '')

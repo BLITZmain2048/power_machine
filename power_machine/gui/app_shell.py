@@ -46,34 +46,9 @@ from .toolbar_icons import icon
 
 
 def show_start_page(app):
-    """Primer paso operativo, sin ejes vacíos antes de la primera corrida."""
-    page = ttk.Frame(app.book, padding=28)
-    heading = ttk.Label(page, font=theme.font('heading'), wraplength=760)
-    heading.pack(anchor='w', pady=(8,18))
-    detail = ttk.Label(page, wraplength=760, justify='left')
-    detail.pack(anchor='w', pady=(0,24))
-    page.bind('<Configure>',lambda event:(heading.configure(wraplength=max(200,event.width-60)),detail.configure(wraplength=max(200,event.width-60))))
-    actions = ttk.Frame(page)
-    actions.pack(anchor='w')
-    buttons = []
-    for position,(key, command) in enumerate([('shell.load_flow',app.run_loadflow), ('shell.events',app.events),
-                         ('shell.rms_simulation',app.simulation_dialog), ('int2.view_diagram',app.open_diagram),
-                         ('study.manager',app.study_selector)]):
-        button = ttk.Button(actions, command=command)
-        button.grid(row=position//2,column=position%2,sticky='ew',padx=4,pady=5)
-        buttons.append((button,key))
-    def retranslate():
-        heading.configure(text=tr('int2.start_heading'))
-        detail.configure(text=tr('int2.start_detail'))
-        for button,key in buttons:
-            button.configure(text=tr(key))
-        app.book.tab(page,text=tr('int2.start_title'))
-    app.book.add(page,text=tr('int2.start_title'))
-    page.retranslate = retranslate
-    app.welcome_page = page
-    retranslate()
-    app.book.select(page)
-    return page
+    from .start_page import show_start_page as build
+    return build(app)
+
 
 
 class WorkspaceNotebook(ttk.Notebook):
@@ -86,20 +61,23 @@ class WorkspaceNotebook(ttk.Notebook):
         self.on_close, self.can_close = on_close, can_close
         self.bar = ttk.Frame(parent, padding=(0, 2))
         self.bar.pack(fill='x')
-        ttk.Button(self.bar, text='◀', width=2, command=lambda: self.scroll(-1)).pack(side='left')
-        self.canvas = tk.Canvas(self.bar, height=28, highlightthickness=0, background=theme.color('bg'))
+        self.previous_button=ttk.Button(self.bar,text='◀',width=2,command=lambda:self.scroll(-1))
+        self.previous_button.pack(side='left')
+        self.canvas = tk.Canvas(self.bar, height=26, highlightthickness=0, background=theme.color('bg'))
         self.canvas.pack(side='left', fill='x', expand=True)
         self.inner = ttk.Frame(self.canvas)
         self.canvas.create_window(0, 0, window=self.inner, anchor='nw')
-        self.list_button = ttk.Menubutton(self.bar, text='▾', width=2)
+        self.list_button = ttk.Menubutton(self.bar, text='', width=2)
         self.list_button.pack(side='right')
         self.list_menu = tk.Menu(self.list_button, tearoff=False)
         self.list_button.configure(menu=self.list_menu)
-        ttk.Button(self.bar, text='▶', width=2, command=lambda: self.scroll(1)).pack(side='right')
+        self.next_button=ttk.Button(self.bar,text='▶',width=2,command=lambda:self.scroll(1))
+        self.next_button.pack(side='right')
         self.buttons, self.signature = {}, None
         self.inner.bind('<Configure>', self.layout_tabs)
         self.canvas.bind('<MouseWheel>', self.wheel)
-        self.canvas.bind('<Configure>', lambda event: self.ensure_visible())
+        self.canvas.bind('<Configure>', self.layout_tabs)
+        self.bar.bind('<Configure>',self.layout_tabs)
         self.bind('<<NotebookTabChanged>>', lambda event: self.sync(), add='+')
 
     def add(self, child, **kwargs):
@@ -127,7 +105,7 @@ class WorkspaceNotebook(ttk.Notebook):
             for tab, title, closable in signature:
                 frame = ttk.Frame(self.inner)
                 frame.pack(side='left', padx=(0,2))
-                button = ttk.Button(frame, text=title, padding=(8,4), command=lambda page=tab: self.select(page))
+                button = ttk.Button(frame, text=title, padding=(6,2), command=lambda page=tab: self.select(page))
                 button.pack(side='left')
                 self.buttons[tab] = (frame, button)
                 if closable:
@@ -151,6 +129,11 @@ class WorkspaceNotebook(ttk.Notebook):
 
     def layout_tabs(self,event=None):
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+        overflow=self.inner.winfo_reqwidth()>max(1,self.bar.winfo_width()-12)
+        if self.bar.winfo_width()>10:
+            for button,side in ((self.previous_button,'left'),(self.list_button,'right'),(self.next_button,'right')):
+                if overflow and not button.winfo_manager():button.pack(side=side,before=self.canvas)
+                elif not overflow and button.winfo_manager():button.pack_forget()
         self.after_idle(self.ensure_visible)
 
     def ensure_visible(self):
@@ -178,75 +161,64 @@ class WorkspaceNotebook(ttk.Notebook):
 
 
 def build_workspace(app):
-    app.case_label = tk.StringVar(value=tr('shell.loading_data'))
-    from .ribbon import build_ribbon
-    build_ribbon(app)
-    welcome=ttk.Frame(app,padding=(10,5))
-    welcome.pack(fill='x')
-    ttk.Label(welcome,text=tr('shell.network_data_and_topology_study_document_scenarios'),style='Muted.TLabel').pack(side='left')
-    ttk.Button(welcome,text=tr('shell.run_load_flow_f10'),command=app.run_loadflow).pack(side='right')
-    ttk.Button(welcome,text=tr('study.manager'),command=app.study_selector).pack(side='right',padx=5)
-    ttk.Button(welcome,text=tr('study.run_history'),command=app.run_history_dialog).pack(side='right',padx=5)
-    refresh_toolbar_icons(app)
-    welcome.pack_forget()
+    from .chrome import BrandBar, CompactToolbar, SegmentedStatus
+    from .analysis_workspace import AnalysisWorkspace
+    from .load_tools import open_load_tools
+    app.case_label=tk.StringVar(value=tr('shell.loading_data'))
+    app.brand=BrandBar(app,'v3.window.analysis',app.case_label)
+    app.brand.pack(fill='x')
+    app.configuration_text=tk.StringVar(value=tr('shell.load_flow'))
+    app.toolbar=CompactToolbar(app)
+    app.toolbar.pack(fill='x')
+    app.case_caption=ttk.Label(app.toolbar,text=tr('v3.case'),style='Toolbar.TLabel')
+    app.case_caption.pack(side='left',padx=(0,5))
+    app.case_selector=ttk.Combobox(app.toolbar,state='readonly',width=28)
+    app.case_selector.pack(side='left',padx=3)
+    app.toolbar.separator()
+    app.run_button=app.toolbar.action('v3.run',lambda:app.analysis.run_active(),'run',run=True)
+    app.stop_button=app.toolbar.action('shell.stop',app.stop,6,shortcut='Esc')
+    app.stop_button.state(['disabled'])
+    app.toolbar.separator()
+    app.toolbar.action('study.manager',app.study_selector,9)
+    app.toolbar.action('tools.diagram',app.open_diagram,'network',shortcut='F9')
+    from .chrome import ElidedLabel
+    app.configuration_label=ElidedLabel(app.toolbar,app.configuration_text,style='Toolbar.TLabel')
+    app.configuration_label.pack(side='left',fill='x',expand=True,padx=8)
+    app.action_buttons=[button for button,_,_ in app.toolbar.buttons if button is not app.stop_button]
+    app.toolbar_images=[]
+    app.menus['edit'].add_command(label=tr('tools.scale_loads'),command=lambda:open_load_tools(app))
+    from .ribbon import edit_network
+    app.menus['edit'].add_command(label=tr('tools.edit_network'),command=lambda:edit_network(app))
+    app.menus['edit'].add_command(label=tr('tools.data_short'),command=app.open_data_table)
     app.output_visible=tk.BooleanVar(value=True)
     app.vertical=ttk.Panedwindow(app,orient='vertical')
     app.vertical.pack(fill='both',expand=True)
-    app.horizontal=ttk.Panedwindow(app.vertical,orient='horizontal')
-    app.vertical.add(app.horizontal,weight=4)
-    app.data_host=ttk.Frame(app.horizontal,width=260)
-    app.horizontal.add(app.data_host,weight=1)
-    center=ttk.Frame(app.horizontal,padding=(2,0,2,0))
-    app.horizontal.add(center,weight=4)
-    app.book=WorkspaceNotebook(center,on_close=app.close_page,
-        can_close=lambda tab: str(app.diagrams.get(None)) != str(tab))
+    app.book=AnalysisWorkspace(app.vertical,app)
+    app.vertical.add(app.book,weight=1)
+    app.horizontal=app.analysis.panes
     app.book.bind('<<NotebookTabChanged>>',app.refresh_tab_navigation,add='+')
-    app.book.pack(fill='both',expand=True)
-    from .properties_dock import PropertiesDock
-    app.properties_dock=PropertiesDock(app.horizontal,app)
-    app.horizontal.add(app.properties_dock,weight=1)
-    app.output=OutputPanel(app.vertical)
-    if hasattr(app.output,'set_select_callback'):
-        app.output.set_select_callback(app.select)
-    app.vertical.add(app.output,weight=1)
+    app.case_selector.bind('<<ComboboxSelected>>',app.analysis.activate_case)
+    app.output=OutputPanel(app.analysis.result_hosts['log'])
+    app.output.pack(fill='both',expand=True)
+    app.output.set_select_callback(app.select)
+    app.windows.ensure_network()
     app.state_text=tk.StringVar(value=tr('shell.ready'))
     app.lf_state_text=tk.StringVar(value=tr('shell.lf_pending'))
     app.study_state_text=tk.StringVar(value=tr('shell.study_no_result'))
     app.time_text=tk.StringVar(value='')
     app.step_text=tk.StringVar(value='')
     app.validity_text=tk.StringVar(value=tr('shell.domain_awaiting_evaluation'))
-    app.status_fields=[]
-    def field(variable,width,formatter=lambda text:text,tooltip=None):
-        display=tk.StringVar()
-        label=ttk.Label(app.status,textvariable=display,width=width,anchor='w',padding=(4,2),font=theme.font('small'))
-        label.pack(side='left',fill='x',expand=variable is app.case_label)
-        def update(*args):
-            raw=variable.get()
-            value='' if '—' in raw else formatter(raw).replace('\n',' ')
-            display.set(value if len(value)<=width else value[:width-1]+'…')
-        variable.trace_add('write',update)
-        update()
-        Tooltip(label,tooltip or variable.get)
-        ttk.Separator(app.status,orient='vertical').pack(side='left',fill='y',pady=3)
-        app.status_fields.append(label)
-        return label
-    field(app.case_label,36)
-    def compact_lf(text):
-        if text.startswith(('LF · Flujo convergente en', 'LF · Load flow converged in')):
-            numbers=re.findall(r'\d+',text)
-            return tr('shell.lf_ok')+(numbers[1]+tr('shell.islands_without_supply') if len(numbers)>1 else tr('shell.converged'))
-        return text.replace('LF · Flujo convergente',tr('shell.lf_converged')).replace('LF · pendiente tras cambios',tr('shell.lf_pending_511521'))
-    field(app.lf_state_text,20,compact_lf)
-    field(app.study_state_text,20,lambda text:text.replace(tr('shell.study'),'').replace('calculando o finalizando cancelación',tr('shell.computing_cancelling')))
-    field(app.time_text,18,lambda text:text.replace('t = ','t=').replace(' / ','/'))
-    field(app.step_text,12)
-    app.progress=ttk.Progressbar(app.status,length=80,maximum=100)
-    app.progress.pack(side='left',padx=4)
-    app.validity_label=field(app.validity_text,30,lambda text: text,tooltip=lambda:getattr(app,'pf_evidence_text',''))
+    app.selection_text=tk.StringVar(value=tr('v3.no_selection'))
+    app.status_segments=SegmentedStatus(app.status,mode=app.state_text,selection=app.selection_text,
+        pf=app.validity_text,case=app.case_label,evidence=app.show_validity)
+    app.status_segments.pack(fill='x')
+    app.status_fields=app.status_segments.labels
+    app.progress=app.status_segments.progress
+    app.validity_label=app.status_segments.labels[2]
+    app.evidence_button=app.status_segments.evidence_button
+    Tooltip(app.validity_label,lambda:getattr(app,'pf_evidence_text',''))
     app.validity_label.bind('<Button-1>',lambda event:app.show_validity())
-    app.evidence_button=ttk.Button(app.status,text=tr('int2.evidence'),command=app.show_validity,style='Compact.TButton')
-    app.evidence_button.pack(side='left',padx=3)
-    Tooltip(app.status,app.state_text.get)
+
 
 
 class EditorTabStrip(ttk.Frame):
@@ -306,6 +278,9 @@ class MenuRegistry(dict):
 
 
 def refresh_toolbar_icons(app):
+    if hasattr(app.toolbar,'refresh_icons'):
+        app.toolbar.refresh_icons()
+        return
     app.toolbar_images = []
     for button in app.action_buttons + [app.stop_button]:
         n = button.action_id

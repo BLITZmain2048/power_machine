@@ -30,7 +30,9 @@ def curve_label(curve):
             name = location + ' ' + name
         if parts[2] != 'kV no disponible' and parts[2] not in name:
             name += ' ' + parts[2]
-    symbols = {'m:u': 'U', 'm:fehz': 'f', 'm:phiu': 'φ', 's:xspeed': 'ω', 's:speed': tr('plots.speed')}
+    symbols = {'m:u': 'U', 'm:fehz': 'f', 'm:phiu': 'φ', 's:xspeed': 'ω', 's:speed': tr('plots.speed'),
+               'classical:u_pu':'U','classical:omega_pu':'ω','classical:delta_deg':'δ',
+               'classical:f_hz':'f','classical:coi_frequency':'f'}
     symbol = symbols.get(variable, variable.split(':', 1)[-1])
     if variable in ('m:P:bus1', 'm:Q:bus1'):
         symbol = variable.split(':')[1]
@@ -304,6 +306,10 @@ class PlotPage(ttk.Frame):
         super().__init__(master, padding=6)
         from matplotlib.figure import Figure
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+        class ToolbarToggle(ttk.Checkbutton):
+            def select(button):button.var.set(1)
+            def deselect(button):button.var.set(0)
+
         class SpanishToolbar(NavigationToolbar2Tk):
             toolitems = tuple((text, {
                 'Home': tr('plots.home'), 'Back': tr('plots.back'), 'Forward': tr('plots.forward'),
@@ -311,32 +317,73 @@ class PlotPage(ttk.Frame):
             }.get(text, tooltip), icon, callback) for text, tooltip, icon, callback in NavigationToolbar2Tk.toolitems if text != 'Subplots')
 
             def set_message(toolbar, text):
-                for english, spanish in (('pan/zoom', 'Desplazar'), ('zoom rect', 'Ampliar región')):
-                    text = str(text).replace(english, spanish)
+                for english, key in (('pan/zoom', 'plots.pan'), ('zoom rect', 'plots.zoom')):
+                    text = str(text).replace(english, tr(key))
                 super().set_message(text.replace(';', ','))
 
             def save_figure(toolbar, *args):
                 self.export_png()
+
+            def _Button(toolbar,text,image_file,toggle,command):
+                if toggle:
+                    variable=tk.IntVar(toolbar)
+                    button=ToolbarToggle(toolbar,text=text,command=command,variable=variable,style='PlotNav.Toolbutton')
+                    button.var=variable
+                else:
+                    button=ttk.Button(toolbar,text=text,command=command,style='PlotNav.TButton')
+                button._image_file=image_file
+                toolbar._set_image_for_button(button)
+                button.pack(side='left')
+                return button
+
+            def _set_image_for_button(toolbar,button):
+                from PIL import Image,ImageTk
+                with Image.open(button._image_file) as original:
+                    pixels=np.asarray(original.convert('RGBA')).copy()
+                images=[]
+                size=18
+                for token in ('text','text_muted'):
+                    pixels[:,:,:3]=tuple(channel//257 for channel in button.winfo_rgb(theme.color(token)))
+                    images.append(ImageTk.PhotoImage(Image.fromarray(pixels).resize((size,size)),master=button))
+                button._nav_images=images
+                button.configure(image=(images[0],'disabled',images[1]))
         self.spec, self.buffer, self.reference = spec, buffer, reference
         self.source_label, self.reference_label = source_label, reference_label
         self._on_reference_toggle = on_reference_toggle
         self._cursor_points = []
+        self._time_enabled = False
+        self._time_value = None
+        self._time_artists = []
+        self._time_background = None
+        self._time_connections = []
+        self._time_samples = {}
+        self._time_verticals = []
+        self._time_markers = []
+        self._time_regions = []
+        self._toolbar_skin_id = None
         self.overlays = {}
         count = max(1, min(6, int(spec.get('axes', 1))))
         self.figure = Figure(figsize=(9, 6), dpi=100, facecolor=theme.color('surface'), layout='constrained')
         self.axes = self.figure.subplots(count, 1, sharex=True, squeeze=False).ravel().tolist()
         self.canvas = FigureCanvasTkAgg(self.figure, master=self)
         bar = ttk.Frame(self)
-        bar.pack(side='bottom', fill='x')
-        navigation = ttk.Frame(self)
-        navigation.pack(side='bottom', fill='x')
+        bar.pack(side='top',fill='x')
+        self.controls=bar
+        navigation=bar
         self.toolbar = SpanishToolbar(self.canvas, navigation, pack_toolbar=False)
         self.toolbar.pack(side='left')
-        ttk.Button(bar, text=tr('plots.export_csv'), command=self.export_csv).pack(side='right')
-        ttk.Button(bar, text=tr('plots.save_pdf'), command=self.export_pdf).pack(side='right', padx=3)
-        ttk.Button(bar, text=tr('plots.save_png'), command=self.export_png).pack(side='right', padx=3)
-        ttk.Button(bar, text=tr('plots.save_svg'), command=self.export_svg).pack(side='right', padx=3)
-        ttk.Button(bar, text=tr('plots.add_run'), command=self.import_run_csv).pack(side='right', padx=3)
+        self.toolbar.bind('<Map>',self._queue_toolbar_skin,add='+')
+        for button in self.toolbar._buttons.values():button.bind('<Map>',self._queue_toolbar_skin,add='+')
+        self.export_button=ttk.Menubutton(bar,text=tr('v3.int.export'),style='TMenubutton',width=0)
+        self.export_menu=tk.Menu(self.export_button,tearoff=False)
+        for kind in ('svg','png','pdf','csv'):
+            self.export_menu.add_command(label=kind.upper(),command=getattr(self,'export_'+kind))
+        self.export_button.configure(menu=self.export_menu)
+        self.export_button.pack(side='right',padx=3)
+        self.overlay_button=ttk.Button(bar,text=tr('v3.int.overlay'),command=self.import_run_csv,style='Toolbar.TButton')
+        self.overlay_button.pack(side='right',padx=3)
+        if 'Save' in self.toolbar._buttons:self.toolbar._buttons['Save'].pack_forget()
+        if hasattr(self.toolbar,'_message_label'):self.toolbar._message_label.pack_forget()
         self.frequency_mode = tk.StringVar(value=spec.get('frequency_mode', 'absolute'))
         self.frequency_display = tk.StringVar(value=tr('plots.frequency_' + self.frequency_mode.get()))
         self.frequency_combo = ttk.Combobox(bar, width=14, state='readonly', textvariable=self.frequency_display,
@@ -344,37 +391,52 @@ class PlotPage(ttk.Frame):
         self.frequency_combo.pack(side='right', padx=3)
         self.frequency_combo.bind('<<ComboboxSelected>>', lambda event: self.frequency_mode.set(
             ('absolute', 'deviation')[self.frequency_combo.current()]))
-        ttk.Label(bar, text=tr('plots.frequency')).pack(side='right')
+        self.frequency_label = ttk.Label(bar, text=tr('plots.frequency'))
+        self.frequency_label.pack(side='right')
         self.show_pf = tk.BooleanVar(value=spec.get('show_pf', True))
         self.reference_toggle = ttk.Checkbutton(bar, text=tr('plots.pf_reference') if reference_label in ('PF','PowerFactory') else tr('plots.compare_run'),
                                                 variable=self.show_pf, command=self.toggle_reference)
         self.reference_toggle.pack(side='right', padx=3)
         self.reference_note = tk.StringVar()
-        ttk.Label(bar, textvariable=self.reference_note, style='Muted.TLabel').pack(side='right', padx=4)
+        self.reference_note_label = ttk.Label(bar, textvariable=self.reference_note, style='Muted.TLabel',width=16)
+        from .app_shell import Tooltip
+        Tooltip(self.reference_note_label,self.reference_note.get)
+        self.reference_note_label.pack(side='right', padx=4)
         self.cursor = tk.StringVar(value=tr('plots.cursor_help'))
         self.statistics = tk.StringVar(value='')
         if source_label != 'Modelo':
             ttk.Label(self, text=tr('plots.first_run', label=source_label) + '\n' + tr('plots.second_run', label=reference_label) if reference else tr('plots.first_run', label=source_label), style='Muted.TLabel').pack(anchor='w')
-        ttk.Label(self, textvariable=self.cursor, style='Muted.TLabel').pack(anchor='w')
-        ttk.Label(self, textvariable=self.statistics, style='Muted.TLabel', wraplength=1100).pack(anchor='w')
+        self.cursor_label = ttk.Label(self, textvariable=self.cursor, style='Muted.TLabel')
+        self.cursor_label.pack(anchor='w')
+        self.statistics_label = ttk.Label(self, textvariable=self.statistics, style='Muted.TLabel', wraplength=1100)
+        self.statistics_label.pack(anchor='w')
         self.canvas.get_tk_widget().pack(fill='both', expand=True)
         self.canvas.mpl_connect('motion_notify_event', self.motion)
         self.canvas.mpl_connect('button_press_event', self.capture_cursor)
         self.canvas.mpl_connect('resize_event', lambda _event: self.canvas.draw_idle())
+        self.canvas.mpl_connect('draw_event', self._cursor_drawn)
         self.frequency_mode.trace_add('write', lambda *_: self.retranslate())
         self.gate = RefreshGate()
         self.last_version = -1
+        self._theme_subscription = None
         self._theme_changed()
         self._theme_subscription = bus.subscribe('theme.changed', self._theme_changed)
         self.bind('<Destroy>', self._dispose, add='+')
         bind_translations(self)
 
     def retranslate(self):
+        self.export_button.configure(text=tr('v3.int.export'))
+        self.overlay_button.configure(text=tr('v3.int.overlay'))
         self.frequency_combo.configure(values=(tr('plots.frequency_absolute'), tr('plots.frequency_deviation')))
         self.frequency_display.set(tr('plots.frequency_' + self.frequency_mode.get()))
         self.redraw(force=True)
 
     def _theme_changed(self, **_):
+        style=ttk.Style(self)
+        for name in ('PlotNav.TButton','PlotNav.Toolbutton'):
+            style.configure(name,background=theme.color('surface'),foreground=theme.color('text'),padding=2,borderwidth=0)
+            style.map(name,background=[('selected',theme.color('selection')),('active',theme.color('selection'))],
+                      foreground=[('disabled',theme.color('text_muted'))])
         self.toolbar.configure(background=theme.color('surface'))
         for child in self.toolbar.winfo_children():
             try:
@@ -382,18 +444,123 @@ class PlotPage(ttk.Frame):
             except tk.TclError:
                 pass
         for button in self.toolbar._buttons.values():
-            options = dict(background=theme.color('surface'), foreground=theme.color('text'),
-                           activebackground=theme.color('selection'), activeforeground=theme.color('text'),
-                           highlightbackground=theme.color('surface'))
-            if isinstance(button, tk.Checkbutton):
-                options['selectcolor'] = theme.color('selection')
-            button.configure(**options)
             self.toolbar._set_image_for_button(button)
         self.redraw(force=True)
+
+    def _queue_toolbar_skin(self,event):
+        # The shared theme styles newly mapped native widgets after their own
+        # bindings. Restore this component's image treatment once mapping ends.
+        if self._toolbar_skin_id:self.after_cancel(self._toolbar_skin_id)
+        self._toolbar_skin_id=self.after_idle(self._restore_toolbar_skin)
+
+    def _restore_toolbar_skin(self):
+        self._toolbar_skin_id=None
+        self.toolbar.configure(background=theme.color('surface'))
+        for child in self.toolbar.winfo_children():
+            try:child.configure(background=theme.color('surface'),foreground=theme.color('text'))
+            except tk.TclError:pass
+        self.toolbar.set_history_buttons()
 
     def _dispose(self, event):
         if event.widget is self:
             bus.unsubscribe(self._theme_subscription)
+            if self._toolbar_skin_id:self.after_cancel(self._toolbar_skin_id)
+            pending=getattr(self.canvas,'_idle_draw_id',None)
+            if pending:
+                try:self.after_cancel(pending)
+                except tk.TclError:pass
+                self.canvas._idle_draw_id=None
+            for callback in self._time_connections:
+                self.canvas.mpl_disconnect(callback)
+
+    def enable_time_cursor(self):
+        """Activa la presentación v3 sin modificar el documento persistido."""
+        if self._time_enabled:
+            return
+        self._time_enabled = True
+        if hasattr(self,'integration_toolbar'):
+            self.integration_toolbar.pack_forget()
+            self.toolbar.master.pack(side='bottom',fill='x',before=self.canvas.get_tk_widget())
+        self.cursor_label.pack_forget()
+        self.statistics_label.pack_forget()
+        if self.reference is None:
+            self.reference_toggle.pack_forget()
+            self.reference_note_label.pack_forget()
+        if not any(c['key'].endswith('|Hz') for c in self.spec.get('curves', [])):
+            self.frequency_combo.pack_forget()
+            self.frequency_label.pack_forget()
+        self.redraw(force=True)
+
+    def _cursor_drawn(self, event):
+        if self._time_enabled and event.canvas is self.canvas and not self.canvas.is_saving() and self.canvas.supports_blit:
+            self._time_background = self.canvas.copy_from_bbox(self.figure.bbox)
+            self._paint_cursor()
+
+    def _paint_cursor(self):
+        if self._time_background is None or not self.canvas.supports_blit:
+            return
+        from matplotlib.transforms import Bbox
+        renderer=self.canvas.get_renderer()
+        regions=[]
+        for ax,line in zip(self.axes,self._time_verticals):
+            bounds=[]
+            if line.get_visible():bounds.append(line.get_window_extent(renderer).padded(4))
+            for dot,*_ in self._time_markers:
+                if dot.axes is ax and dot.get_visible():bounds.append(dot.get_window_extent(renderer).padded(3))
+            if bounds:regions.append(Bbox.union(bounds))
+        # Legends are compact and have a fixed box. Refreshing their full box
+        # also erases digits that disappear when a value becomes unavailable.
+        for ax in self.axes:
+            legend=ax.get_legend()
+            if legend is not None:regions.append(legend.get_window_extent(renderer).padded(3))
+        dirty=self._time_regions+regions
+        self._time_regions=regions
+        self.canvas.restore_region(self._time_background)
+        for artist in self._time_artists:
+            if artist.get_visible():
+                self.figure.draw_artist(artist)
+        for region in dirty:
+            region=Bbox.intersection(region,self.figure.bbox)
+            if region is not None:self.canvas.blit(region)
+
+    def set_time_cursor(self, t):
+        """Actualiza solo líneas, marcadores y textos animados de la leyenda."""
+        if not self._time_enabled:
+            return
+        self._time_value = t
+        for line in getattr(self, '_time_verticals', []):
+            line.set_xdata([t, t] if t is not None else [0, 0])
+            line.set_visible(t is not None)
+        from .time_cursor import number
+        for marker, text, label, key, samples in getattr(self, '_time_markers', []):
+            # La instantánea se reconstruye solo cuando cambian las muestras.
+            version = (id(samples), samples.version, key, self._frequency_options())
+            cached = self._time_samples.get(version)
+            if cached is None and t is not None:
+                from .time_cursor import TemporalResult
+                try:
+                    from types import SimpleNamespace
+                    x, y, unit = self._series(samples, key)
+                    data = TemporalResult(SimpleNamespace(keys=[TIME_KEY,key],rows=np.column_stack((x,y))))
+                    cached = (data, unit)
+                    self._time_samples[version] = cached
+                except (ValueError, TypeError):
+                    pass
+            value = cached[0].sample(key, float(t)) if cached and t is not None else None
+            marker.set_data([t], [value]) if value is not None else marker.set_data([], [])
+            marker.set_visible(value is not None)
+            if text is not None:
+                unit = cached[1] if cached else key.rsplit('|', 1)[-1]
+                text.set_text(label + '  ' + (number(value, 4) if value is not None else '—') + ' ' + unit)
+        if self.canvas.get_tk_widget().winfo_ismapped():
+            if self._time_background is not None and self.canvas.supports_blit:
+                self._paint_cursor()
+            else:
+                self.canvas.draw_idle()
+
+    def set_events(self, events):
+        self._analysis_events = list(events)
+        self.redraw(force=True)
 
     def _frequency_options(self):
         return self.frequency_mode.get(), float(self.spec.get('frequency_base_hz', 50.0))
@@ -530,6 +697,11 @@ class PlotPage(ttk.Frame):
         if not force and (self.last_version == self.buffer.version or not self.gate.ready()):
             return
         self.last_version = self.buffer.version
+        self._time_background = None
+        self._time_regions = []
+        self._time_samples.clear()
+        self._time_artists, self._time_markers, self._time_verticals = [], [], []
+        sources = {}
         self.figure.set_facecolor(theme.mpl_rc()['figure.facecolor'])
         self.figure.suptitle(tr(self.spec['name_key']) if self.spec.get('name_key') else self.spec.get('name', ''), fontsize=10, color=theme.color('text'))
         reference_available = self._reference_state()
@@ -543,7 +715,7 @@ class PlotPage(ttk.Frame):
             ax.yaxis.label.set_color(rc['axes.labelcolor'])
             for spine in ax.spines.values():
                 spine.set_color(rc['axes.edgecolor'])
-            ax.grid(True, color=theme.color('grid'), linewidth=.6)
+            ax.grid(True, color=theme.color('grid'), linewidth=.5, alpha=.5 if self._time_enabled else 1)
             ax.tick_params(labelsize=8 if len(self.axes) < 5 else 7)
         legends, stats = [[] for ax in self.axes], []
         for number, curve in enumerate(self.spec.get('curves', [])):
@@ -556,6 +728,7 @@ class PlotPage(ttk.Frame):
             line, = ax.plot(x, y, linestyle=style, color=theme.color(curve.get('color_token', 'accent')), linewidth=curve.get('line_width', 1.15), marker=curve.get('marker', ''),
                             label=label + ' · ' + self._source_name() if len(x) else '_nolegend_')
             handle = line if len(x) else None
+            sources[id(line)] = (key, self.buffer)
             for run_number, (run_label, samples) in enumerate(self.overlays.values()):
                 ox, oy, _ = self._series(samples, key)
                 ox, oy = decimate(*break_at_events(ox, oy, self.spec.get('events', [])))
@@ -564,6 +737,7 @@ class PlotPage(ttk.Frame):
                                        linestyle=self._LINE_STYLES[(run_number + 1) % 4],
                                        linewidth=1.1, label=label + ' · ' + run_label)
                     legends[axis].append((overlay, label + ' · ' + run_label))
+                    sources[id(overlay)] = (key, samples)
             if self.show_pf.get() and reference_available:
                 rx, ry, _ = self._series(self.reference, key)
                 rx, ry = decimate(*break_at_events(rx, ry, self.spec.get('events', [])))
@@ -571,7 +745,8 @@ class PlotPage(ttk.Frame):
                     reference_style = '--' if style == '-' else ':'
                     ref_line, = ax.plot(rx, ry, linestyle=reference_style, color=theme.color(curve.get('reference_color_token', 'warn')), linewidth=.9,
                                         label=label + ' · ' + self.reference_label)
-                    if self.spec.get('source_legend'):
+                    sources[id(ref_line)] = (key, self.reference)
+                    if self.spec.get('source_legend') or self._time_enabled:
                         legends[axis].append((ref_line,label+' · '+self.reference_label))
                     if handle is None:
                         handle = ref_line
@@ -589,12 +764,24 @@ class PlotPage(ttk.Frame):
                 for field, setter in (('xlim_s', ax.set_xlim), ('ylim', ax.set_ylim)):
                     if field in options:
                         setter(options[field])
-            for marker in self.spec.get('events', []):
+            events = getattr(self, '_analysis_events', self.spec.get('events', []))
+            faults = {}
+            for marker in events:
                 time_s = marker.get('time_s') if isinstance(marker, dict) else None
                 if isinstance(time_s, (int, float)):
-                    ax.axvline(float(time_s), color=theme.color('text_muted'), linestyle=':', linewidth=.8)
-                    if axis == 0:
-                        ax.annotate(tr(marker['label_key']) if marker.get('label_key') else str(marker.get('label', tr('plots.event'))), (float(time_s), 1), xycoords=('data', 'axes fraction'),
+                    kind, target = marker.get('kind'), marker.get('target_id', '')
+                    if kind == 'short_circuit':
+                        faults[target] = time_s
+                    elif kind == 'clear_short_circuit' and target in faults:
+                        start=faults.pop(target)
+                        ax.axvspan(start, time_s, color=theme.color('accent2'), alpha=.12, zorder=0)
+                        if self._time_enabled:
+                            ax.text((start+time_s)/2,.98,tr('v3.analysis.fault_band'),transform=ax.get_xaxis_transform(),
+                                    ha='center',va='top',fontsize=8,color=theme.color('text_muted'))
+                    ax.axvline(float(time_s), color=theme.color('text_muted'), linestyle='--', linewidth=.8)
+                    if axis == 0 and not self._time_enabled:
+                        label = tr('v3.analysis.event.'+kind) if self._time_enabled and kind else tr(marker['label_key']) if marker.get('label_key') else str(marker.get('label', tr('plots.event')))
+                        ax.annotate(label, (float(time_s), 1), xycoords=('data', 'axes fraction'),
                                     xytext=(2, -3), textcoords='offset points', rotation=90, va='top', fontsize=7,
                                     color=theme.color('text_muted'))
             for point in self._cursor_points:
@@ -607,10 +794,37 @@ class PlotPage(ttk.Frame):
             if entries:
                 title = (tr('plots.pf_legend') if self.source_label == 'Modelo' else tr('plots.runs_legend')) if self.reference is not None and self.show_pf.get() else tr('plots.single_run')
                 if self.spec.get('source_legend'):title=tr('plots.source_legend')
-                ax.legend(*zip(*entries), fontsize=7 if len(self.axes) < 5 else 6, title=title, title_fontsize=7,
-                          loc='upper left', bbox_to_anchor=(1.01, 1), borderaxespad=0,
+                layout = dict(loc='upper right', borderaxespad=.7) if self._time_enabled else dict(loc='upper left', bbox_to_anchor=(1.01, 1), borderaxespad=0)
+                labels = [(line, label+'  0,0000 '+sources[id(line)][0].rsplit('|',1)[-1]) for line,label in entries] if self._time_enabled else entries
+                ax.legend(*zip(*labels), fontsize=8 if self._time_enabled else 7 if len(self.axes) < 5 else 6, title=None if self._time_enabled else title, title_fontsize=7,
+                          **layout,
                           facecolor=theme.color('surface'), edgecolor=theme.color('border'), labelcolor=theme.color('text'))
                 ax.get_legend().get_title().set_color(theme.color('text'))
+                if self._time_enabled:
+                    for (line, label), text in zip(entries, ax.get_legend().get_texts()):
+                        key, samples = sources[id(line)]
+                        dot, = ax.plot([], [], 'o', color=line.get_color(), markersize=5, animated=True, zorder=8)
+                        text.set_animated(True)
+                        self._time_markers.append((dot, text, label, key, samples))
+                        self._time_artists.extend((dot, text))
+            if self._time_enabled:
+                from matplotlib.ticker import FuncFormatter
+                from .i18n import language
+                def decimal(value, position):
+                    text = f'{value:g}'
+                    return text.replace('.', ',') if language() == 'es' else text
+                ax.xaxis.set_major_formatter(FuncFormatter(decimal))
+                ax.yaxis.set_major_formatter(FuncFormatter(decimal))
+                curves = [c for c in self.spec.get('curves', []) if min(len(self.axes)-1, int(c.get('axis',0))) == axis]
+                kinds = {'m:u':'voltage','s:xspeed':'speed','s:speed':'speed','s:phi':'angle','m:phiu':'angle','m:fehz':'frequency',
+                         'classical:u_pu':'voltage','classical:omega_pu':'speed','classical:delta_deg':'angle',
+                         'classical:f_hz':'frequency','classical:coi_frequency':'frequency'}
+                if curves:
+                    variable = curves[0]['key'].rsplit('|',2)[-2]
+                    ax.set_title(tr('v3.analysis.magnitude.'+kinds[variable]) if variable in kinds else variable, loc='left', fontsize=10, color=theme.color('text'), pad=9)
+                vertical = ax.axvline(0, color=theme.color('accent2'), linewidth=1, animated=True, visible=False, zorder=7)
+                self._time_verticals.append(vertical)
+                self._time_artists.append(vertical)
         self.axes[-1].set_xlabel(tr('plots.time_axis'), fontsize=9)
         if old_limits:
             for ax, (xl, yl) in zip(self.axes, old_limits):
@@ -618,6 +832,10 @@ class PlotPage(ttk.Frame):
                 ax.set_ylim(yl)
         notice = tr('plots.missing', count=len(self.spec.get('missing_signals', []))) if self.spec.get('missing_signals') else ''
         self.statistics.set(notice + ('  |  '.join(stats) if stats else tr('plots.empty_samples')))
+        if self._time_enabled:
+            from matplotlib.text import Text
+            for text in self.figure.findobj(Text):text.set_fontfamily(theme.font('body')[0])
+            self.set_time_cursor(self._time_value)
         self.canvas.draw_idle()
 
     def _cursor_point(self, axis, time_s):
@@ -651,6 +869,11 @@ class PlotPage(ttk.Frame):
     def capture_cursor(self, event):
         if event.inaxes not in self.axes or event.xdata is None:
             return
+        if self._time_enabled and hasattr(self, 'time_transport'):
+            if not self.toolbar.mode:
+                self.time_transport.pause()
+                self.time_transport.seek(event.xdata)
+            return
         point = self._cursor_point(self.axes.index(event.inaxes), event.xdata)
         self._cursor_points = (self._cursor_points + [point])[-2:]
         if len(self._cursor_points) == 2:
@@ -672,17 +895,29 @@ class PlotPage(ttk.Frame):
     def export_png(self):
         path = filedialog.asksaveasfilename(parent=self, defaultextension='.png', filetypes=[(tr('plots.png_image'), '*.png')])
         if path:
-            self.figure.savefig(path, dpi=180, facecolor=theme.color('surface'))
+            self.save_figure(path, dpi=180, facecolor=theme.color('surface'))
+
+    def save_figure(self,path,**options):
+        """Incluye cursor y lecturas en la exportación de un fotograma estático."""
+        artists=list(self._time_artists)
+        states=[artist.get_animated() for artist in artists]
+        try:
+            for artist in artists:artist.set_animated(False)
+            self.figure.savefig(path,**options)
+        finally:
+            for artist,state in zip(artists,states):artist.set_animated(state)
+            self._time_background=None
+            self.canvas.draw_idle()
 
     def export_svg(self):
         path = filedialog.asksaveasfilename(parent=self, defaultextension='.svg', filetypes=[('SVG', '*.svg')])
         if path:
-            self.figure.savefig(path, format='svg', facecolor=self.figure.get_facecolor())
+            self.save_figure(path, format='svg', facecolor=self.figure.get_facecolor())
 
     def export_pdf(self):
         path = filedialog.asksaveasfilename(parent=self, defaultextension='.pdf', filetypes=[('PDF', '*.pdf')])
         if path:
-            self.figure.savefig(path, format='pdf', facecolor=theme.color('surface'))
+            self.save_figure(path, format='pdf', facecolor=theme.color('surface'))
 
 
 class VariablesDialog(tk.Toplevel):

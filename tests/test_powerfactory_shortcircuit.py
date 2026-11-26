@@ -145,3 +145,6 @@ def test_export_confinement_and_completeness(comparison, tmp_path):
     assert len(cc.read_csv(tmp_path / "check.csv")) == 39
     assert cc.number("") is None
 
+
+import pytest
+pytestmark = [pytest.mark.pfdata]

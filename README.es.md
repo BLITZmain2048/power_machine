@@ -8,18 +8,12 @@ Versión preliminar **0.1.0**. [English version](README.md).
 ![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%20to%203.13-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-![RMS nativo comparado con una referencia de PowerFactory para IEEE 39](docs/images/05_rms_falla.png)
 
-*RMS nativo IEEE 39, 166 estados, paso de 1 ms y ventana de comparación de 1.2 s. La gráfica muestra dos canales que cumplen sus criterios publicados.*
+![IEEE 39](docs/images/01_ieee39.png)
 
 ## Aspectos destacados
 
-- Importa exportaciones CSV de PowerFactory y conserva identidad estable y procedencia de cada elemento.
-- Ejecuta flujo AC, contingencias N-1 y N-2, cortocircuito IEC 60909 por perfil, RMS, CCT, modal, PV/QV y estudios cuasi-dinámicos.
-- Las comparaciones IEEE 39 incluidas muestran errores máximos aproximados de 1.215e-9 p.u. en tensión de flujo y 2.600e-8 relativo en Ik''. Consulte la [evidencia de validación](docs/validation.md).
-- Ejecuta campañas paralelas reproducibles con semillas deterministas, puntos de reanudación y continuación.
-- Ofrece un servidor MCP con 23 herramientas, recursos y prompts para agentes, además de API tipada, CLI y GUI de escritorio.
-- Usa solo la biblioteca estándar de Python y NumPy en la ruta base, con SciPy disponible como extra opcional de aceleración.
+Flujo AC, contingencias, cortocircuito con fuentes expl?citas, RMS cl?sico y GUI de escritorio. La red IEEE 39 por defecto procede de MATPOWER case39.
 
 ## Instalación
 
@@ -105,12 +99,6 @@ server  estado_anterior: completed, estado_posterior: completed
 
 La aplicación distingue visiblemente red, documento de estudio y resultados desactualizados. Ofrece flujo, ranking de contingencias, entrada de cortocircuito, flujos RMS y controles de lotes cuando el perfil del estudio lo permite.
 
-| Red IEEE 39 | Flujo | Cortocircuito | Ranking N-1 |
-| --- | --- | --- | --- |
-| ![Red](docs/images/01_ieee39.png) | ![Flujo](docs/images/02_flujo.png) | ![Cortocircuito](docs/images/03_cortocircuito.png) | ![N-1](docs/images/04_n1.png) |
-
-Consulte [uso y límites de GUI](docs/gui.md). El [recorrido GUI](docs/images/recorrido.gif) reúne estas cinco vistas.
-
 ## Lotes paralelos
 
 Los escenarios independientes de flujo y contingencia pueden ejecutarse en un grupo persistente de procesos. Las entradas, semillas, puntos de reanudación, cancelación y fallos por escenario son explícitos. Cada trabajador prepara su propia instantánea de red y limita los hilos BLAS. Consulte [campañas por lotes](docs/batch.md).
@@ -126,19 +114,6 @@ Los escenarios independientes de flujo y contingencia pueden ejecutarse en un gr
 | PV, QV, sensibilidades | Implementado | Requieren entradas explícitas de estudio |
 | Importación CSV | Parcial | Importa solo campos exportados documentados, nunca datos eléctricos inferidos |
 | GUI, CLI, MCP, lotes | Implementado | La GUI sigue en español en esta versión |
-
-## Evidencia de comparación IEEE 39
-
-| Estudio y perfil | Evidencia | Resultado publicado |
-| --- | --- | --- |
-| Flujo AC | Comparación IEEE 39 incluida de PowerFactory | 39 barras, 46 ramas, 10 generadores. Errores máximos: 1.215e-9 p.u. en tensión, 4.237e-7 grados y 4.205e-6 Mvar en flujo reactivo de rama |
-| Edición de red | No hay exportación incluida | Sin comparación |
-| Cortocircuito trifásico `iec_pf2016_c1_v1` | Comparación incluida de 39 barras | Errores relativos máximos: 2.600e-8 Ik'', 2.587e-8 ip y 7.176e-8 Ib. Pasan 102 contribuciones por magnitud y 39 residuos KCL |
-| RMS clásico IEEE 39 | Paridad interna y balance analítico | Sin comparación con PowerFactory. Es un modelo de 20 estados distinto del RMS nativo |
-| RMS nativo IEEE 39, 166 estados | Tres comparaciones incluidas hasta 1.2 s | Evidencia parcial: 26/29, 26/29 y 27/29 canales cumplen su criterio máximo publicado en E39-DIN-01/02/03 |
-| Resolución RMS y casos analíticos | Comprobaciones h, h/2, h/4 y casos cerrados | Pasan las comprobaciones declaradas en intervalos suaves y siete casos analíticos. No es una afirmación de orden global a través de eventos |
-
-Ejecute `python -m validation` para reproducir el informe incluido. Consulte [validación](docs/validation.md).
 
 ## Mediciones de rendimiento
 
@@ -170,7 +145,6 @@ Todas las corridas de flujo completadas convergieron. Las corridas dispersas de 
 
 ## Límites
 
-- La evidencia de comparación IEEE 39 es específica de cada estudio. La edición de red no tiene comparación incluida y el RMS nativo conserva canales incompletos o fuera de criterio.
 - Los CSV importados deben contener la información eléctrica, de secuencias, controles y datos dinámicos exigidos por el estudio. Los datos ausentes siguen ausentes.
 - Cortocircuito, RMS y CCT se limitan a sus datos fuente y perfiles declarados.
 - El ranking N-1 informa restricciones y resultados topológicos calculados. No establece factibilidad operativa, coordinación de protecciones, respuesta de frecuencia ni reservas.
@@ -192,4 +166,7 @@ Ejecute `python -m pytest -m "not gui"` para la suite sin GUI y `python -m valid
 
 ## Licencia, aviso de datos y cita
 
-El código fuente tiene licencia MIT. Los datos IEEE 39 y las exportaciones de comparación tienen procedencia y términos separados, descritos en [NOTICE](NOTICE), y no están cubiertos por la licencia del código. Cite el software mediante [CITATION.cff](CITATION.cff).
+El código fuente tiene licencia MIT. Los datos IEEE 39  tienen procedencia y términos separados, descritos en [NOTICE](NOTICE), y no están cubiertos por la licencia del código. Cite el software mediante [CITATION.cff](CITATION.cff).
+
+
+Incluye importadores y comparadores para exportaciones de PowerFactory proporcionadas por el usuario; no se distribuyen datos ni resultados de PowerFactory. Configure `POWER_MACHINE_PF_IEEE39` con la carpeta de su exportación. Las funciones dependientes informan `pf_reference_data_not_included` cuando faltan los datos.

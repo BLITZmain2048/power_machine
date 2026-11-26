@@ -12,7 +12,10 @@ from tkinter import ttk
 from typing import Callable
 
 from .loading import diagram_loading
+from .data_cards import ElementCards
+from .navigation import CanvasNavigation
 from power_machine.gui.i18n import tr
+from power_machine.gui.results_tables import display_value
 
 from .layout import (OFF_COLOR, VOLTAGE_COLORS, apply_positions, build_scene,
                      clean_label, element_index, load_positions, save_positions,
@@ -58,7 +61,7 @@ def _result_text(symbol, result, *, item=None, digits=None, include_loading=Fals
     def value(key, digits=3):
         number = result.get(key)
         precision = (format_digits or {}).get(key, digits)
-        return "—" if number is None or not math.isfinite(float(number)) else f"{float(number):.{precision}f}"
+        return "—" if number is None or not math.isfinite(float(number)) else display_value(float(number),key,precision=precision)
     format_digits = digits
     if boxes is not None:
         fields = boxes.get(item.get('class', 'ElmTerm' if symbol.kind == 'bus' else ''), [])
@@ -76,7 +79,7 @@ def _result_text(symbol, result, *, item=None, digits=None, include_loading=Fals
             if variable == 'loading' and end == 'none':
                 key = 'loading_pct'
             number = result.get(key)
-            text = '—' if number is None or not math.isfinite(float(number)) else f'{float(number):.{field["precision"]}f}'
+            text = '—' if number is None or not math.isfinite(float(number)) else display_value(float(number),key,precision=field['precision'])
             lines.append(f'{field.get("label", variable)} {text} {field["unit"]}')
         return '\n'.join(lines)
     if symbol.kind == "bus":
@@ -115,14 +118,14 @@ def result_text(symbol, result, *, layers=None, **kwargs):
                 ('u_kv','U','U','kV',1), ('angle_deg','angle',tr('diagram.angle'),'°',1)]:
             value = result.get(key)
             if layers.get(layer) and value is not None and math.isfinite(float(value)):
-                lines.append(f'{label} {value:.{precision}f} {unit}')
+                lines.append(f'{label} {display_value(value,key,precision=precision)} {unit}')
         return '\n'.join(lines) if not kwargs.get('item',symbol.item).get('outserv') else '—'
     lines = _result_text(symbol, result, **kwargs).splitlines()
     return '\n'.join(line for line in lines if
         layers.get('P' if line.startswith('P ') else 'Q' if line.startswith('Q ') else 'loading', True))
 
 
-class DiagramView(ttk.Frame):
+class DiagramView(CanvasNavigation, ElementCards, ttk.Frame):
     """En el general, doble clic entrega el ID de grupo a on_open_properties.
 
     diagram view puede reconocer esos IDs con diagram_groups y abrir su pestaña.
@@ -160,7 +163,9 @@ class DiagramView(ttk.Frame):
         self._presentation = None
         self.detail_zoom = .65
         self.result_detail_zoom = .80
-        self.show_results = True
+        from ..settings import settings
+        self._settings = getattr(getattr(self, 'app', None), 'settings', settings)
+        self.show_results = self._settings.get('diagram_result_labels', False) is True
         self.selected_id = None
         self._drag = None
         self._paint_job = None
@@ -175,8 +180,8 @@ class DiagramView(ttk.Frame):
         toolbar.pack(fill="x")
         ttk.Button(toolbar, text=tr('diagram.fit'), command=self.fit).pack(side="left", padx=4, pady=3)
         ttk.Button(toolbar, textvariable=self.zoom_text, command=self._actual_size).pack(side="left")
-        self._result_var = tk.BooleanVar(self, True)
-        ttk.Checkbutton(toolbar, text=tr('diagram.results'), variable=self._result_var,
+        self._result_var = tk.BooleanVar(self, self.show_results)
+        ttk.Checkbutton(toolbar, text=tr('v3.diagram.result_labels'), variable=self._result_var,
                         command=lambda: self.set_result_boxes_visible(self._result_var.get())).pack(side="left", padx=8)
         self.status = tk.StringVar(self, self.scene.title)
         ttk.Label(toolbar, textvariable=self.status, width=25).pack(side="left", padx=8)
@@ -197,6 +202,10 @@ class DiagramView(ttk.Frame):
         self.canvas = tk.Canvas(canvas_parent, background=theme.color('diagram_bg'), highlightthickness=0,
                                 width=1000, height=650, takefocus=True)
         self.canvas.pack(fill="both", expand=True)
+        self._init_cards()
+        self.scene.results = self.results
+        self._labels_job = None
+        self._moving_wires = None
         legend = ttk.Frame(self)
         legend.pack(fill="x", before=self.canvas if canvas_parent is self else canvas_parent)
         self._legend_var = tk.StringVar(self)
@@ -231,16 +240,10 @@ class DiagramView(ttk.Frame):
                 self.after_cancel(self._initial_fit)
             self._initial_fit = self.after_idle(self._fit_initial)
 
-    def _hide_tooltip(self):
-        if self._tooltip is not None:
-            self._tooltip.destroy()
-            self._tooltip = None
-        self._hover_id = None
-
     def _destroy(self, event):
         if event.widget is self:
             self._hide_tooltip()
-            for job in (self._paint_job, self._initial_fit):
+            for job in (self._paint_job, self._initial_fit, self._labels_job):
                 if job:
                     self.after_cancel(job)
 
@@ -282,6 +285,11 @@ class DiagramView(ttk.Frame):
         """Evita cajas de resultado superpuestas en mallas a poco zoom."""
         if not self.show_results or not symbol.result_box:
             return False
+        if not getattr(self, '_exporting', False):
+            x1,y1 = self._xy(*symbol.result_box[:2])
+            x2,y2 = self._xy(*symbol.result_box[2:])
+            if x2 < 0 or y2 < 0 or x1 > self.canvas.winfo_width() or y1 > self.canvas.winfo_height():
+                return False
         if (not self.is_dense or self.scale >= self.result_detail_zoom or
                 getattr(self, '_exporting', False)):
             return True
@@ -361,8 +369,10 @@ class DiagramView(ttk.Frame):
         warning, limit = self.loading_bands
         self._legend_var.set({
             'voltage': tr('diagram.legend.voltage'),
-            'voltage_band': tr('diagram.legend.voltage_band', low=low, high=high),
-            'loading': tr('diagram.legend.loading', warning=warning, limit=limit),
+            'voltage_band': tr('v3.diagram.legend.voltage_band',
+                low=display_value(low,precision=2), high=display_value(high,precision=2)),
+            'loading': tr('v3.diagram.legend.loading',
+                warning=display_value(warning), limit=display_value(limit)),
             'state': tr('diagram.legend.state'),
         }[self.color_mode])
         if self.historical:
@@ -439,6 +449,8 @@ class DiagramView(ttk.Frame):
         self._paint_job = None
         from .render import draw
         draw(self)
+        self._apply_lod()
+        self._refresh_cards()
 
     def _draw_highlight(self):
         self.canvas.delete("selection")
@@ -466,9 +478,10 @@ class DiagramView(ttk.Frame):
             decorated = dict(row, loading_pct=summary['loading_pct'],
                              loading_cause=summary.get('cause'), loading_rating=summary['rating'])
             for end, values in summary['ends'].items():
-                decorated['loading_' + end + '_pct'] = values.get('loading_pct')
-                decorated['i_' + end + '_ka'] = values.get('i_ka')
-                decorated['s_' + end + '_mva'] = values.get('s_mva')
+                for quantity, unit in (('loading','pct'),('i','ka'),('s','mva')):
+                    key = quantity + '_' + end + '_' + unit
+                    supplied = row.get(key)
+                    decorated[key] = supplied if isinstance(supplied,(int,float)) and math.isfinite(supplied) else values.get(quantity+'_'+unit)
             self.results[element_id] = decorated
         self._rebuild_scene()
         if not self._user_zoom:
@@ -479,6 +492,10 @@ class DiagramView(ttk.Frame):
     def set_result_boxes_visible(self, visible: bool) -> None:
         self.show_results = bool(visible)
         self._result_var.set(self.show_results)
+        self._settings.set('diagram_result_labels', self.show_results)
+        self._settings.save()
+        if 'result_labels' in getattr(self,'_icon_buttons',{}):
+            self._refresh_icon('result_labels')
         self._rebuild_scene()
         if not self._user_zoom:
             self.fit()
@@ -488,6 +505,7 @@ class DiagramView(ttk.Frame):
     def _rebuild_scene(self):
         self.scene = build_scene(self.model, self.group,
                                  result_boxes=bool(self.results) and self.show_results)
+        self.scene.results = self.results
         apply_positions(self.scene, self.positions)
 
     def highlight(self, element_id: str | None) -> None:
@@ -534,6 +552,8 @@ class DiagramView(ttk.Frame):
         for item_id in reversed(self.canvas.find_overlapping(event.x - 3, event.y - 3, event.x + 3, event.y + 3)):
             tags = self.canvas.gettags(item_id)
             for tag in tags:
+                if tag.startswith('data_for:'):
+                    return tag[len('data_for:'):]
                 if tag.startswith("element:"):
                     key = tag[len("element:"):]
                     if "symbol" in tags or "result" in tags or "label" in tags:
@@ -549,6 +569,9 @@ class DiagramView(ttk.Frame):
         return wire_key
 
     def _press(self, event):
+        if self._pin_close_hit(event):
+            return
+        self._hide_tooltip()
         self.canvas.focus_set()
         key = self._hit(event)
         self.highlight(key)
@@ -556,29 +579,8 @@ class DiagramView(ttk.Frame):
             self.callbacks.on_select(key)
         self._drag = (key if key in self.scene.symbols else None, event.x, event.y, False)
 
-    def _hover(self, event):
-        if self._drag:
-            return
-        key = self._hit(event)
-        item = self.index.get(key)
-        if key != self._hover_id:
-            self._hide_tooltip()
-            self._hover_id = key
-            if item:
-                self._tooltip = tk.Toplevel(self)
-                self._tooltip.overrideredirect(True)
-                self._tooltip.geometry(f"+{self.canvas.winfo_rootx() + int(event.x) + 14}+{self.canvas.winfo_rooty() + int(event.y) + 18}")
-                symbol = self.scene.symbols.get(key)
-                details = result_text(symbol, self.results.get(key), item=item, digits=self.result_digits, include_loading=True) if symbol else ''
-                tk.Label(self._tooltip, text=clean_label(item.get('name', key)) + '\n' + item.get('class', item.get('group', '')) + ('\n' + details if details else ''),
-                         background=theme.color('surface'), foreground=theme.color('text'), relief='solid', borderwidth=1,
-                         font=theme.font('small'), padx=6, pady=4).pack()
-        if item:
-            self.status.set(clean_label(item.get("name", key)) + "  ·  " + key)
-        elif not self.layout_error:
-            self.status.set(self.scene.title)
-
     def _pan_press(self, event):
+        self._hide_tooltip()
         self._drag = (None, event.x, event.y, False)
 
     def _motion(self, event):
@@ -587,17 +589,13 @@ class DiagramView(ttk.Frame):
         key, x, y, moved = self._drag
         dx, dy = event.x - x, event.y - y
         if key:
-            symbol = self.scene.symbols[key]
-            self.positions[key] = (symbol.x + dx / (self.scale * self.x_factor), symbol.y + dy / self.scale)
-            # Reconstruir desde la geometría base evita acumular codos al arrastrar.
-            self._rebuild_scene()
+            self._move_symbols([key], dx/(self.scale*self.x_factor), dy/self.scale)
         else:
-            self.offset = (self.offset[0] + dx, self.offset[1] + dy)
+            self._pan_pixels(dx,dy)
         self._drag = (key, event.x, event.y, moved or bool(dx or dy))
-        if self._paint_job is None:
-            self._paint_job = self.after(16, self.draw)
 
     def _release(self, event):
+        panned = self._drag and not self._drag[0] and self._drag[3]
         if self._drag and self._drag[0] and self._drag[3]:
             try:
                 save_positions(self.layout_path, self.group, self.positions)
@@ -606,19 +604,14 @@ class DiagramView(ttk.Frame):
                 self.layout_error = str(exc)
                 self.status.set(tr('diagram.write_error') + clean_label(exc))
         self._drag = None
+        self._moving_wires = None
+        if panned:
+            self._finish_pan()
 
     def _wheel(self, event):
         if event.delta:
             self._zoom(event.x, event.y, 1.15 ** (event.delta / 120))
         return "break"
-
-    def _zoom(self, x, y, factor):
-        self._user_zoom = True
-        new = min(4.0, max(0.025, self.scale * factor))
-        ratio = new / self.scale
-        self.offset = (x - (x - self.offset[0]) * ratio, y - (y - self.offset[1]) * ratio)
-        self.scale = new
-        self.draw()
 
     def _double(self, event):
         key = self._hit(event)
@@ -634,15 +627,16 @@ class DiagramView(ttk.Frame):
             self.callbacks.on_open_properties(key)
 
     def _context(self, event):
+        from .context_menu import ElementContextMenu
         key = self._hit(event)
         if not key:
             return
         self.highlight(key)
         if self._menu is not None:
             self._menu.destroy()
-        menu = self._menu = tk.Menu(self, tearoff=False, background=theme.color('surface'),
-            foreground=theme.color('text'), activebackground=theme.color('selection'),
-            activeforeground=theme.color('text'), font=theme.font('body'))
+        self._hide_tooltip()
+        menu = self._menu = ElementContextMenu(self,self.index.get(key,{}).get('name',key))
+        self.add_context_data(menu,key)
         if key in self.scene.symbols and self.scene.symbols[key].kind == "group":
             menu.add_command(label=tr('diagram.open_group'), command=lambda: self.callbacks.on_open_properties(key))
         else:

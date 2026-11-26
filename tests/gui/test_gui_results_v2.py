@@ -112,13 +112,16 @@ def test_navigation_toolbar_initial_dark_theme_and_live_switch(tk_root):
     try:
         theme.set('dark')
         page = PlotPage(tk_root, dict(axes=1, curves=[dict(key=KEY)]), samples([[0, 1], [1, .9]]))
-        for button in page.toolbar._buttons.values():
-            assert button.cget('background') == theme.color('surface')
-            assert str(button.cget('image')) == str(button._ntimage_alt)
-        theme.set('light')
-        for button in page.toolbar._buttons.values():
-            assert button.cget('background') == theme.color('surface')
-            assert str(button.cget('image')) == str(button._ntimage)
+        from tkinter import ttk
+        for name in ('dark','light'):
+            theme.set(name)
+            style=ttk.Style(page)
+            for button in page.toolbar._buttons.values():
+                assert style.lookup(button.cget('style'),'background') == theme.color('surface')
+                assert str(button._nav_images[0]) in str(button.cget('image'))
+                assert button._nav_images[0].width()==18
+                assert button._nav_images[1].width()==18
+            assert style.lookup('PlotNav.Toolbutton','background',('selected',))==theme.color('selection')
     finally:
         theme.set(previous)
 

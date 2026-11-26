@@ -86,7 +86,8 @@ def test_deenergized_island_and_metric_are_explicit():
     assert values['loading_metric'] == dict(thermal_factors_included=False, overload_factors_included=False, quantity='apparent_power_ratio', numerator='S extremo [MVA]', denominator='strn × ntnum [MVA]', per_winding=False)
 
 def test_dense_result_boxes_keep_buses_and_selected_element_at_low_zoom():
-    view = SimpleNamespace(show_results=True, is_dense=True, scale=0.65, result_detail_zoom=0.8, selected_id='selected')
+    view = SimpleNamespace(show_results=True, is_dense=True, scale=0.65, result_detail_zoom=0.8, selected_id='selected',
+        canvas=SimpleNamespace(winfo_width=lambda:100,winfo_height=lambda:100),_xy=lambda x,y:(x,y))
     bus = SimpleNamespace(id='bus', kind='bus', result_box=(0, 0, 1, 1))
     selected = SimpleNamespace(id='selected', kind='branch', result_box=(0, 0, 1, 1))
     other = SimpleNamespace(id='other', kind='branch', result_box=(0, 0, 1, 1))

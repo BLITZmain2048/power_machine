@@ -110,3 +110,6 @@ event limits are recorded. Cut powers are compared with retained-branch terminal
 powers evaluated on the full trajectory and all 15 retained states are compared.
 This checks replay equivalence at the same discrete integration schedule. It does
 not establish time-step convergence or validation of the full AVR/governor model.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

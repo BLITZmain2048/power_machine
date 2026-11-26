@@ -1,7 +1,7 @@
+import pytest
 """Recovery, event persistence and declared-frequency GUI integration."""
 import json
 from pathlib import Path
-import pytest
 from test_gui_shell_windows import shell
 from power_machine.gui.events_editor import EventsEditor
 from power_machine.gui.i18n import set_language, tr
@@ -96,7 +96,8 @@ def test_initial_empty_state_offers_study_actions(shell):
     assert shell.book.select() == str(shell.welcome_page)
     for code in ('en', 'es'):
         set_language(code)
-        assert shell.book.tab(shell.welcome_page, 'text') == tr('int2.start_title')
+        assert shell.book.tab(shell.welcome_page, 'text') == tr('v3.start.title')
+        assert {'flow','shortcircuit','contingency','rms','execute','configure'} <= set(shell.welcome_page.buttons)
 
 
 def test_rms_recovery_opens_network_data_selector(shell, monkeypatch):
@@ -120,6 +121,7 @@ def test_pf_reference_overlay_never_qualifies_current_run():
     assert 'User run B' in detail
 
 
+@pytest.mark.pfdata
 def test_native_case_does_not_replace_a_modified_network_or_scenario():
     from power_machine.resources import readonly_path
     from power_machine.gui.native_case import is_native_case

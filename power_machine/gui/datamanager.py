@@ -14,7 +14,7 @@ from tkinter import filedialog, messagebox, ttk
 from .document import operation_changes
 from .events_editor import KINDS
 from .presentation import element_label, station
-from .results_tables import COLUMNS, format_value
+from .results_tables import COLUMNS, format_value, display_value
 from .bus import bus
 from .i18n import tr
 from .settings import settings
@@ -396,7 +396,7 @@ class DataManager(ttk.Frame):
         self._search_job = None; rows = self._class_rows(); self._refresh_filter_values(rows)
         visible_rows = combined_filter(rows, self.query.get(), self.station_filter.get(), self.voltage_filter.get(), self._state_key(self.state_filter.get())); self._set_columns(); self.table.delete(*self.table.get_children())
         columns = [key for key, _ in DATA_COLUMNS.get(self.current_group, DATA_COLUMNS['branches']) if self.column_visible[key].get()]
-        for row in visible_rows: self.table.insert('', 'end', iid=row['object_id'], values=[format_value(row.get(key), key) for key in columns])
+        for row in visible_rows: self.table.insert('', 'end', iid=row['object_id'], values=[display_value(row.get(key), key) for key in columns])
         editable = sorted({field for row in visible_rows for field in editable_fields(row)})
         self.batch_field_box.configure(values=editable)
         if self.batch_field.get() not in editable: self.batch_field.set(editable[0] if editable else '')

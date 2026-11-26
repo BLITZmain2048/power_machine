@@ -44,3 +44,11 @@ def red_sintetica():
         "shunts": [],
     }
     return copy.deepcopy(model)
+
+
+def pytest_collection_modifyitems(items):
+    import os
+    reason = "PowerFactory reference data is not distributed; set POWER_MACHINE_PF_IEEE39 to your own export"
+    for item in items:
+        if item.get_closest_marker("pfdata") and not os.environ.get("POWER_MACHINE_PF_IEEE39"):
+            item.add_marker(pytest.mark.skip(reason=reason))

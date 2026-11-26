@@ -1,6 +1,6 @@
+import pytest
 """Discontinuidades DSL aisladas, tiempos [s] y estados sin conversión de unidad."""
 import numpy as np
-import pytest
 
 from power_machine.dsl_editor import new_draft, PreviewCase
 from power_machine.dsl_editor.preview import _simulate_local
@@ -134,6 +134,7 @@ def test_time_calendar_and_interpreter_agree_for_strict_guards():
     assert compiled["payload"]["states"]["x"][-1] == pytest.approx(.01, abs=1e-10)
 
 
+@pytest.mark.pfdata
 def test_pf_bench_accepts_both_steps_without_changing_gate(tmp_path):
     from power_machine.pfcompare.dsl import DEFAULT_PF_DIR, compare_bench
     if not (DEFAULT_PF_DIR / "E39-DSL-01/trajectories_full_precision.csv").is_file():

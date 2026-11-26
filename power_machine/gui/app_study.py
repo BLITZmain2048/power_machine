@@ -96,6 +96,7 @@ class StudyActions:
         document=self.document
         self.capture_presentation()
         self.close_parity_panels()
+        if hasattr(self,'analysis'):self.analysis.select_study('flow',open_panel=False)
         model, study, dependencies=document.activate_case(case_id or document.active_case_id,document.revision)
         # La fachada mantiene study operativo para compatibilidad con los paneles.
         self.model=document.network.model if document.network.state is not None else self.base_model

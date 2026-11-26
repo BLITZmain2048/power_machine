@@ -110,7 +110,12 @@ def test_shortcuts_from_detached_canvas_once_and_not_in_event_editor(app,monkeyp
     app.update()
     canvas.focus_force()
     app.update()
-    for key in ('<F10>','<F11>','<F12>','<Escape>','<Control-s>','<Control-z>','<Control-y>'):
+    canvas.event_generate('<F10>')
+    app.update()
+    assert not calls
+    assert app.focus_get() is app.windows.window.menu_bar.buttons['file']
+    canvas.focus_force()
+    for key in ('<F5>','<F11>','<F12>','<Escape>','<Control-s>','<Control-z>','<Control-y>'):
         canvas.event_generate(key)
         app.update()
     assert calls==Counter(dict(run_loadflow=1,initial_conditions=1,simulation_dialog=1,stop=1,save_case=1,undo=1,redo=1))
@@ -121,6 +126,7 @@ def test_shortcuts_from_detached_canvas_once_and_not_in_event_editor(app,monkeyp
     entry.focus_force()
     app.update()
     entry.event_generate('<F10>')
+    entry.event_generate('<F5>')
     app.update()
     assert calls['run_loadflow']==1
     editor.destroy()
@@ -130,6 +136,10 @@ def test_shortcuts_from_detached_canvas_once_and_not_in_event_editor(app,monkeyp
     app.update()
     assert app.focus_get().winfo_toplevel() is app
     app.event_generate('<F10>')
+    app.update()
+    assert app.focus_get() is app.menu_bar.buttons['file']
+    assert calls['run_loadflow']==1
+    app.event_generate('<F5>')
     app.update()
     assert calls['run_loadflow']==2
 

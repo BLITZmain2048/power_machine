@@ -18,3 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A desktop interface, command-line tools, and an MCP server interface.
 - An included IEEE 39-bus case with documented provenance.
 - Structured outputs for reproducible studies and result export.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

@@ -1,4 +1,4 @@
-"""Regression coverage for Claude's first diagram review."""
+"""Regression coverage for the first diagram review."""
 from copy import deepcopy
 from types import SimpleNamespace
 import math
@@ -52,6 +52,7 @@ def test_detail_panel_icons_status_and_ordered_ranking(tk_root,tmp_path,inputs):
     view.pack(fill='both',expand=True)
     try:
         tk_root.update()
+        view.set_result_boxes_visible(True)
         view.set_loadflow_results(result)
         view.select_ids(['L05-08'])
         tk_root.update()

@@ -271,7 +271,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         if self.vertical.winfo_height() < 100:
             self.after(100, self.initial_panes)
             return
-        self.horizontal.sashpos(0, min(300, int(self.winfo_width()*.26)))
+        self.horizontal.sashpos(0, min(380, int(self.winfo_width()*.30)))
         self.reset_output_height()
         self.restore_dividers()
         if len(self.horizontal.panes())==3:
@@ -303,7 +303,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         self.menus['edit'].add_command(label=tr('shell.undo'), command=self.undo, accelerator='Ctrl+Z')
         self.menus['edit'].add_command(label=tr('shell.redo'), command=self.redo, accelerator='Ctrl+Y')
         self.menus['edit'].add_command(label=tr('shell.element_properties'), command=lambda: self.properties(self.selected_id))
-        self.menus['calculation'].add_command(label=tr('shell.load_flow'), command=self.run_loadflow, accelerator='F10')
+        self.menus['calculation'].add_command(label=tr('shell.load_flow'), command=self.run_loadflow)
         self.menus['calculation'].add_command(label=tr('shell.initial_conditions'), command=self.initial_conditions, accelerator='F11')
         self.menus['calculation'].add_command(label=tr('shell.calculation_options'), command=self.options_dialog)
         self.install_calculation_menu()
@@ -327,11 +327,15 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         self.menus['help'].add_command(label=tr('shell.about_power_machine'), command=self.show_about)
         self.menus['help'].add_command(label=tr('shell.validation'),command=self.show_validation)
         self.menus['help'].add_command(label=tr('shell.manual'), command=self.open_manual)
+        from .start_page import reopen_start_page
+        self.menus['help'].add_command(label=tr('v3.start.title'),command=lambda:reopen_start_page(self))
+        self.menus['help'].add_command(label=tr('v3.int.shortcuts'),command=lambda:messagebox.showinfo(tr('v3.int.shortcuts'),tr('v3.int.shortcut_help'),parent=self))
         from .app_shell import build_workspace
         build_workspace(self)
         view = self.menus['view']
         view.add_separator()
         view.add_command(label=tr('menu.view.diagram'), command=self.open_diagram, accelerator='F9')
+        view.add_command(label=tr('v3.expand_workspace'),command=lambda:self.windows.ensure_network().workspace.focus_button.invoke())
         self.diagram_docked = tk.BooleanVar(value=self.windows.docked)
         view.add_checkbutton(label=tr('menu.view.dock'), variable=self.diagram_docked,
                              command=lambda:self.windows.dock_diagram(self.diagram_docked.get()))
@@ -354,10 +358,16 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         if batch_available():
             self.menus['calculation'].add_command(label=tr('shell.batch_studies'),command=lambda:BatchWindow(self))
         self.menus['calculation'].add_command(label=tr('shell.compare_cases'),command=self.compare_cases_dialog)
+        from .chrome import MenuBar
+        self.configure(menu='')
+        self.menu_bar=MenuBar(self,self.menus)
+        self.menu_bar.pack(fill='x',after=self.brand)
 
     def bind_shortcuts(self):
         from .shortcuts import install_study_shortcuts
         install_study_shortcuts(self)
+        if hasattr(self,'_study_shortcut_hint'):self._study_shortcut_hint.pack_forget()
+        self.bind_all('<F5>',lambda event:self.analysis.run_active() if event.widget.winfo_toplevel() in (self,self.windows.window) else None)
         self.bind('<Control-l>', lambda event: self.toggle_output())
         self.bind('<Control-Tab>', lambda event: self.next_page(1))
         self.bind('<Control-Shift-Tab>', lambda event: self.next_page(-1))
@@ -431,6 +441,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         self.table_pages.clear()
         self.reference = None
         self.update_document(invalidate=False)
+        self.analysis.select_study('flow',open_panel=False)
         self.open_diagram()
         self.rebuild_plots()
         self.load_reference()
@@ -468,7 +479,8 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         if identity.startswith(original+' · '):
             identity=self.display_study_name()+identity[len(original):]
         self.case_label.set(self.display_study_name())
-        self.title(identity + ' · Power Machine')
+        if hasattr(self,'analysis'):self.analysis.refresh_document()
+        self.title(tr('v3.window.analysis')+' · '+self.case_label.get()+' · Power Machine')
         if invalidate:
             self.bus.publish('network.edited', ids=list(self.index))
             self.bus.publish('results.stale', reason=tr('shell.document_modified'))
@@ -637,6 +649,9 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         self.selected_id = ident
         if ident and hasattr(self,'properties_dock'):
             self.properties_dock.show_element(ident)
+        if not ident and hasattr(self,'properties_dock'):self.properties_dock.show_element(None)
+        if hasattr(self,'selection_text'):
+            self.selection_text.set(element_label(self.index[ident],self.index) if ident in self.index else tr('v3.no_selection'))
         if publish:
             self.bus.publish('selection.changed', ids=[ident] if ident else [], source='main')
         if hasattr(self,'data_manager'):self.data_manager.locate(ident)
@@ -710,6 +725,8 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
 
     def events(self, preset=None, event_index=None):
         if self.available():
+            if hasattr(self,'analysis'):
+                return self.analysis.show_events(preset,event_index)
             powered = {row['id']: row['energized'] for row in (self.result or {}).get('buses', [])}
             index = self.api.element_index(self.operational)
             dialog = EventsEditor(self, self.document, self.api, self.root_path, self.model, index,
@@ -956,7 +973,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
                     row['i_from_ka']=max((end['i_ka'] for end in item.get('ends',{}).values() if end.get('i_ka') is not None),default=None)
             page = ResultsTable(self.book, kind, rows, self.index,select_callback=self.select)
             self.restore_table_presentation(page)
-            self.book.add(page, text='LF · ' + label)
+            self.book.add(page, text='LF · ' + label,area='tables')
             self.table_pages.append(page)
         if select:
             self.book.select(self.table_pages[0])
@@ -1139,7 +1156,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             page = PlotPage(self.book, spec, self.buffer, self.reference,
                             on_reference_toggle=lambda visible, i=index: self.toggle_reference(i, visible))
             self.configure_plot_page(page)
-            self.book.add(page, text=spec.get('name', tr('integration.plots')))
+            self.book.add(page, text=spec.get('name', tr('integration.plots')),area='curves')
             self.plot_pages.append(page)
         self.refresh_plot_templates()
 
@@ -1163,7 +1180,8 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         if identity.startswith(original+' · '):
             identity=self.display_study_name()+identity[len(original):]
         self.case_label.set(self.display_study_name())
-        self.title(identity + ' · Power Machine')
+        self.title(tr('v3.window.analysis')+' · '+self.case_label.get()+' · Power Machine')
+        if hasattr(self,'analysis'):self.analysis.refresh_document()
 
     def new_plot(self, count=None):
         if not self.document:

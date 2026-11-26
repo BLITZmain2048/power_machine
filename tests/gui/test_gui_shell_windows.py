@@ -76,8 +76,9 @@ def test_live_theme_language_and_stable_menu_keys(shell):
     app = shell
     assert set(app.menus) == {'file','edit','view','calculation','rms','plots','tools','window','help'}
     view = app.diagrams[None]
-    assert str(app.cget('menu')) == str(app.menu)
-    assert not hasattr(app, 'menu_bar')
+    assert str(app.cget('menu')) == ''
+    assert set(app.menu_bar.buttons)==set(app.menus)
+    assert all(str(button.cget('menu'))==str(app.menus[key]) for key,button in app.menu_bar.buttons.items())
     original_name = app.document.study.name
     for name in ('dark','light'):
         theme.set(name)
@@ -91,7 +92,7 @@ def test_live_theme_language_and_stable_menu_keys(shell):
         assert app.menu.entrycget(0,'label') == tr('menu.file')
         assert app.case_label.get() == tr('shell.ieee39_base_case')
         assert app.document.study.name == original_name
-        assert app.windows.window.title() == tr('window.diagram')
+        assert app.windows.window.title() == tr('v3.window.network')+' · '+app.case_label.get()+' · Power Machine'
         assert app.diagrams[None] is view
     app.document.study.name = 'User study · caso base'
     for code in ('en','es'):

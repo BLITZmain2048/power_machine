@@ -100,11 +100,18 @@ def format_value(value, key=None):
     if isinstance(value, bool):
         return tr('results.yes') if value else tr('results.no')
     if is_number(value) and key:
-        decimals = 4 if key.endswith('_pu') or key == 'voltage' else 3 if key.endswith('_ka') else 2
+        decimals = 3 if key=='time_s' else 4 if key.endswith('_pu') or key == 'voltage' else 3 if key.endswith('_ka') else 2
         return f'{value:.{decimals}f}'
     if isinstance(value, float):
         return f'{value:.6g}' if math.isfinite(value) else '—'
     return clean_display(value)
+
+
+def display_value(value,key=None,*,precision=None):
+    """Locale-aware screen value. CSV export retains the original raw numbers."""
+    from .i18n import language
+    text=f'{value:.{precision}f}' if precision is not None and is_number(value) and math.isfinite(value) else format_value(value,key)
+    return text.replace('.',',') if is_number(value) and language()=='es' else text
 
 
 def clean_display(value):
@@ -507,18 +514,19 @@ class ResultsTable(ttk.Frame):
         for key, label in columns:
             self.tree.heading(key, text=label, command=lambda k=key: self.sort(k))
             self.tree.column(key, width=getattr(self, 'column_widths', {}).get(key, 230 if key == 'name' else 130),
+                             minwidth=150 if key=='name' else 100,
                              anchor='w' if key in ('name', 'substation', 'case', 'state', 'violation') else 'e')
         self.tree.delete(*self.tree.get_children())
         for row in self.visible_rows:
             object_id = str(row.get('object_id', row.get('id', '')))
             self.tree.insert('', 'end', iid=object_id or None,
-                             values=[format_value(row.get(key), key) for key, _ in columns],
+                             values=[display_value(row.get(key), key) for key, _ in columns],
                              tags=alarm_tags(row, self.limits))
         mode = {'Totales': 'totals', 'Extremos': 'extremes', tr('results.totals'): 'totals', tr('results.extremes'): 'extremes'}.get(self.summary_mode.get())
         summary = summary_row(self.visible_rows, columns, mode)
         if summary:
             self.tree.insert('', 'end', iid='__summary__',
-                             values=[format_value(summary.get(key), key) for key, _ in columns], tags=('summary',))
+                             values=[display_value(summary.get(key), key) for key, _ in columns], tags=('summary',))
 
     def sort(self, key):
         self.rows = sorted_rows(self.rows, key, self.reverse.get(key, False))

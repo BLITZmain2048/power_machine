@@ -163,6 +163,7 @@ def test_zoom_resize_navigation_hover_drag_and_export(root, inputs, tmp_path, mo
         assert view.scale == zoom
         assert view.zoom_text.get() == f'{zoom * 100:.0f} %'
         view.fit()
+        view.set_result_boxes_visible(True)
         view.set_loadflow_results(result)
         assert view.canvas.find_withtag('result')
         view._zoom(350, 220, .8)
@@ -172,6 +173,9 @@ def test_zoom_resize_navigation_hover_drag_and_export(root, inputs, tmp_path, mo
         view._double(event)
         assert calls[-1] == ('open', outgoing.remote_group)
         view._hover(event)
+        assert view._hover_job is not None
+        root.after(340,root.quit)
+        root.mainloop()
         assert view._tooltip is not None
         assert clean_label(outgoing.item['name']) in view._tooltip.winfo_children()[0].cget('text')
         view._hide_tooltip()
@@ -188,12 +192,15 @@ def test_zoom_resize_navigation_hover_drag_and_export(root, inputs, tmp_path, mo
         assert (tmp_path / 'fitted.ps').read_bytes().startswith(b'%!PS')
         assert (tmp_path / 'full.ps').read_bytes().startswith(b'%!PS')
         with monkeypatch.context() as p:
-            p.setattr(tk.Menu, 'tk_popup', lambda *_a, **_k: None)
+            from power_machine.gui.diagram.context_menu import ElementContextMenu
+            p.setattr(ElementContextMenu, 'tk_popup', lambda *_a, **_k: None)
             symbol = view.scene.symbols[symbol.id]
             sx, sy = view._xy(symbol.x, symbol.y)
             view._context(SimpleNamespace(x=sx, y=sy, x_root=0, y_root=0))
-        view._menu.invoke(0)
-        assert calls[-1] == ('properties', symbol.id)
+        from power_machine.gui.i18n import tr
+        button=next(b for b in view._menu.buttons if b.cget('text')==tr('v3.diagram.properties'))
+        button.invoke()
+        assert calls[-1] == ('select', symbol.id)
     finally:
         view.destroy()
 
@@ -208,6 +215,7 @@ def test_ieee39_result_boxes_remain_visible_after_dense_arrangement(root, tmp_pa
     view.pack(fill='both', expand=True)
     root.update()
     try:
+        view.set_result_boxes_visible(True)
         view.set_loadflow_results(result)
         root.update()
         assert not view.unplaced_labels

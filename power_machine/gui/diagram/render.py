@@ -2,6 +2,7 @@
 
 from power_machine.gui.theme import theme
 from power_machine.gui.i18n import tr
+from power_machine.gui.results_tables import display_value
 import tkinter as tk
 from tkinter import font as tkfont
 
@@ -69,7 +70,7 @@ def draw(view):
     levels = sorted({round(float(sym.un_kv), 3) for sym in view.scene.symbols.values()
                      if sym.un_kv is not None}, reverse=True)
     for kv in levels if view.color_mode == 'voltage' else []:
-        ident = c.create_text(lx, c.winfo_height() - 8, text=f'━ {kv:g} kV',
+        ident = c.create_text(lx, c.winfo_height() - 8, text='━ '+display_value(kv)+' kV',
                              anchor='sw', fill=voltage_color(kv), font=theme.font('small'), tags='legend')
         lx = c.bbox(ident)[2] + 12
     for wire in view.scene.wires:
@@ -81,12 +82,14 @@ def draw(view):
             a, b = wire.points[:2]
             if power < 0:
                 a, b = b, a
-            view._line([a, b], fill=color, arrow=tk.LAST, tags=('flow_arrow', 'element:' + wire.id))
+            view._line([a, b], fill=color, arrow=tk.LAST, tags=('flow_arrow', 'small_symbol', 'element:' + wire.id))
     for key, symbol in view.scene.symbols.items():
         x, y = view._xy(symbol.x, symbol.y)
         kind, color = symbol.kind, view._color(symbol)
         item = view.index.get(symbol.item.get('id', key), symbol.item)
         tags = ('symbol', 'element:' + key)
+        if kind in ('node','port_switch'):
+            tags += ('small_symbol',)
         radius = max(2, 6 * s)
         if kind == 'generator':
             radius = max(7, 14 * s)
@@ -128,14 +131,11 @@ def draw(view):
             c.create_rectangle(x - 3 * s, y - 8 * s, x + 3 * s, y + 8 * s,
                                fill=theme.color('diagram_bg'), outline=color, tags=tags)
         detailed = view.detail_visible(key)
-        if symbol.label and (detailed or kind in ('group','generator') or (kind == 'bus' and s >= .25)):
-            text_in_box(view, symbol.label, symbol.label_box, ('label', 'element:' + key), bold=kind == 'bus')
-        if view.result_visible(symbol):
-            result = view.results.get(symbol.item.get('id', key))
-            text = result_text(symbol, result, item=item, digits=view.result_digits, include_loading=True,
-                               boxes=view.box_formats, layers=getattr(view, 'layers', None))
-            if text:
-                text_in_box(view, text, symbol.result_box, ('result', 'element:' + key), background=theme.color('surface_alt'))
+        if symbol.label and symbol.label_box and (detailed or kind in ('group','generator') or (kind == 'bus' and s >= .14)):
+            text_in_box(view, symbol.label, symbol.label_box,
+                ('label', 'label_primary' if kind in ('bus','group','generator') else 'label_secondary',
+                 'element:' + key), bold=kind == 'bus')
+    draw_result_labels(view)
     # Rótulos de multiplicidad con fondo blanco, colocados fuera de las cajas.
     for wire in view.scene.wires:
         if wire.label:
@@ -157,6 +157,21 @@ def draw(view):
                   text=tr('diagram.symbols'),
                   font=theme.font('small'),fill=theme.color('text_muted'),tags='legend')
     suppress_overlapping_result_boxes(view)
+
+
+def draw_result_labels(view):
+    """Only result labels intersecting the current viewport are materialized."""
+    from .view import result_text
+    for key,symbol in view.scene.symbols.items():
+        if not view.result_visible(symbol):
+            continue
+        item = view.index.get(symbol.item.get('id',key),symbol.item)
+        result = view.results.get(item.get('id',key))
+        text = result_text(symbol,result,item=item,digits=view.result_digits,include_loading=True,
+            boxes=view.box_formats,layers=getattr(view,'layers',None))
+        if text:
+            text_in_box(view,text,symbol.result_box,('result','element:'+key),
+                background=theme.color('surface_alt'))
 
 
 def suppress_overlapping_result_boxes(view):
@@ -183,14 +198,20 @@ def suppress_overlapping_result_boxes(view):
 def arrange_dense_callouts(view):
     """Coloca detalles de malla sin ocultar resultados al ajustar la vista."""
     c = view.canvas
-    occupied = [c.bbox(i) for i in c.find_withtag('symbol')]
     view.unplaced_labels = []
     width, height = c.winfo_width(), c.winfo_height()
+    def in_view(box):
+        return box and box[2]>=0 and box[3]>=0 and box[0]<=width and box[1]<=height
+    occupied = [box for i in c.find_withtag('symbol') if in_view(box:=c.bbox(i))]
     for ident in c.find_all():
         tags = c.gettags(ident)
         if c.type(ident) != 'text' or not ('label' in tags or 'result' in tags):
             continue
         box = c.bbox(ident)
+        # Offscreen labels stay attached to their objects. Do not pull them into
+        # the viewport, or spend collision-search time on invisible text.
+        if not in_view(box):
+            continue
         element = next((t[8:] for t in tags if t.startswith('element:')), None)
         chosen = None
         def fits(candidate):
@@ -222,8 +243,10 @@ def arrange_dense_callouts(view):
         if chosen is None:
             view.unplaced_labels.append(element)
             if len(view.scene.symbols) >= 250:
+                c.addtag_withtag('layout_hidden',ident)
                 c.itemconfigure(ident, state='hidden')
                 for i in related:
+                    c.addtag_withtag('layout_hidden',i)
                     c.itemconfigure(i, state='hidden')
             continue
         dx, dy = chosen[0]-box[0], chosen[1]-box[1]
@@ -265,6 +288,8 @@ def draw_bundle_guides(view):
 
 
 def overlaps(a, b, padding=6):
+    if not a or not b:
+        return False
     return (min(a[2], b[2]) + padding > max(a[0], b[0]) and
             min(a[3], b[3]) + padding > max(a[1], b[1]))
 

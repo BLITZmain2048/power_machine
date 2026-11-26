@@ -23,7 +23,7 @@ class FakeJob:
 class FakeContext:
     def __init__(self):
         self.root = ROOT
-        model = json.loads((ROOT / "cases/ieee39_pf/model.json").read_text(encoding="utf-8"))
+        model = ieee_model()
         study = {"scenario": {}, "ldf_options": {}}
         self.snapshot = {"model": model, "study": study, "fingerprints": {
             "model_sha256": fingerprint(model), "study_sha256": fingerprint(study), "variant_sha256": None}}

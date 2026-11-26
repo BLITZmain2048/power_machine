@@ -48,7 +48,8 @@ def test_settings_corruption_and_roundtrip(tmp_path):
 def test_language_catalogues_and_fallback():
     old=language()
     try:
-        set_language('en');assert 'Network' in tr('window.diagram')
-        set_language('es');assert 'Diagrama' in tr('window.diagram')
+        for code in ('en','es'):
+            set_language(code)
+            assert tr('v3.window.network') in tr('window.diagram')
         with pytest.raises(ValueError):set_language('xx')
     finally:set_language(old)

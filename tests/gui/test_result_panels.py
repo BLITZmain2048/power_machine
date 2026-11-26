@@ -124,7 +124,16 @@ def test_modal_summary():
 
 
 
-def test_n1_values_filter_and_tcc_bounds(window):
+@pytest.fixture(params=('en','es'))
+def result_locale(request):
+    from power_machine.gui.i18n import language,set_language
+    old=language()
+    set_language(request.param)
+    yield request.param
+    set_language(old)
+
+
+def test_n1_values_filter_and_tcc_bounds(window,result_locale):
     from power_machine.gui.panels import contingency as contingency, protection as protection
     context = Context()
     panel = contingency.create_panel(window, context)
@@ -136,8 +145,9 @@ def test_n1_values_filter_and_tcc_bounds(window):
     first = table.tree.get_children()[0]
     from power_machine.gui.i18n import translate_text
     assert table.tree.set(first, "state") == translate_text(contingency.STATUS_TEXT['completed'])
-    assert table.tree.set(first, "u_pu") == "0.9877"
-    assert table.tree.set(first, "loading_pct") == "120.12"
+    assert table.tree.set(first, "u_pu") == ("0,9877" if result_locale=='es' else "0.9877")
+    assert table.tree.set(first, "loading_pct") == ("120,12" if result_locale=='es' else "120.12")
+    assert table.rows[0]['u_pu']==.987654321
     button = next(w for w in descendants(panel.options) if isinstance(w, ttk.Checkbutton) and w.cget("text") == tr('results.violations_only'))
     button.invoke()
     assert len(table.tree.get_children()) == 1

@@ -1,0 +1,7 @@
+prune _historico
+prune _temporales
+prune synthetic
+prune validation/results
+prune power_machine/cases/ieee39/results
+prune tests/02_trabajo
+recursive-exclude * __pycache__ *.pyc

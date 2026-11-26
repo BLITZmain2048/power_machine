@@ -30,6 +30,10 @@ def icon(master, name, active=False):
         path((5,3),(12,3),(16,7),(16,13),(12,17),(5,17),(2,13),(2,7),(5,3)); line((15,16),(22,23))
     elif name=='legend':
         for y in (4,11,18): box(2,y,4,3); line((10,y+1),(21,y+1))
+    elif name=='result_labels':
+        box(3,3,18,14)
+        path((7,17),(7,22),(12,17))
+        for y in (7,12):line((7,y),(17,y))
     return image
 
 

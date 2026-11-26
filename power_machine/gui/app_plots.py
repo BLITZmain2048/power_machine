@@ -17,4 +17,4 @@ class EngineeringPlotPage(PlotPage):
     def redraw(self, force=False):
         super().redraw(force=force)
         for axis in self.axes:
-            if axis.get_yscale()=='linear':axis.ticklabel_format(axis='y',style='plain',useOffset=False)
+            if not self._time_enabled and axis.get_yscale()=='linear':axis.ticklabel_format(axis='y',style='plain',useOffset=False)

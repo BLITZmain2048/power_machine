@@ -118,3 +118,6 @@ def test_modal_profile_uses_declared_frequency(tmp_path, monkeypatch, frequency)
     result = results.execute_request(request)
     assert called == [frequency]
     assert not any(d.get('code') == 'electrical_base' for d in result['diagnostics'])
+
+import pytest
+pytestmark = [pytest.mark.pfdata]

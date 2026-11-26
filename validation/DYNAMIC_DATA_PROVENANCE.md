@@ -23,3 +23,6 @@ not verified. Every value in the table below remains provisional.
 Primary sources named by the current file are: Athay, Podmore and Virmani, *A Practical Method for the Direct Analysis of Transient Stability*, IEEE PAS, 1979, and M. A. Pai, *Energy Function Analysis for Power System Stability*, 1989. This document intentionally makes no page or table-number claim without the primary material.
 
 The source record remains provisional until the exact edition, table or page and machine ordering have been checked against primary material. The neutral locator is a mapping aid and is not a primary source for inertia or transient reactance. Numerical values remain unchanged.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

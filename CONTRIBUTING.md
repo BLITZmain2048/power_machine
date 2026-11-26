@@ -60,3 +60,6 @@ identify the source, version or revision, applicable terms, transformations,
 units, and file paths. Update `NOTICE` whenever the included third-party data
 or reference exports change. Do not assume that a code license applies to
 case data.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

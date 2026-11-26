@@ -250,7 +250,7 @@ def test_cc_n1_controls_inherit_case_units_and_options(monkeypatch):
     for config in received:
         assert config['frequency_hz']==60.
         assert config['q_limits'] is False
-        assert Path(config['supplemental_path']) == ROOT/'cases/ieee39/results/CC/supplemental_data.json'
+        assert Path(config['supplemental_path']) == ROOT/'cases/ieee39/shortcircuit_data.json'
     app_module.Application.initialize_benchmark_controls(app,'modal',SimpleNamespace())
 
 

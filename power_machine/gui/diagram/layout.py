@@ -119,6 +119,7 @@ class Scene:
     title: str
     symbols: dict[str, Symbol] = field(default_factory=dict)
     wires: list[Wire] = field(default_factory=list)
+    results: dict = field(default_factory=dict)
 
     @property
     def bounds(self):

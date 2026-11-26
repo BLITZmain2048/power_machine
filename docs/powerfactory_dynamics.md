@@ -121,3 +121,6 @@ or plant validation. Run from the repository root:
 ```text
 python -m pytest -q --ignore=tests/gui
 ```
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

@@ -6,6 +6,7 @@ from tkinter import ttk, messagebox
 from .presentation import target_labels, station, element_label
 from .i18n import tr
 from .theme import theme
+from .results_tables import display_value
 
 # Compatibilidad con el administrador de datos mientras migra sus propios rótulos.
 KINDS = {
@@ -67,14 +68,13 @@ def validate_events(events, options, index, energized=None, gen_trip_supported=F
     return list(dict.fromkeys(errors))
 
 
-class EventsEditor(tk.Toplevel):
-    def __init__(self, master, document, api, root, model, index, on_apply, energized=None, preset=None):
-        super().__init__(master)
-        self.title(tr('events.title'))
-        self.geometry('1080x690')
-        self.minsize(880, 600)
-        self.transient(master)
-        self.grab_set()
+class EventsForm:
+    def build_form(self, master, document, api, root, model, index, on_apply, energized=None, preset=None, event_bus=None):
+        self.document=document
+        self.case_id=getattr(document,'active_case_id',None)
+        self.model=model
+        self.energized=energized
+        self._event_bus=event_bus or getattr(master,'bus',None)
         self._applied_rows = None
         self._form_baseline = None
         self._editing_index = None
@@ -88,9 +88,12 @@ class EventsEditor(tk.Toplevel):
             if key == 'time':
                 self.tree.heading(key, command=self.sort)
             self.tree.column(key, width=width)
-        self.tree.pack(fill='both', expand=True, padx=12, pady=12)
-        form = ttk.LabelFrame(self, text=tr('events.definition'), padding=theme.pad_l)
-        form.pack(fill='x', padx=12)
+        self.tree.pack(fill='x', expand=False, padx=8, pady=4)
+        from .panels.panel_widgets import ScrollForm
+        self.form_scroll=ScrollForm(self)
+        self.form_scroll.pack(fill='both',expand=True,padx=8)
+        form = ttk.LabelFrame(self.form_scroll.content, text=tr('events.definition'), padding=8)
+        form.pack(fill='x')
         self.form = form
         self.time = tk.StringVar(value='1.0')
         self.kind = tk.StringVar(value=kind_label((preset or {}).get('kind', 'short_circuit')))
@@ -100,11 +103,11 @@ class EventsEditor(tk.Toplevel):
         ttk.Entry(form, textvariable=self.time, width=12).grid(row=1, column=0, padx=(0, 10))
         self.kind_label_widget = ttk.Label(form, text=tr('events.type'))
         self.kind_label_widget.grid(row=0, column=1, sticky='w')
-        self.kind_box = ttk.Combobox(form, textvariable=self.kind, values=[kind_label(k) for k in KINDS if k != 'gen_trip'], state='readonly', width=29)
+        self.kind_box = ttk.Combobox(form, textvariable=self.kind, values=[kind_label(k) for k in KINDS if k != 'gen_trip'], state='readonly', width=24)
         self.kind_box.grid(row=1, column=1, padx=(0, 10))
         self.target_label_widget = ttk.Label(form, text=tr('events.target_detail'))
         self.target_label_widget.grid(row=0, column=2, sticky='w')
-        self.target_box = ttk.Combobox(form, textvariable=self.target, state='readonly', width=65)
+        self.target_box = ttk.Combobox(form, textvariable=self.target, state='readonly', width=30)
         self.target_box.grid(row=1, column=2, sticky='ew')
         form.columnconfigure(2, weight=1)
         self.param_frame = ttk.Frame(form)
@@ -119,9 +122,12 @@ class EventsEditor(tk.Toplevel):
         self.clearing_entry = ttk.Entry(self.clearing_frame, textvariable=self.clearing_time, width=12)
         self.clearing_entry.pack(side='left', padx=8)
         self.clearing_hint = ttk.Label(self.clearing_frame, text=tr('int2.clear_hint'), wraplength=480)
-        self.clearing_hint.pack(side='left')
+        self.clearing_hint.pack(side='left',fill='x',expand=True)
+        self.clearing_frame.bind('<Configure>',lambda e:self.clearing_hint.configure(wraplength=max(120,e.width-self.clearing_check.winfo_reqwidth()-130)))
         self.pending_text = tk.StringVar(self)
-        ttk.Label(self, textvariable=self.pending_text, wraplength=1000).pack(fill='x', padx=12, pady=(6,0))
+        self.pending_label=ttk.Label(self, textvariable=self.pending_text, wraplength=1000)
+        self.pending_label.pack(side='bottom',fill='x',padx=8,pady=3,before=self.tree)
+        self.bind('<Configure>',lambda e:self.pending_label.configure(wraplength=max(200,e.width-20)) if e.widget is self else None,add='+')
         filters = ttk.Frame(form)
         filters.grid(row=2, column=0, columnspan=3, sticky='ew', pady=8)
         self.query = tk.StringVar()
@@ -143,11 +149,12 @@ class EventsEditor(tk.Toplevel):
             self.target.set(self.target_labels.get(preset.get('target_id'), ''))
             for key, value in preset.get('params', {}).items():
                 if key in self.params: self.params[key].set(str(value))
-        bar = ttk.Frame(self, padding=12)
-        bar.pack(fill='x')
+        bar = ttk.Frame(self, padding=6)
+        bar.pack(side='bottom',fill='x',before=self.tree)
+        self.action_bar=bar
         self.add_button = ttk.Button(bar, text=tr('events.add'), command=lambda: self.store(False))
         self.add_button.pack(side='left')
-        self.add_button.configure(style='Accent.TButton')
+        self.add_button.configure(style='Toolbar.TButton')
         self.update_button = ttk.Button(bar, text=tr('events.update'), command=lambda: self.store(True))
         self.update_button.pack(side='left', padx=6)
         self.delete_button = ttk.Button(bar, text=tr('events.delete'), command=self.delete)
@@ -158,10 +165,10 @@ class EventsEditor(tk.Toplevel):
             try:
                 if self.form_pending() and not self.store(self._editing_index is not None):
                     return
-                errors = validate_events(self.rows, document.study.options, index, energized)
+                errors = validate_events(self.rows, document.study.options, self.index, self.energized)
                 candidate = type(document.study).from_json(document.snapshot())
                 candidate.events = [api.SimEvent.from_dict(row) for row in self.rows]
-                errors.extend(x['message'] for x in api.validate_study(root, candidate, model=model) if x['level'].lower() == 'error')
+                errors.extend(x['message'] for x in api.validate_study(root, candidate, model=self.model) if x['level'].lower() == 'error')
                 if errors:
                     raise ValueError('\n'.join(dict.fromkeys(errors)))
                 document.edit(lambda study: setattr(study, 'events', candidate.events))
@@ -173,13 +180,14 @@ class EventsEditor(tk.Toplevel):
                 messagebox.showerror(tr('events.invalid'), str(exc).replace(';', ','), parent=self)
         self.apply_button = ttk.Button(bar, text=tr('events.apply'), command=apply)
         self.apply_button.pack(side='right', padx=6)
-        self._language_token = getattr(master, 'bus', None).subscribe('language.changed', lambda **_: self.retranslate()) if getattr(master, 'bus', None) else None
+        self._language_token=self._event_bus.subscribe('language.changed',lambda **_:self.retranslate()) if self._event_bus else None
         self.bind('<Destroy>', self._dispose, add='+')
         self.refresh()
         self._form_baseline = None if preset else self.form_signature()
         for variable in (self.time, self.target, self.kind, self.include_clearing, self.clearing_time):
             variable.trace_add('write', self.update_pending)
         self.update_pending()
+        self.form_scroll.wire()
 
     def form_signature(self):
         return (self.time.get(), self.kind_key(), self.target.get(),
@@ -260,11 +268,15 @@ class EventsEditor(tk.Toplevel):
             return False
 
     def refresh(self):
+        self.tree.configure(height=max(2,min(6,len(self.rows))))
         self.tree.delete(*self.tree.get_children())
         for i, row in enumerate(self.rows):
             units = {'r_ohm': tr('events.rf'), 'x_ohm': tr('events.xf'), 'dp_pct': tr('events.dp'), 'dq_pct': tr('events.dq'), 'action': tr('events.action')}
             params = ', '.join(f'{units.get(k, k)}: {tr("events." + str(v)) if k == "action" else v}' for k, v in row.get('params', {}).items())
-            self.tree.insert('', 'end', iid=str(i), values=(row['time_s'], kind_label(row['kind']), element_label(self.index.get(row['target_id'], {}), self.index), params))
+            self.tree.insert('', 'end', iid=str(i), values=(display_value(row['time_s'],'time_s'), kind_label(row['kind']), element_label(self.index.get(row['target_id'], {}), self.index), params))
+        callback = getattr(self, 'on_rows_changed', None)
+        if callback:
+            callback(self.rows)
 
     def sort(self):
         self.rows.sort(key=lambda row: row['time_s'])
@@ -298,7 +310,7 @@ class EventsEditor(tk.Toplevel):
         """Actualiza etiquetas sin alterar filas ni el evento que se está editando."""
         current_kind = self.kind_key()
         all_stations = self.station_filter.get() == self.station_box.cget('values')[0]
-        self.title(tr('events.title'))
+        if isinstance(self,tk.Toplevel):self.title(tr('events.title'))
         self.form.configure(text=tr('events.definition'))
         for key, text_key in self._heading_keys.items():
             self.tree.heading(key, text=tr(text_key))
@@ -323,6 +335,137 @@ class EventsEditor(tk.Toplevel):
         self.update_pending()
 
     def _dispose(self, _=None):
-        bus = getattr(self.master, 'bus', None)
-        if bus and self._language_token:
-            bus.unsubscribe(self._language_token)
+        if _ is not None and _.widget is not self:return
+        if self._event_bus and self._language_token:
+            self._event_bus.unsubscribe(self._language_token)
+            self._language_token=None
+
+
+class EventsEditor(EventsForm,tk.Toplevel):
+    def __init__(self,master,*args,**kwargs):
+        tk.Toplevel.__init__(self,master)
+        self.title(tr('events.title'))
+        self.geometry('1080x690')
+        self.minsize(880,600)
+        self.transient(master)
+        self.grab_set()
+        self.build_form(master,*args,**kwargs)
+
+
+class EmbeddedEventsEditor(EventsForm,ttk.Frame):
+    def __init__(self,parent,*args,**kwargs):
+        ttk.Frame.__init__(self,parent)
+        self.build_form(parent,*args,**kwargs)
+        self.tree.configure(height=max(2,min(6,len(self.rows))))
+        for column in self.tree['columns']:
+            self.tree.column(column, width=130, minwidth=60)
+        self.cancel_button.configure(command=self.discard)
+
+    def discard(self):
+        self.rows=[event.to_dict() for event in self.document.study.events]
+        self._editing_index=None
+        self.change_kind()
+        self.include_clearing.set(False)
+        self.clearing_time.set('')
+        self.refresh()
+        self._form_baseline=self.form_signature()
+        self.update_pending()
+
+    def refresh_context(self,model,index,energized=None):
+        target=next((key for key,label in self.target_labels.items() if label==self.target.get()),None)
+        self.model,self.index,self.energized=model,index,energized
+        self.target_labels=target_labels(index,TARGET_CLASSES[self.kind_key()])
+        self.filter_targets()
+        if target in self.target_labels:self.target.set(self.target_labels[target])
+
+
+class EventCards(ttk.Frame):
+    """Tarjetas temporales con el mismo índice que el editor, sin duplicar eventos."""
+    def __init__(self, parent, on_seek, on_edit, *, compact=False):
+        super().__init__(parent, padding=(8, 4), style='Panel.TFrame')
+        self.on_seek, self.on_edit, self.compact = on_seek, on_edit, compact
+        self.rows, self.index = [], {}
+        self.widgets = []
+        self._pending=None
+        self.bind('<Destroy>',self._dispose_cards,add='+')
+
+    def _schedule_seek(self,index):
+        if self._pending:self.after_cancel(self._pending)
+        def invoke():
+            self._pending=None
+            if index<len(self.rows):self.on_seek(index)
+        self._pending=self.after(250,invoke)
+
+    def _double_click(self,index):
+        if self._pending:
+            self.after_cancel(self._pending)
+            self._pending=None
+        self.on_edit(index)
+        return 'break'
+
+    def _dispose_cards(self,event):
+        if event.widget is self and self._pending:
+            self.after_cancel(self._pending)
+            self._pending=None
+
+    def set_events(self, rows, index):
+        self.rows, self.index = [dict(row) for row in rows], index
+        self.retranslate()
+
+    def retranslate(self):
+        from .time_cursor import number
+        ttk.Style(self).configure('Panel.EventTime.TLabel',background=theme.color('panel'),
+                                  foreground=theme.color('accent2'),font=theme.font('body'))
+        if self._pending:
+            self.after_cancel(self._pending)
+            self._pending=None
+        for child in self.winfo_children():
+            child.destroy()
+        self.widgets = []
+        if not self.rows:
+            ttk.Label(self, text=tr('v3.analysis.no_events'), style='Muted.TLabel').pack(anchor='w')
+            return
+        if self.compact:
+            body = self
+        else:
+            canvas = tk.Canvas(self, height=min(3, len(self.rows))*64, highlightthickness=0,
+                               background=theme.color('panel'))
+            self.canvas=canvas
+            scroll = ttk.Scrollbar(self, command=canvas.yview)
+            canvas.configure(yscrollcommand=scroll.set)
+            scroll.pack(side='right', fill='y')
+            canvas.pack(side='left', fill='x', expand=True)
+            body = ttk.Frame(canvas, style='Panel.TFrame')
+            window = canvas.create_window(0, 0, window=body, anchor='nw')
+            def layout(event):
+                canvas.configure(scrollregion=canvas.bbox('all'))
+                height=min(210,event.height)
+                if int(canvas.cget('height'))!=height:canvas.configure(height=height)
+            body.bind('<Configure>',layout)
+            canvas.bind('<Configure>', lambda event: canvas.itemconfigure(window, width=event.width))
+        for i, row in enumerate(self.rows):
+            kind = tr('v3.analysis.event.'+row['kind'])
+            target = self.index.get(row.get('target_id'), {}).get('name') or row.get('target_id', '')
+            if self.compact:
+                card = ttk.Button(body, text=number(row['time_s'])+' s · '+kind+' · '+target,
+                                  style='Toolbar.TButton', command=lambda n=i: self._schedule_seek(n))
+                card.pack(side='left', padx=(0, 6))
+                card.bind('<Double-1>', lambda event, n=i: self._double_click(n))
+            else:
+                card = ttk.Frame(body, padding=(10, 8), style='Event.Card.TFrame',takefocus=True)
+                card.grid(row=i//2,column=i%2,sticky='nsew',padx=3,pady=3)
+                body.columnconfigure(i%2,weight=1,uniform='event-cards')
+                time_label = ttk.Label(card, text=number(row['time_s'])+' s',
+                                       style='Event.Time.TLabel', width=11)
+                time_label.pack(side='left')
+                text = ttk.Frame(card, style='Event.Card.TFrame')
+                text.pack(side='left', fill='x', expand=True)
+                ttk.Label(text, text=kind+' · '+target, style='Event.Card.TLabel').pack(anchor='w')
+                def bind(widget, n=i):
+                    widget.bind('<Button-1>', lambda event: self._schedule_seek(n))
+                    widget.bind('<Double-1>', lambda event: self._double_click(n))
+                    widget.bind('<Return>',lambda event:self.on_seek(n))
+                    for child in widget.winfo_children():
+                        bind(child, n)
+                bind(card)
+            self.widgets.append(card)

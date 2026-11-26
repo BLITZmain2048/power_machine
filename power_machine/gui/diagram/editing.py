@@ -34,10 +34,11 @@ class DiagramEditing:
 
     def editing_toolbar(self):
         if not hasattr(self,'_edit_var'):return
-        ttk.Separator(self._toolbar,orient='vertical').pack(side='left',fill='y',padx=4)
-        ttk.Checkbutton(self._toolbar,text=tr('edit.enable'),variable=self._edit_var,
+        parent=self._edit_bar
+        ttk.Separator(parent,orient='vertical').pack(side='left',fill='y',padx=4)
+        ttk.Checkbutton(parent,text=tr('edit.enable'),variable=self._edit_var,
                         command=self.toggle_editing).pack(side='left',padx=4)
-        ttk.Label(self._toolbar,textvariable=self._edit_mode_text,style='Muted.TLabel').pack(side='left')
+        ttk.Label(parent,textvariable=self._edit_mode_text,style='Muted.TLabel',font=theme.font('small')).pack(side='left')
         self._build_toolbox()
 
     def _build_toolbox(self):
@@ -97,6 +98,7 @@ class DiagramEditing:
             self._toolbox.pack_forget()
         self.cancel_drawing()
         self._edit_mode_text.set(tr('edit.mode_on' if self.editing else 'edit.mode_off'))
+        self.bus.publish('diagram.mode.changed',editing=self.editing)
 
     def set_edit_mode(self,enabled):
         """Enable drawing explicitly, or return the diagram to view-only mode."""
@@ -214,12 +216,14 @@ class DiagramEditing:
         from .context_menu import ElementContextMenu
         key=self._hit(event)
         if not key:return
+        self._hide_tooltip()
         if key not in self.selected_ids:self.select_ids([key])
         if self._menu is not None:
             try:self._menu.destroy()
             except tk.TclError:pass
         menu=ElementContextMenu(self,self.index.get(key,{}).get('name',key))
         self._menu=menu
+        self.add_context_data(menu,key)
         for label,action in [(tr('edit.edit'),'edit'),(tr('edit.delete'),'delete'),
                 (tr('edit.inserv') if self.index.get(key,{}).get('outserv') else tr('edit.outserv'),'service'),
                 (tr('edit.disconnect'),'disconnect_ports')]:

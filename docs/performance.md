@@ -45,3 +45,6 @@ The public [Linux benchmark samples](benchmarks/linux_2026-11-18.json) were coll
 All completed load-flow runs converged. The 5,000- and 10,000-bus sparse runs converged in three iterations. On the same Linux environment, the wheel built and installed in a clean environment outside the repository, `power-machine doctor` loaded IEEE 39, and the README tour reported `2.18e-10`, `partial 56`, and `L21-22 157.72`.
 
 Earlier profiling identified model copying, result materialization, and diagnostic condition-number work as important costs in static campaigns. Use the same model, options, hardware, thread limits, and output detail before comparing runs. These measurements do not compare Power Machine with another product.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

@@ -102,13 +102,14 @@ class ScrollForm(ttk.Frame):
         self.window = self.canvas.create_window(0, 0, anchor="nw", window=self.content)
         self.content.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfigure(self.window, width=e.width))
+        self.bind('<Configure>',lambda e:self.hint.configure(wraplength=max(200,e.width-14)) if e.widget is self else None,add='+')
         self.canvas.bind("<MouseWheel>", self.wheel)
         self.canvas.bind("<Next>", lambda e: self.canvas.yview_scroll(1, "pages"))
         self.canvas.bind("<Prior>", lambda e: self.canvas.yview_scroll(-1, "pages"))
     def _scroll_status(self, bar, first, last):
         bar.set(first,last)
         if float(last)<0.999:
-            if not self.hint.winfo_manager():self.hint.pack(side='bottom',fill='x')
+            if not self.hint.winfo_manager():self.hint.pack(side='bottom',fill='x',before=self.canvas)
         else:self.hint.pack_forget()
 
     def wheel(self, event):
@@ -140,10 +141,20 @@ class StudyPanel(ttk.Frame):
         ttk.Label(self, textvariable=self.state_text).pack(fill="x")
         body = ttk.Frame(self)
         body.pack(fill="both", expand=True)
-        left = ttk.Frame(body, width=340)
-        left.pack(side="left", fill="y")
+        analysis=getattr(self.winfo_toplevel(),'analysis',None)
+        self._analysis_external=analysis is not None
+        left = ttk.Frame(analysis.options_host if analysis is not None else body, width=340)
+        if analysis is None:left.pack(side="left", fill="y")
+        else:
+            def dispose_external(event):
+                if event.widget is self and left.winfo_exists():
+                    from ..panel_context import cancel_panel_timers
+                    cancel_panel_timers(left)
+                    left.destroy()
+            self.bind('<Destroy>',dispose_external,add='+')
         left.pack_propagate(False)
         self.form_host = left
+        left._study_panel_owner=self
         self.form = ScrollForm(left)
         self.form.pack(fill="both", expand=True)
         self.options = self.form.content
@@ -470,6 +481,9 @@ def action_button(parent, role, **kwargs):
     button.action_id = role
     owner = parent
     while owner is not None and not isinstance(owner, StudyPanel):
+        if hasattr(owner,'_study_panel_owner'):
+            owner=owner._study_panel_owner
+            break
         owner = getattr(owner, 'master', None)
     if owner is not None:
         if not hasattr(owner, '_action_sources'): owner._action_sources = {}
@@ -866,9 +880,13 @@ class CapabilityGate:
                         from power_machine.resources import readonly_path
                         from power_machine.modal.results import fingerprint
                         import json
-                        reference = json.loads(readonly_path('cases', 'ieee39_pf', 'model.json').read_text(encoding='utf-8-sig'))
-                        if fingerprint(snapshot['model']) != fingerprint(reference) or any(study.get('scenario', {}).values()):
-                            blockers.append(dict(code='modal_case', message=tr('int2.modal_reference_only')))
+                        from power_machine.resources import pf_data_available
+                        if not pf_data_available():
+                            blockers.append(dict(code='pf_reference_data_not_included', message=tr('pf_reference_data_not_included')))
+                        else:
+                            reference = json.loads(readonly_path('cases', 'ieee39_pf', 'model.json').read_text(encoding='utf-8-sig'))
+                            if fingerprint(snapshot['model']) != fingerprint(reference) or any(study.get('scenario', {}).values()):
+                                blockers.append(dict(code='modal_case', message=tr('int2.modal_reference_only')))
                 if self.module == "contingency":
                     blockers += [b for b in self.report["calculations"]["voltage_stability"]["blockers"]
                                  if b["code"] in ("invalid_scenario", "invalid_topology", "no_reference")]
@@ -946,9 +964,10 @@ def verified_qds_inputs(root, model, profile):
     from power_machine.qds_panel.adapter import fingerprint
     base = Path(root).resolve()
     builtin = profile.get("kind") == "builtin_ieee39"
-    model_path = (base / ("power_machine/cases/ieee39_pf/model.json" if builtin else profile.get("model_path", "power_machine/cases/ieee39/model.json"))).resolve()
+    from power_machine.resources import pf_data_root
+    model_path = (pf_data_root() / "model.json") if builtin else (base / profile.get("model_path", "power_machine/cases/ieee39/model.json")).resolve()
     manifest = (base / ("power_machine/cases/ieee39/manifest.json" if builtin else profile.get("manifest_path", ""))).resolve()
-    if not model_path.is_relative_to(base) or not manifest.is_relative_to(base):
+    if (not builtin and not model_path.is_relative_to(base)) or not manifest.is_relative_to(base):
         raise ValueError(tr('integration.profile_must_remain_within_the_project'))
     loaded, series = read_series(model_path, manifest, profile.get("name", ""))
     return {"profile_verified": bool(series.steps) and fingerprint(loaded) == fingerprint(model)}
@@ -963,7 +982,7 @@ def sc_preflight_inputs(root, model, supplied):
     fault = inputs.get("fault", {})
     selected = inputs.get("selected_bus_ids") or ([fault["bus_id"]] if fault.get("bus_id") else None)
     result["selected_bus_ids"] = selected
-    relative = inputs.get("supplemental_path") or ("power_machine/cases/ieee39/results/CC/supplemental_data.json"
+    relative = inputs.get("supplemental_path") or ("power_machine/cases/ieee39/shortcircuit_data.json"
         if model.get("meta", {}).get("benchmark") == "ieee39" else "")
     if "supplemental" in inputs:
         result["supplemental"] = inputs["supplemental"]

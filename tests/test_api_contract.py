@@ -1,11 +1,11 @@
 """Public API contract tests for the typed 0.1.0 facade."""
 from __future__ import annotations
+import pytest
 
 import inspect
 import json
 from pathlib import Path
 
-import pytest
 
 
 def _api():
@@ -20,15 +20,13 @@ def _strict(value):
 
 
 def _sc_data() -> Path:
-    return Path(__file__).parents[1] / "power_machine" / "cases" / "ieee39" / "results" / "CC" / "supplemental_data.json"
+    return Path(__file__).parents[1] / "power_machine" / "cases" / "ieee39" / "shortcircuit_data.json"
 
 
 def test_public_import_is_lazy_for_gui_modules():
-    import sys
-    import power_machine
-    assert power_machine.__version__ == "0.1.0"
-    assert "tkinter" not in sys.modules
-    assert "matplotlib" not in sys.modules
+    import subprocess, sys
+    subprocess.run([sys.executable, "-c", "import sys, power_machine; assert power_machine.__version__ == '0.1.0'; assert 'tkinter' not in sys.modules; assert 'matplotlib' not in sys.modules"], check=True)
+
 
 
 def test_typed_loadflow_tables_are_json_safe(ieee39):
@@ -119,22 +117,25 @@ def test_options_and_unit_parameter_names_are_discoverable():
         api.ContingencyOptions(island_reference="unknown")
 
 
+@pytest.mark.pfdata
 def test_compare_powerfactory_loadflow_reference(ieee39):
-    reference = Path(__file__).parents[1] / "power_machine" / "cases" / "ieee39_pf"
+    reference = __import__("power_machine.resources", fromlist=["pf_data_root"]).pf_data_root()
     result = _api().compare_powerfactory(ieee39, reference, "loadflow")
     assert result.status == "completed"
     _strict(result)
 
 
+@pytest.mark.pfdata
 def test_compare_powerfactory_network_reference(ieee39):
-    reference = Path(__file__).parents[1] / "power_machine" / "cases" / "ieee39_pf"
+    reference = __import__("power_machine.resources", fromlist=["pf_data_root"]).pf_data_root()
     result = _api().compare_powerfactory(ieee39, reference, "network")
     assert result.status == "completed"
     _strict(result)
 
 
+@pytest.mark.pfdata
 def test_compare_powerfactory_shortcircuit_reference(ieee39):
-    reference = Path(__file__).parents[1] / "power_machine" / "cases" / "ieee39_pf"
+    reference = __import__("power_machine.resources", fromlist=["pf_data_root"]).pf_data_root()
     result = _api().compare_powerfactory(ieee39, reference, "shortcircuit")
     assert result.status == "completed"
     assert len(result.tables["comparison"].to_records()) == 39

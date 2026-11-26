@@ -108,7 +108,7 @@ class WorkspaceActions:
         return self.settings.path
 
     def restore_window(self):
-        self.window_preferences = self.settings.get('panel_options', {}).get('workspace', {})
+        self.window_preferences = self.settings.get('panel_options', {}).get('workspace_v3', {})
         try:
             self.state('normal')
             geometry = self.settings.get('main_geometry', '1400x850')
@@ -123,14 +123,13 @@ class WorkspaceActions:
         if not data:return
         self.horizontal.sashpos(0,min(max(205,int(data.get('sidebar',260))),self.winfo_width()-400))
         self.set_output_visible(bool(data.get('output_visible',True)))
-        if self.output_visible.get():
-            self.vertical.sashpos(0,max(365,min(int(data.get('output_sash',self.vertical.winfo_height()*.78)),self.vertical.winfo_height()-65)))
+
 
     def save_window_preferences(self):
         data=dict(sidebar=self.horizontal.sashpos(0),output_visible=self.output_visible.get(),
-                  output_sash=self.vertical.sashpos(0) if self.output_visible.get() else 365)
+                  output_sash=0)
         options = deepcopy(self.settings.get('panel_options', {}))
-        options['workspace'] = data
+        options['workspace_v3'] = data
         self.settings.set('panel_options', options)
         self.settings.set('main_geometry', self.geometry())
         self.settings.save()
@@ -272,13 +271,22 @@ class WorkspaceActions:
         for child in widget.winfo_children():
             yield child
             yield from WorkspaceActions.widget_descendants(child)
+        if getattr(widget,'_analysis_external',False):
+            yield widget.form_host
+            yield from WorkspaceActions.widget_descendants(widget.form_host)
 
     def protection_controls(self,panel,restore=None):
         from .panels.panel_widgets import ElementSelector
         fields={}
         for widget in self.widget_descendants(panel):
             if not isinstance(widget,(ttk.Entry,ttk.Combobox)):continue
-            key=str(widget).removeprefix(str(panel))
+            form_host=getattr(panel,'form_host',None)
+            external=getattr(panel,'_analysis_external',False) and str(widget).startswith(str(form_host)+'.')
+            suffix=str(widget).removeprefix(str(form_host)) if external else ''
+            key='options'+suffix if external else str(widget).removeprefix(str(panel))
+            if restore is not None and external and key not in restore:
+                legacy='.!frame.!frame'+suffix
+                if legacy in restore:restore={**restore,key:restore[legacy]}
             if restore is not None and key in restore:
                 value=restore[key]
                 if isinstance(widget,ElementSelector):

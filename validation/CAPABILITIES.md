@@ -1,23 +1,12 @@
-# Study capabilities and evidence
+# Study capabilities
 
-This matrix describes the current implementation and the evidence shipped with this repository. “PowerFactory comparison” is deliberately narrow: it means an offline comparison with the included IEEE 39 export under the listed profile, not a general equivalence claim.
+| Study | Data and scope |
+| --- | --- |
+| AC load flow | Included MATPOWER case39 and user networks |
+| Classical RMS IEEE 39 | Included provisional classical machine data. It has **no** PF comparison label |
+| Native RMS IEEE 39 | Requires user-supplied network and dynamic exports |
+| Short circuit | Explicit source and sequence data; included case39 assumptions are provisional |
+| Modal | Requires compatible dynamic models |
 
-| Study and profile | Method | Required data | Boundaries | Evidence level |
-| --- | --- | --- | --- | --- |
-| AC load flow | Polar Newton-Raphson AC, analytic Jacobian, PV/PQ switching and ideal-node contraction | Buses, branches, loads, generators, bases and a reference bus | Constant P/Q load where ZIP exponents are absent. Not OPF and not a complete PowerFactory control policy | IEEE 39 PowerFactory comparison. Voltage, angle, branch P/Q, losses and generator Q are reported with per-channel errors |
-| Network editing | Explicit commands, materialised variants, undo/redo and deterministic export | Base model, edit description and ID correspondence | Only represented element fields and edit operations | Not compared in this checkout. The `E39-NET-01` export required by the comparator is not included, so an internal round trip is not substituted for external evidence |
-| Contingencies | Repeated AC load flow with outage catalogue | The load-flow data plus selected outages | Feasibility and coverage depend on the selected outage set | Internal parity only in this validation runner. PF-backed LF cases are included in the load-flow campaign |
-| Short circuit, `iec_pf2016_c1_v1` | Positive-sequence 3-phase maximum fault, C(1), IEC corrections and explicit supplemental data | Network, source and transformer SC data, voltage factor, opening time | Three-phase maximum fault only. This is not a full IEC 60909 compliance claim | IEEE 39 PowerFactory comparison on all 39 buses for Ik'', ip, Ib, angle, contributions and KCL residual |
-| Short circuit, radial IEC profiles | Sequence-network calculation with explicit coverage gaps | Sequence impedances, grounding and sources | Quantities are omitted where inputs or profile coverage are absent | Analytical cases only. No included PF comparison is claimed here |
-| Short circuit, ANSI/RL window | Physical RL current window | Explicit source and circuit R/L data | Not a complete ANSI interrupting-duty implementation | Not compared |
-| Protection curves | IEC/IEEE inverse, definite-time and tabulated curves | Relay settings, CT ratios and fault currents | Does not establish relay logic, CT saturation, reclosing or dynamic protection coordination | Analytical curve and internal parity evidence, not compared in this runner |
-| PV and QV curves | Point-by-point operating-point sweep | AC model, dispatch and sweep request | No pseudo-arclength continuation. A last converged point is not a bifurcation proof | Internal parity only |
-| Sensitivities | Central perturbations with control-regime tracking | AC model and perturbation options | Local, step-size-sensitive derivatives, not universal PTDF/LODF | Internal parity only |
-| Classical RMS IEEE 39 | 20-state classical swing equations, Kron reduction and RK4 | `dynamic_data.json`, AC model and event definition | Constant EMF, zero damping, admittance loads. No AVR or governor model | Internal parity and analytical balance checks. It has **no** PF comparison label |
-| Native RMS IEEE 39 | 166-state implicit trapezoidal DAE with native machine, AVR, governor and load models | Included PF-export-derived dynamic catalogue, event trial and channel mapping | Evidence applies only to the three included trials and 1.2 s horizon. It does not prove general model-library equivalence | IEEE 39 PowerFactory comparison. All 29 channels per trial are emitted, including incomplete or failing channels |
-| CCT B16 classical | Repeated classical RMS trial and bisection | Classical dynamic data, fault, clearing range and stability criterion | Finite-horizon 360-degree separation criterion and monotonicity assumption | Internal parity and temporal-resolution study. Not compared to PF |
-| Modal | DAE linearisation and eigenanalysis | Dynamic operating point and state mapping | State definitions and reference frame must match the external tool | Internal parity only |
-| Quasi-dynamic | Sequential AC operating points with checkpoints | Time series, model and control policy | Current path requires declared Q-limit policy | Internal parity only |
-
-Evidence levels: **not compared** means no external or internal parity result is claimed here. **Internal parity** means preservation against the previous engine, not independent validation. **Analytical** means a closed-form check. **PowerFactory comparison** is limited to the specific included IEEE 39 export, settings and channels.
-
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed.
+Set POWER_MACHINE_PF_IEEE39 to supply external data. Missing optional data is reported as pf_reference_data_not_included.

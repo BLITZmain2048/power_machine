@@ -1,5 +1,6 @@
 """Reusable diagram host. Electrical actions are requests to the application."""
 from pathlib import Path
+import math
 import tkinter as tk
 from tkinter import ttk
 
@@ -17,6 +18,10 @@ class DiagramWidget(DiagramEditing,DiagramView):
         self.selected_ids = set()
         self.ranking_ids = ()
         self.contingency_id = None
+        self.cursor_t=None
+        self.cursor_buses={}
+        self.cursor_branches={}
+        self._time_corner=None
         self.mode = 'select'
         self._space = False
         self._rubber = None
@@ -47,6 +52,8 @@ class DiagramWidget(DiagramEditing,DiagramView):
         self._toolbar.pack(fill='x', before=self._body)
         self._options_bar = ttk.Frame(self)
         self._options_bar.pack(fill='x', before=self._body)
+        self._edit_bar = ttk.Frame(self)
+        self._edit_bar.pack(fill='x', before=self._body)
         self._legend_label = ttk.Label(self, textvariable=self._legend_var)
         self._legend_label.pack(fill='x', before=self._body)
         self.canvas.pack_configure(side='left')
@@ -77,6 +84,7 @@ class DiagramWidget(DiagramEditing,DiagramView):
             ('network.edited', self._network_changed),
             ('results.updated', self._results_changed),
             ('results.stale', self._stale),
+            ('time.cursor',self._time_cursor),
             ('contingency.selected', self._contingency_changed),
             ('contingency.ranking.changed', self._ranking_changed)):
             self._subscriptions.append(bus.subscribe(topic, callback))
@@ -91,7 +99,7 @@ class DiagramWidget(DiagramEditing,DiagramView):
         if not hasattr(self, '_toolbar'):
             return
         self._release_icons()
-        for bar in (self._toolbar, self._options_bar):
+        for bar in (self._toolbar, self._options_bar, self._edit_bar):
             for child in bar.winfo_children():
                 child.destroy()
         self._icon_buttons = {}
@@ -102,7 +110,9 @@ class DiagramWidget(DiagramEditing,DiagramView):
                              ('legend', self.toggle_legend), ('minimap', self.toggle_minimap),
                              ('detail', self.toggle_detail)):
             self._icon_button(self._toolbar, key, command)
-        ttk.Button(self._toolbar, textvariable=self.zoom_text, command=self._actual_size).pack(side='left')
+        ttk.Button(self._toolbar, textvariable=self.zoom_text, width=7, command=self._actual_size).pack(side='left')
+        self._icon_button(self._toolbar,'result_labels',
+            lambda:self.set_result_boxes_visible(not self.show_results))
         layers = self._icon_button(self._options_bar, 'layers', kind=ttk.Menubutton)
         menu = tk.Menu(layers, tearoff=False, background=theme.color('surface'), foreground=theme.color('text'))
         self._layer_vars = {}
@@ -113,11 +123,14 @@ class DiagramWidget(DiagramEditing,DiagramView):
         layers.configure(menu=menu)
         modes = ('voltage', 'voltage_band', 'loading', 'state')
         labels = [tr('diagram.color.' + m) for m in modes]
-        self._choices = ttk.Combobox(self._options_bar, state='readonly', width=24, values=labels)
+        from tkinter import font as tkfont
+        font=tkfont.Font(self,font=theme.font('body'))
+        choice_width=math.ceil(max(font.measure(label) for label in labels)/max(1,font.measure('0')))+2
+        self._choices = ttk.Combobox(self._options_bar, state='readonly', width=choice_width, values=labels)
         self._choices.current(modes.index(self.color_mode))
         self._choices.pack(side='left', padx=4)
         self._choices.bind('<<ComboboxSelected>>', lambda e: self.set_color_mode(modes[self._choices.current()]))
-        search = ttk.Entry(self._options_bar, textvariable=self._search_var, width=22)
+        search = ttk.Entry(self._options_bar, textvariable=self._search_var, width=12)
         search.pack(side='left', padx=4)
         search.bind('<Return>', lambda e: self.find_element(self._search_var.get()))
         self._icon_button(self._options_bar, 'search', self._search)
@@ -132,14 +145,15 @@ class DiagramWidget(DiagramEditing,DiagramView):
             options['command'] = command
         button = kind(parent, **options)
         button.pack(side='left', padx=1, pady=2)
-        button._diagram_tooltip = Tooltip(button, tr('diagram.' + name))
+        button._diagram_tooltip = Tooltip(button, tr('v3.diagram.result_labels' if name=='result_labels' else 'diagram.' + name))
         self._icon_buttons[name] = button
         self._refresh_icon(name)
         return button
 
     def _refresh_icon(self, name):
         button = self._icon_buttons[name]
-        button._diagram_image = icon(button, name, active=name == self.mode)
+        button._diagram_image = icon(button, name,
+            active=name == self.mode or (name=='result_labels' and self.show_results))
         button.configure(image=button._diagram_image)
 
     def _release_icons(self):
@@ -244,6 +258,8 @@ class DiagramWidget(DiagramEditing,DiagramView):
             self.select_ids(ids, publish=False)
 
     def _press(self, event):
+        if self._pin_close_hit(event):return
+        self._hide_tooltip()
         self.canvas.focus_set()
         if self.drawing_press(event):return
         if self.mode == 'pan' or self._space:
@@ -269,27 +285,16 @@ class DiagramWidget(DiagramEditing,DiagramView):
         if self._drag and self._drag[0]:
             key, x, y, moved = self._drag
             dx, dy = (event.x-x)/(self.scale*self.x_factor), (event.y-y)/self.scale
-            for ident in self.selected_ids:
-                symbol = self.scene.symbols.get(ident)
-                if symbol:
-                    self.positions[ident] = (symbol.x+dx, symbol.y+dy)
-            self._rebuild_scene()
+            self._move_symbols(self.selected_ids,dx,dy)
             self._drag = (key, event.x, event.y, moved or bool(dx or dy))
-            if self._paint_job is None:
-                self._paint_job = self.after(16, self.draw)
         else:
             if self._drag:
                 key, x, y, moved = self._drag
                 dx, dy = event.x-x, event.y-y
-                self.offset = (self.offset[0]+dx, self.offset[1]+dy)
-                self._user_zoom = True
-                self.canvas.move('all', dx, dy)
-                for tag in ('legend', 'selected_detail', 'minimap'):
-                    self.canvas.move(tag, -dx, -dy)
+                self._pan_pixels(dx,dy)
                 self._drag = (key, event.x, event.y, moved or bool(dx or dy))
 
     def _release(self, event):
-        panned = self._drag and self._drag[0] is None and self._drag[3]
         if self.editing and self._drag and self._drag[0] and self._drag[3]:
             controller=self.editor_controller
             if controller:
@@ -314,8 +319,6 @@ class DiagramWidget(DiagramEditing,DiagramView):
             self._rubber = None
             self.canvas.delete('rubber')
         super()._release(event)
-        if panned:
-            self.draw()
 
     def _rebuild_scene(self):
         self.editing_positions()
@@ -396,6 +399,10 @@ class DiagramWidget(DiagramEditing,DiagramView):
 
     def _stale(self, reason='', **payload):
         self.results = {}
+        self.scene.results = self.results
+        self.cursor_t=None
+        self.cursor_buses={}
+        self.cursor_branches={}
         self.status.set(tr('diagram.stale', reason=reason))
         self.draw()
 
@@ -403,6 +410,11 @@ class DiagramWidget(DiagramEditing,DiagramView):
         self.layers[name] = bool(visible)
         self.draw()
         self.bus.publish('diagram.overlay.changed', mode=name)
+
+    def result_visible(self,symbol):
+        # At overview scale, the inspector carries the detailed last calculation.
+        if self.is_dense and self.scale<.35 and symbol.id!=self.selected_id:return False
+        return super().result_visible(symbol)
 
     def set_contingency(self, target_id=None, ranking_ids=()):
         self.contingency_id = target_id
@@ -448,6 +460,9 @@ class DiagramWidget(DiagramEditing,DiagramView):
 
     def draw(self):
         super().draw()
+        if getattr(self,'_status_scale',None)!=self.scale:
+            self._set_status()
+            self._status_scale=self.scale
         for key in dict.fromkeys((*self.ranking_ids, self.contingency_id)):
             if not key:
                 continue
@@ -458,10 +473,10 @@ class DiagramWidget(DiagramEditing,DiagramView):
             symbol = self.scene.symbols.get(key)
             if symbol:
                 x,y = self._xy(symbol.x, symbol.y)
-                self.canvas.create_oval(x-12,y-12,x+12,y+12,outline=color,width=3,tags='contingency')
+                self.canvas.create_oval(x-12,y-12,x+12,y+12,outline=color,width=3,tags=('contingency','overlay:'+key))
                 if key in self.ranking_ids:
                     self.canvas.create_text(x+14,y-14,text=str(self.ranking_ids.index(key)+1),
-                        fill=color,font=theme.font('heading'),anchor='sw',tags=('contingency','ranking'))
+                        fill=color,font=theme.font('heading'),anchor='sw',tags=('contingency','ranking','overlay:'+key))
         if hasattr(self, '_footer'):
             self.canvas.delete('legend')
             self._draw_footer()
@@ -469,6 +484,76 @@ class DiagramWidget(DiagramEditing,DiagramView):
             self.canvas.delete('legend')
         if self.minimap_visible:
             self._draw_minimap()
+        self._draw_time_cursor()
+
+    def _draw_time_cursor(self):
+        c=self.canvas
+        c.delete('time_cursor')
+        if self.cursor_t is None:
+            self._time_corner=None
+            return
+        from ..results_tables import display_value
+        text=tr('v3.diagram.time',value=display_value(self.cursor_t,precision=3))
+        ident=c.create_text(0,0,text=text,anchor='nw',font=theme.font('body'),
+            fill=theme.color('ink'),tags='time_cursor')
+        box=c.bbox(ident)
+        width,height=box[2]-box[0]+12,box[3]-box[1]+8
+        size=(c.winfo_width(),c.winfo_height())
+        corners=dict(ne=(size[0]-width-10,10),se=(size[0]-width-10,size[1]-height-10),
+            nw=(10,10),sw=(10,size[1]-height-10))
+        if self._time_corner is None or getattr(self,'_time_view_size',None)!=size:
+            def occupied(corner):
+                x,y=corners[corner]
+                score=0
+                for item in c.find_overlapping(x,y,x+width,y+height):
+                    tags=c.gettags(item)
+                    if 'symbol' in tags or 'pinned_data' in tags or 'minimap' in tags:score+=1000
+                    elif 'label' in tags:score+=100
+                    elif 'wire' in tags:score+=1
+                return score
+            self._time_corner=min(corners,key=occupied)
+            self._time_view_size=size
+        x,y=corners[self._time_corner]
+        c.coords(ident,x+6,y+4)
+        rect=c.create_rectangle(x,y,x+width,y+height,fill=theme.color('surface'),
+            stipple='gray50',outline=theme.color('border'),tags='time_cursor')
+        c.tag_lower(rect,ident)
+
+    def _time_cursor(self,t=None,bus_state=None,branch_state=None,**_):
+        """Consume only explicitly supplied, finite time-state values."""
+        previous=set(self.cursor_buses)|set(self.cursor_branches)
+        self.cursor_t=float(t) if isinstance(t,(int,float)) and math.isfinite(t) else None
+        self.cursor_buses=dict(bus_state or {}) if self.cursor_t is not None else {}
+        self.cursor_branches=dict(branch_state or {}) if self.cursor_t is not None else {}
+        # Playback changes colors, not geometry. Keep wheel/pan and labels intact.
+        for ident in previous|set(self.cursor_buses)|set(self.cursor_branches):
+            item=self.index.get(ident)
+            if item is None:continue
+            symbol=self.scene.symbols.get(ident)
+            color=self.element_color(item,self.results.get(ident,{}),symbol.un_kv if symbol else None)
+            if self.cursor_t is None and (ident==self.contingency_id or ident in self.ranking_ids):
+                color=theme.color('error' if ident==self.contingency_id else 'warn')
+            for handle in self.canvas.find_withtag('element:'+ident):
+                tags=self.canvas.gettags(handle)
+                kind=self.canvas.type(handle)
+                if not any(tag in tags for tag in ('symbol','wire','flow_arrow')):continue
+                if kind in ('line','text'):self.canvas.itemconfigure(handle,fill=color)
+                elif kind in ('rectangle','polygon','oval'):self.canvas.itemconfigure(handle,outline=color)
+        self._draw_time_cursor()
+        self._refresh_cards()
+
+    def element_color(self,item,result,un_kv):
+        ident=item.get('id')
+        state=getattr(self,'cursor_buses',{}).get(ident,{})
+        value=state.get('u_pu') if isinstance(state,dict) else None
+        if isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value):
+            low,high=self.voltage_limits
+            return theme.color('v_low' if value<low else 'v_high' if value>high else 'v_ok')
+        state=getattr(self,'cursor_branches',{}).get(ident,{})
+        value=state.get('loading_pct') if isinstance(state,dict) else state
+        if isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value):
+            return theme.color('load_'+str(min(120,max(0,round(value)))))
+        return super().element_color(item,result,un_kv)
 
     def _draw_footer(self):
         if not hasattr(self, '_footer'):
@@ -480,7 +565,8 @@ class DiagramWidget(DiagramEditing,DiagramView):
         if self.color_mode == 'voltage':
             levels = sorted({s.un_kv for s in self.scene.symbols.values() if s.un_kv is not None},reverse=True)
             from .layout import voltage_color
-            entries.extend((f'{v:g} kV',voltage_color(v)) for v in levels)
+            from ..results_tables import display_value
+            entries.extend((display_value(v)+' kV',voltage_color(v)) for v in levels)
         elif self.color_mode == 'loading':
             entries.extend([(tr('diagram.load_low'),theme.color('ok')),
                             (tr('diagram.load_mid'),theme.color('warn')),
@@ -515,6 +601,7 @@ class DiagramWidget(DiagramEditing,DiagramView):
 
     def _draw_minimap(self):
         c = self.canvas
+        c.delete('minimap')
         left, top, right, bottom = self.scene.bounds
         ratio = min(150/max(1,right-left), 90/max(1,bottom-top))
         ox, oy = c.winfo_width()-170, 15

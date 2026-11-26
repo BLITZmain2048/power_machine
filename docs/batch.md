@@ -6,13 +6,11 @@
 from power_machine import load_case
 from power_machine.batch import BatchOptions, Scenario, run_batch
 
-
 def main():
     model = load_case("ieee39")
     scenarios = [Scenario(id="base"), Scenario(id="line-out", out_of_service=("L01-02",))]
     result = run_batch(model, "loadflow", scenarios, options=BatchOptions(workers=1))
     print([row["status"] for row in result.to_records()])
-
 
 if __name__ == "__main__":
     main()
@@ -25,3 +23,6 @@ On Windows, `spawn` requires this entry-point guard when `BatchOptions(workers >
 Only independent `loadflow` and `contingency` scenarios are supported. A sequential quasi-dynamic series is a different workflow and uses `quasi_dynamic`. Results from a resumed run are accepted only when the model, study options, and scenario hashes agree.
 
 One recorded IEEE 39 experiment produced identical result fingerprints at 1, 2, 4, and 8 processes. Its shared-machine throughput varied, so it is evidence of deterministic execution rather than a general scaling claim.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

@@ -6,7 +6,8 @@ from dataclasses import asdict
 
 def sc_reference_label(model, options, supplemental, fault):
     """Reconoce exclusivamente la entrada PF y el perfil trifásico publicados."""
-    from power_machine.resources import readonly_path
+    from power_machine.resources import readonly_path, pf_data_available
+    if not pf_data_available(): return None
     from power_machine.shortcircuit.results import fingerprint
     from power_machine.pfcompare.cc import build_supplement
     from power_machine.shortcircuit import ShortCircuitOptions
@@ -29,6 +30,8 @@ def sc_reference_label(model, options, supplemental, fault):
 
 def sc_result_matches_reference(result, model):
     """Comprueba las tres magnitudes actuales contra la referencia por barra."""
+    from power_machine.resources import pf_data_available
+    if not pf_data_available(): return False
     import csv,math
     from power_machine.resources import readonly_path
     payload=result.get('payload',{})

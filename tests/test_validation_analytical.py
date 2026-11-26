@@ -1,5 +1,6 @@
 """Fast validation tests. The full offline campaign is a separate command."""
 from __future__ import annotations
+import pytest
 
 import json
 from pathlib import Path
@@ -24,6 +25,7 @@ def test_capability_matrix_keeps_classical_and_native_rms_separate():
     assert "It has **no** PF comparison label" in text
 
 
+@pytest.mark.pfdata
 def test_included_ieee39_loadflow_reference_is_comparable():
     """Small external-reference subset kept separate from the full campaign."""
     from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR, LDF_OPTIONS, build_model
@@ -34,4 +36,5 @@ def test_included_ieee39_loadflow_reference_is_comparable():
     comparison = compare_results(model, run_loadflow(model, options=LDF_OPTIONS), DEFAULT_PF_DIR / "E39-LF-01")
     assert comparison["pass"]
     assert {"buses", "branches", "generators", "reference", "totals"} <= set(comparison["counts"])
+
 

@@ -1,7 +1,7 @@
 """Run the offline IEEE 39 validation campaign.
 
 Run ``python -m validation`` from the repository root.  The command uses only
-the included PowerFactory exports and writes a timestamped, immutable result
+user-supplied PowerFactory exports and writes a timestamped, immutable result
 folder below ``validation/results``.  It never changes model parameters or
 tolerances after measurements have started.
 """
@@ -212,14 +212,22 @@ def run(output=None, *, quick=False):
     """Execute the campaign and return its JSON summary."""
     tolerances = json.loads(TOLERANCE_PATH.read_text(encoding="utf-8"))
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    output = Path(output) if output else VALIDATION_ROOT / "results" / stamp
+    output = Path(output) if output else Path(os.environ.get("POWER_MACHINE_OUTPUT_DIR", str(ROOT / "study_results"))) / stamp
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     # Some existing comparison helpers intentionally confine their output to this root.
     os.environ["POWER_MACHINE_OUTPUT_DIR"] = str(output)
     _write_json(output / "tolerances_before_run.json", tolerances)
     analytical = run_cases(tolerances["analytical"])
-    if quick:
+    from power_machine.resources import pf_data_available
+    if not pf_data_available() and not quick:
+        convergence = [_classical_convergence(tolerances["temporal_convergence"])]
+        result = {"schema": "power-machine-validation-summary-v1", "mode": "internal",
+                  "analytical": analytical, "convergence": convergence,
+                  "powerfactory": {"status": "not included", "code": "pf_reference_data_not_included"},
+                  "pass": all(item["pass"] for item in analytical) and all(item["pass"] for item in convergence)}
+        (output / "report.md").write_text("PowerFactory comparisons: not included\n", encoding="utf-8")
+    elif quick:
         result = {"schema": "power-machine-validation-summary-v1", "mode": "quick", "tolerances": tolerances,
                   "analytical": analytical, "pass": all(item["pass"] for item in analytical)}
     else:
@@ -241,6 +249,8 @@ def main(argv=None):
     parser.add_argument("--quick", action="store_true", help="Run only closed-form analytical validation")
     args = parser.parse_args(argv)
     result, output = run(args.output, quick=args.quick)
+    if result.get("powerfactory"):
+        print("PowerFactory comparisons: not included")
     print(output)
     return 0 if result["pass"] else 1
 

@@ -229,7 +229,7 @@ def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None):
     from power_machine.resources import output_root
     from power_machine.pfcompare.rms_replay import inside_workspace
     target = inside_workspace(output_dir if output_dir is not None else output_root() / "comparison_results/ieee39_pf")
-    model_path = required_readonly_path("cases", "ieee39_pf", "model.json")
+    model_path = Path(pf_dir) / "model.json"
     model = read_json(model_path)
     types, config, controllers = native_inputs(root)
     lf = run_loadflow(model, options=LDF_OPTIONS)

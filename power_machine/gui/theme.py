@@ -6,6 +6,19 @@ DARK=dict(bg='#151b26',surface='#1e2837',surface_alt='#29364a',border='#40516a',
 for palette in (LIGHT,DARK):
     for i in range(121):
         palette['load_'+str(i)]=palette['ok'] if i<80 else palette['warn'] if i<100 else palette['error']
+# Shell v3 tokens. Electrical palettes above remain stable for existing overlays.
+LIGHT.update(bg='#e7e8e9',panel='#f1f2f3',paper='#ffffff',soft='#f7f8f9',
+    line='#c9cdd1',ink='#30363d',muted='#65707b',accent='#173653',accent2='#d99a28',
+    sky='#56a9d3',select='#fff0d2',grid='#e9edf0',alert='#ad493f',
+    titlebar='#353a40',title_ink='#edf0f3',title_muted='#c2c9d1')
+DARK.update(bg='#282b2f',panel='#30343a',paper='#22262b',soft='#292e34',
+    line='#484e57',ink='#e3e7ec',muted='#a8b0bc',accent='#83bddb',accent2='#e5b45b',
+    sky='#83bddb',select='#4c4030',grid='#363d45',alert='#df8e82',
+    titlebar='#20252b',title_ink='#edf0f3',title_muted='#bdc7d1')
+for palette in (LIGHT,DARK):
+    for alias,token in dict(surface='paper',surface_alt='panel',border='line',text='ink',
+                            text_muted='muted',selection='select',error='alert',diagram_bg='paper').items():
+        palette[alias]=palette[token]
 class Theme:
     palettes={'light':LIGHT,'dark':DARK}
     pad_s,pad_m,pad_l=4,8,16
@@ -63,6 +76,14 @@ class Theme:
                         bordercolor=c('border'),lightcolor=c('border'),darkcolor=c('border'))
         for name,token in [('Muted','text_muted'),('Warning','warn'),('Error','error'),('Section','text')]:
             style.configure(name+'.TLabel',foreground=c(token),background=c('bg'))
+        for orientation in ('Horizontal','Vertical'):
+            style.configure(orientation+'.TScale',background=c('bg'),troughcolor=c('soft'),bordercolor=c('line'),lightcolor=c('line'),darkcolor=c('line'))
+            style.map(orientation+'.TScale',background=[('disabled',c('panel')),('active',c('select'))])
+        style.configure('Event.Card.TFrame',background=c('soft'),bordercolor=c('line'),relief='solid',borderwidth=1)
+        style.configure('Event.Card.TLabel',background=c('soft'),foreground=c('ink'))
+        style.configure('Event.Target.TLabel',background=c('soft'),foreground=c('muted'),font=self.font('small'))
+        style.configure('Event.Time.TLabel',background=c('soft'),foreground=c('accent2'),font=self.font('body'))
+        self._chrome_styles(root,style)
         self._defaults(root)
         # One hook per interpreter, shared by all of its Toplevels. Apply also to
         # widgets created after the theme was selected, without rebuilding panels.
@@ -74,6 +95,59 @@ class Theme:
         else:
             hook['theme']=self
         self._native(root)
+
+    def _chrome_styles(self,root,style):
+        """Stable extension points for the network and analysis workspaces."""
+        import tkinter as tk
+        c=self.color
+        for prefix,background in (('Titlebar','titlebar'),('Panel','panel'),('Inspector','panel'),
+                                   ('Status','bg'),('Toolbar','soft')):
+            style.configure(prefix+'.TFrame',background=c(background))
+            style.configure(prefix+'.TLabel',background=c(background),foreground=c('title_ink' if prefix=='Titlebar' else 'ink'))
+        style.configure('Titlebar.Brand.TLabel',background=c('titlebar'),foreground=c('title_ink'),font=('Segoe UI',11,'bold'))
+        style.configure('Titlebar.Window.TLabel',background=c('titlebar'),foreground=c('title_muted'))
+        style.configure('Titlebar.Case.TLabel',background=c('titlebar'),foreground=c('accent2'))
+        style.configure('PanelHeader.TLabel',background=c('bg'),foreground=c('muted'),font=('Segoe UI',9,'bold'),padding=(10,7))
+        style.configure('Inspector.Code.TLabel',background=c('select'),foreground=c('accent'),font=('Segoe UI',13,'bold'),padding=8)
+        style.configure('Inspector.Title.TLabel',background=c('panel'),foreground=c('ink'),font=('Segoe UI',10,'bold'))
+        style.configure('Inspector.Key.TLabel',background=c('panel'),foreground=c('muted'))
+        style.configure('Inspector.Value.TLabel',background=c('panel'),foreground=c('ink'),anchor='e')
+        style.configure('Status.TLabel',font=self.font('small'),padding=(8,4))
+        style.configure('Status.Mode.TLabel',foreground=c('accent'),font=self.font('small'),padding=(8,4))
+        style.configure('Toolbar.TButton',background=c('paper'),padding=(7,3),borderwidth=1)
+        style.layout('Chrome.TMenubutton',[('Menubutton.border',{'sticky':'nsew','children':[
+            ('Menubutton.padding',{'sticky':'nsew','children':[('Menubutton.label',{'sticky':'w'})]})]})])
+        style.configure('Chrome.TMenubutton',background=c('panel'),foreground=c('ink'),padding=(8,4),borderwidth=0,arrowcolor=c('muted'))
+        style.map('Chrome.TMenubutton',background=[('active',c('select'))])
+        style.configure('Run.TButton',background=c('select'),foreground=c('ink'),bordercolor=c('accent2'),padding=(10,3))
+        style.map('Run.TButton',background=[('active',c('accent2')),('pressed',c('accent2'))])
+        style.configure('Explorer.Treeview',background=c('panel'),fieldbackground=c('panel'),rowheight=30)
+        style.configure('Explorer.Subtitle.Treeview',foreground=c('muted'),font=self.font('small'))
+        # Image elements paint a true two-pixel stripe, independent of OS theme.
+        host=root._root()
+        images=getattr(host,'_chrome_tab_images',{})
+        for prefix,edge in (('Doc','top'),('Results','bottom')):
+            active=tk.PhotoImage(master=root,width=3,height=5)
+            inactive=tk.PhotoImage(master=root,width=3,height=5)
+            active.put(c('paper'),to=(0,0,3,5))
+            inactive.put(c('panel'),to=(0,0,3,5))
+            active.put(c('accent') if prefix=='Doc' else c('accent2'),to=(0,0,3,2) if edge=='top' else (0,3,3,5))
+            element=prefix+'.stripe'
+            # Reuse Tcl images on live theme changes so the style references stay valid.
+            if prefix in images:
+                for old,new in zip(images[prefix],(inactive,active)):
+                    root.tk.call(str(old),'copy',str(new))
+            else:
+                images[prefix]=(inactive,active)
+                style.element_create(element,'image',inactive,('selected',active),border=(0,2,0,2),sticky='nsew')
+            style.layout(prefix+'.TNotebook.Tab',[(element,{'sticky':'nsew','children':[
+                ('Notebook.padding',{'side':'top','sticky':'nsew','children':[
+                    ('Notebook.label',{'side':'top','sticky':''})]})]})])
+            style.configure(prefix+'.TNotebook',background=c('bg'),borderwidth=0,tabmargins=(3,3,0,0))
+            style.configure(prefix+'.TNotebook.Tab',padding=(14,8),foreground=c('ink'),background=c('panel'))
+            style.map(prefix+'.TNotebook.Tab',foreground=[('selected',c('ink')),('!selected',c('muted'))])
+        host._chrome_tab_images=images
+        style.layout('Hidden.TNotebook.Tab',[])
 
     def _defaults(self, root):
         c=self.color
@@ -137,7 +211,10 @@ class Theme:
             if isinstance(widget,ttk.Widget):
                 style=ttk.Style(widget)
                 name=widget.cget('style') or widget.winfo_class()
-                for option,token in [('background','bg'),('fieldbackground','surface'),('foreground','text')]:
+                if name.startswith(('Titlebar.','PanelHeader.','Inspector.','Status.')) and 'font' in widget.keys():
+                    font=style.lookup(name,'font')
+                    if font:widget.configure(font=font)
+                for option,token in ([] if name.startswith(('Titlebar.','Toolbar.','Run.','Panel','Doc.','Results.','Explorer.','Inspector.','Status.','Chrome.','Event.')) else [('background','bg'),('fieldbackground','surface'),('foreground','text')]):
                     value=style.lookup(name,option)
                     if value:
                         style.configure(name,**{option:self._semantic(value,token)})

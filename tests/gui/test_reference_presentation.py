@@ -93,3 +93,6 @@ def test_n1_uses_engine_priority_and_published_generation():
     assert row['loading']==121.2345 and row['generation']==42.
     from power_machine.gui.panels.contingency import STATUS_TEXT
     assert row['state'] == STATUS_TEXT['generation_disconnected'] and 'L1' in row['branch']
+
+import pytest
+pytestmark = [pytest.mark.pfdata]

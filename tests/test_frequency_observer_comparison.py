@@ -124,3 +124,6 @@ def test_adaptive_steps_and_both_event_sides_keep_27_channels(monkeypatch):
     # La muestra de evento sigue siendo t-, el nuevo valor aparece después.
     assert enabled["physical_0"][1] < enabled["physical_0"][2]-.4
 
+
+import pytest
+pytestmark = [pytest.mark.pfdata]

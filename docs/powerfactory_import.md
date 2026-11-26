@@ -16,15 +16,11 @@ Pass the export directory to `import_powerfactory`, `load_case`, or `power-machi
 
 ## Native passive elements (PF 2024)
 
-The balanced positive-sequence LF and RMS network stamps use physical ohms and siemens before conversion to the system MVA base and each terminal's kV base. All data below are input attributes, never `m:` result channels. The reference circuits are DIgSILENT PowerFactory 2024 Technical References `Series Capacitor (ElmScap)`, sections 1-4, `Series Reactor (ElmSind)`, sections 1-4, and `Filter/Shunt (ElmShnt)`, sections 1.1-1.5 and 4. These manuals are distributed with PowerFactory. They are not redistributed here.
-
 | Class | Connections | Supported native attributes and units |
 | --- | --- | --- |
 | `ElmScap` | `bus1`, `bus2` | `xcap` (positive magnitude, ohm), or `bcap` (S, explicit `uS` also accepted). Series reactance is negative. `gcap` (S, explicit `uS` accepted) or `tandc` gives parallel capacitor losses. Optional explicit series resistance `rcap` or `rrea` is in ohms. `ucn` (kV) and `Sn` (MVA) are ratings, not an impedance base when `xcap` is exported. |
 | `ElmSind` | `bus1`, `bus2` | `xrea`, `rrea` (ohm), or `ucn` (kV), `Sn` (MVA), `uk` (% impedance magnitude), `Pcu` (kW copper loss). With `Zb=ucn**2/Sn`, `R=Pcu/(1000 Sn) Zb`, `X=sqrt((uk Zb/100)**2-R**2)`. Explicit layout components take precedence over rating-derived components. |
 | `ElmShnt` | `bus1` | `shtype`, `ushnm` (kV), `ncapa` active steps, `ncapx` maximum steps. Layout fields: `xrea`, `rrea`, `rpara` (ohm), `bcap`, `gparac` (uS), `c1`, `c2` (uF). Design alternatives: `qrean`, `qcapn` (Mvar), `grea` quality factor, `tandc` loss tangent. |
-
-No bypass attribute is listed in the PF 2024 Series Capacitor parameter table. If an export supplies an explicit boolean `bypass`, `bypassed`, or `is_bypassed`, the importer preserves it and the network contracts the branch as an ideal connection when it equals 1. These are accepted export aliases, not claimed universal PF native names. Missing bypass means inserted. Out-of-service elements and open terminal switches remain disconnected. Capacitor losses and declared series resistance are included. Nonlinear MOV and spark-gap protection are outside the static LF/RMS network stamp.
 
 ### Shunt circuits
 
@@ -69,7 +65,6 @@ ElmXnet is imported into `gens` through its native `bus1` port. Original paramet
 
 Balanced initial short-circuit calculations use `Z1 = c Un² / Sk` and the declared R/X ratio. `ikss` and `ikssmin` in kA are alternatives to Sk in MVA. `xntrn` and `xntrnmin` are X/R alternatives when R/X is absent. Minimum data never fall back to maximum data. Supplementary source records take precedence when present. Native ground-fault sequence and neutral models remain explicitly unsupported. Preserving `cgnd` does not infer a grounding impedance. Negative sequence currently uses the reciprocal balanced equivalent.
 
-The RMS adapter initializes its internal EMF from the accepted load flow using `E = V + Z conj(S/V)`. The default is a fixed internal voltage behind the declared positive-sequence impedance. With exported `tag` in seconds, it can use a classical two-state swing model. The PF2024 acceleration base is `tag = 2H` and its equivalent rating is `0.2 sqrt(1+(R/X)²) Sk/cmax`. Thus inertia requires explicit `snss`, `rntxn` and `cmax`. `rms_fixed_voltage` selects fixed frequency even when tag is exported. This adapter does not reproduce PF's subtransient flux model, excitation, primary or secondary frequency control. Unsupported control fidelity must not be interpreted as validated PowerFactory RMS equivalence.
 
-Checked against the installed PowerFactory 2024 Technical Reference, External Grid, sections 2, 3 and 5, especially equations 38 and 75. No manual is distributed with this repository. Public references are [DIgSILENT RMS external grid](https://www.digsilent.de/en/faq-reader-powerfactory/how-is-the-external-grid-modeled-for-rms-simulation.html), [DIgSILENT short-circuit equivalent](https://www.digsilent.de/en/faq-reader-powerfactory/how-to-set-up-a-model-of-hv-grid-as-an-external-grid-for-short-circuit-calculation.html) and [pandapower's native PowerFactory importer](https://github.com/e2nIEE/pandapower/blob/develop/pandapower/converter/powerfactory/pp_import_functions.py).
 
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

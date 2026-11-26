@@ -184,3 +184,6 @@ def test_output_requires_the_comparator_workspace(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="working directory"):
         fresh_output(tmp_path, "synthetic")
 
+
+import pytest
+pytestmark = [pytest.mark.pfdata]

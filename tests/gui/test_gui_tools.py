@@ -21,10 +21,13 @@ def test_scale_preview_commit_and_undo(shell):
     assert shell.document.network.model['loads'][0]['p_mw']==load['p_mw']
 
 
-def test_logo_optional_and_ribbon(shell,tmp_path):
+def test_logo_optional_and_compact_study_workspace(shell,tmp_path):
     from power_machine.gui.identity import apply_window_icon
     apply_window_icon(shell,tmp_path)
-    assert len(shell.ribbon.tabs())==5
+    assert tuple(shell.analysis.result_hosts)==('curves','events','tables','log')
+    nodes={node for group in shell.analysis.study_tree.get_children() for node in shell.analysis.study_tree.get_children(group)}
+    assert nodes >= {'flow','shortcircuit','contingency','rms','modal'}
+    assert str(shell.case_selector.cget('state'))=='readonly'
     assert all(button.cget('text') for button in shell.action_buttons)
     shell.select(shell.model['loads'][0]['id'])
     assert shell.properties_dock.editor is not None

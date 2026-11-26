@@ -34,6 +34,10 @@ class BenchmarkActions:
     def open_native_comparison(self, directory=None):
         """Abre una corrida nativa existente junto a la referencia IEEE 39 incluida."""
         if not self.available():return
+        from power_machine.resources import pf_data_available
+        if not pf_data_available():
+            self.show_error(ValueError(tr("pf_reference_data_not_included")))
+            return
         if directory is None:
             directory=filedialog.askdirectory(parent=self,title=tr('integration.native_e39_din_01_run_with_signals'),initialdir=self.root_path)
         if not directory:return
@@ -171,7 +175,7 @@ class BenchmarkActions:
                                      initialvalue=self.model['buses'][0]['id'], parent=self)
         if not bus:
             return
-        supplemental = self.model_path.parent / 'results/CC/supplemental_data.json'
+        supplemental = self.model_path.parent / 'shortcircuit_data.json'
         if not supplemental.exists():
             selected = filedialog.askopenfilename(parent=self, initialdir=self.model_path.parent,
                                                   filetypes=[(tr('integration.short_circuit_data'), '*.json')])

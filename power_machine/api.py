@@ -651,9 +651,10 @@ def quasi_dynamic(net: Network, series: Any, *, options: QuasiDynamicOptions | N
                               StudyTable("records", tuple(records), {"t_s": "s", "elapsed_s": "s"}), summary)
 
 
-def compare_powerfactory(net: Network, pf_results_dir: str | Path, study: str = "loadflow") -> GenericStudyResult:
+def compare_powerfactory(net: Network, pf_results_dir: str | Path | None = None, study: str = "loadflow") -> GenericStudyResult:
     """Compare a fresh calculation against a PowerFactory export."""
-    _require_network(net); folder = Path(pf_results_dir); study = study.lower()
+    from .resources import pf_data_root
+    _require_network(net); folder = pf_data_root(pf_results_dir); study = study.lower()
     if study == "loadflow":
         from .pfcompare.lf import compare_results; result = loadflow(net); comparison = compare_results(net.to_model(), result._raw, _study_folder(folder, "E39-LF-01", "buses.csv"))
     elif study == "network":

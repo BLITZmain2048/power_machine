@@ -258,6 +258,8 @@ def create_panel(parent, context) -> ttk.Frame:
         app.open_parity_panel('modal')
         app.parity_panels['modal'][1].panel.modal_profile.set('ieee39_classical')
     compatible_button = ttk.Button(toolbar, text=tr('int2.open_modal_case'), command=open_compatible)
+    from power_machine.resources import pf_data_available
+    if not pf_data_available(): compatible_button.configure(state="disabled")
     compatible_button.grid(row=4, column=0, columnspan=2, sticky='ew', pady=6)
     shell.compatible_case_button = compatible_button
     panel = finish_panel(shell, context, controller, tr("panel.modal.scope"))

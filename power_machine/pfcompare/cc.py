@@ -288,7 +288,7 @@ def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None, *, model=None):
 
     def write(path, rows):
         write_table(path, rows, output_dir=allowed_root)
-    model = model if model is not None else read_json(readonly_path("cases", "ieee39_pf", "model.json"))
+    model = model if model is not None else read_json(root / "model.json")
     for relative, expected_hash in model["meta"]["sha256_inputs"].items():
         if file_hash(root / relative) != expected_hash:
             raise ValueError("Fuente distinta del modelo PFC-MODEL: " + relative)

@@ -1,22 +1,7 @@
-# Comparison evidence and limitations
+# Validation
 
-The repository includes specific IEEE 39 comparisons, not a global claim for arbitrary networks or profiles. Run the reproducible evidence command from the repository root:
+Run `python -m validation` from the repository root. Without external data it runs analytical checks and classical temporal convergence and reports PowerFactory comparisons as **not included**. Configure `POWER_MACHINE_OUTPUT_DIR` or pass `--output` to select the destination. Existing runs are preserved.
 
-```console
-python -m validation
-```
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory to enable optional comparisons. Tolerances are copied before execution. An unavailable comparison does not establish agreement.
 
-Versioned tolerances are copied before the run. The command writes a new report under `validation/results/`. That generated output is not publication source material.
-
-| Study and profile | Evidence | Result |
-| --- | --- | --- |
-| AC load flow IEEE 39 | Included PowerFactory comparison E39-LF-01 | 1.215e-9 p.u. maximum voltage error, 4.237e-7 degrees, and 4.205e-6 Mvar branch reactive-flow error |
-| Network editing | Export E39-NET-01 absent from resources | Not compared |
-| 3-phase short circuit `iec_pf2016_c1_v1` | Included 39-bus PowerFactory comparison | 2.600e-8 maximum relative Ik'', 2.587e-8 ip, and 7.176e-8 Ib error |
-| Classical RMS | Internal parity and analytical balance | Not compared with PowerFactory and distinct from native RMS |
-| Native RMS, 166 states | E39-DIN-01/02/03 through 1.2 s | Partial: 26/29, 26/29, and 27/29 channels meet their published maximum criterion |
-| Analytical cases | Closed-form checks | Seven cases pass at 1e-9 absolute and relative tolerance |
-
-The aggregate evidence outcome remains false by design because the network-editing reference is absent and native RMS has incomplete or out-of-criterion channels. Do not replace those states with a global label. h, h/2, and h/4 checks are published for smooth intervals and CCT B16 resolution, not as a universal event-crossing order claim.
-
-See `validation/CAPABILITIES.md` for profile-level coverage and `validation/DYNAMIC_DATA_PROVENANCE.md` for dynamic-parameter provenance.
+See [capabilities](../validation/CAPABILITIES.md) and [dynamic provenance](../validation/DYNAMIC_DATA_PROVENANCE.md).

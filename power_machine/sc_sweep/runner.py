@@ -28,7 +28,7 @@ def _cancelled(cancel):
 def _default_supplemental_path(model):
     """Known local path without inferred electrical parameters."""
     if model.get("meta", {}).get("benchmark") == "ieee39":
-        return "cases/ieee39/results/CC/supplemental_data.json"
+        return "cases/ieee39/shortcircuit_data.json"
     raise ValueError('[invalid_input] ' + "Provide supplemental or supplemental_path")
 
 
@@ -43,7 +43,7 @@ def _source_document(root, request, model):
     relative = source.get("supplemental_path", _default_supplemental_path(model))
     if "supplemental_path" not in source and model.get("meta", {}).get("benchmark") == "ieee39":
         from ..resources import required_readonly_path
-        path = required_readonly_path("cases", "ieee39", "results", "CC", "supplemental_data.json")
+        path = required_readonly_path("cases", "ieee39", "shortcircuit_data.json")
     else:
         path = confined_path(root, relative)
     if not path.is_file():
@@ -138,7 +138,10 @@ def _status(rows):
 
 def _reference_ieee39(root, rows):
     """Indicative CC-01 comparison without claiming case validation."""
-    path = output_root() / "comparison_results/ieee39_pf/E39-CC-01/buses.csv"
+    from power_machine.resources import pf_data_available, pf_data_root
+    if not pf_data_available():
+        return {"status": "not included", "code": "pf_reference_data_not_included"}
+    path = pf_data_root() / "E39-CC-01/fault_summary.csv"
     if not path.is_file():
         return {"status": "unavailable"}
     reference = {}
@@ -146,7 +149,7 @@ def _reference_ieee39(root, rows):
         for item in csv.DictReader(stream):
             raw = item.get("fault_bus", "")
             try:
-                reference[f"B{int(raw):02d}"] = float(item["pf_Ikss_kA"])
+                reference[f"B{int(raw):02d}"] = float(item.get("pf_Ikss_kA", item.get("Ikss_kA")))
             except (TypeError, ValueError):
                 continue
     differences = []

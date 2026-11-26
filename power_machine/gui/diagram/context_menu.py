@@ -29,6 +29,10 @@ class ElementContextMenu(tk.Toplevel):
     def add_separator(self):ttk.Separator(self.body).pack(fill='x',pady=3)
 
     def tk_popup(self,x,y):
+        self.update_idletasks()
+        # A branch has two data sections, so keep actions reachable on 720p.
+        x=max(0,min(round(x),self.winfo_screenwidth()-self.winfo_reqwidth()-8))
+        y=max(0,min(round(y),self.winfo_screenheight()-self.winfo_reqheight()-8))
         self.geometry(f'+{x}+{y}')
         self.deiconify()
         self.lift()

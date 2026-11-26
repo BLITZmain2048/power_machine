@@ -10,13 +10,22 @@ class DiagramWindow(tk.Toplevel):
         super().__init__(app)
         self.app,self.bus,self.manager=app,bus,manager
         self.title(tr('window.diagram'))
+
         try:self.geometry((manager.settings if manager else settings).get('diagram_geometry','1200x760'))
         except tk.TclError:self.geometry('1200x760')
-        self.book=ttk.Notebook(self)
+        from .network_workspace import NetworkWorkspace
+        self.workspace=NetworkWorkspace(self,app)
+        self.workspace.pack(fill='both',expand=True)
+        from .chrome import MenuBar
+        self.menu_bar=MenuBar(self.workspace,app.menus)
+        self.menu_bar.pack(fill='x',after=self.workspace.brand)
+        self._title_trace=app.case_label.trace_add('write',lambda *_:self.refresh_title())
+        self.refresh_title()
+        self.book=self.workspace.diagram_book
+        app.data_host=self.workspace.explorer_host
+        app.properties_dock=self.workspace.inspector
         self.status=tk.StringVar(value=tr('window.diagram')+' · '+tr('diagram.focus_hint'))
-        self.status_label = ttk.Label(self,textvariable=self.status,padding=theme.pad_s)
-        self.status_label.pack(side='bottom',fill='x')
-        self.book.pack(fill='both',expand=True)
+        self.status_label=self.workspace.statusbar.labels[1]
         self.book.bind('<<NotebookTabChanged>>',self._sync_status)
         self.protocol('WM_DELETE_WINDOW',manager.hide_diagram if manager else self.withdraw)
         self._tokens=[bus.subscribe('language.changed',lambda **p:self.retranslate())]
@@ -31,12 +40,20 @@ class DiagramWindow(tk.Toplevel):
             # The detached host supplies the status bar. Docked widgets keep theirs.
             if hasattr(view,'_status_label'):
                 view._status_label.pack_forget()
+            if hasattr(view,'_detail_panel'):view._detail_panel.pack_forget()
+            if not getattr(view,'_network_chrome_attached',False):
+                view.detail_expanded=False
+                view._network_chrome_attached=True
 
     def _destroy(self,event):
         if event.widget is self:
+            self.app.case_label.trace_remove('write',self._title_trace)
             for token in self._tokens:self.bus.unsubscribe(token)
+    def refresh_title(self):
+        self.title(tr('v3.window.network')+' · '+self.app.case_label.get()+' · Power Machine')
+
     def retranslate(self):
-        self.title(tr('window.diagram'))
+        self.refresh_title()
         self.status.set(tr('window.diagram')+' · '+tr('diagram.focus_hint'))
 
 class WindowManager:
@@ -46,6 +63,10 @@ class WindowManager:
         self.window=None
         self.docked=bool(self.settings.get('docked',False))
         self._dock_book=None
+    def ensure_network(self):
+        if self.window is None or not self.window.winfo_exists():
+            self.window=DiagramWindow(self.app,self.bus,self)
+        return self.window
     def show_diagram(self):
         if self.docked:
             if self._dock_book is None or not self._dock_book.winfo_exists():
@@ -53,12 +74,14 @@ class WindowManager:
                 self.app.book.add(self._dock_book,text=tr('window.diagram'))
             self.app.book.select(self._dock_book)
             return self._dock_book
-        if self.window is None or not self.window.winfo_exists():self.window=DiagramWindow(self.app,self.bus,self)
+        self.ensure_network()
+        self.window.workspace.documents.select(self.window.workspace.single_line)
         self.window.deiconify()
         self.window.lift()
         return self.window.book
     def hide_diagram(self):
         if self.window and self.window.winfo_exists():
+            self.window.workspace.save_layout()
             self.settings.set('diagram_geometry',self.window.geometry())
             self.window.withdraw()
     def dock_diagram(self,value):
@@ -93,5 +116,7 @@ class WindowManager:
             if self.window and not self.docked:self.window.focus_force()
     def save(self):
         self.settings.set('main_geometry',self.app.geometry())
-        if self.window and self.window.winfo_exists():self.settings.set('diagram_geometry',self.window.geometry())
+        if self.window and self.window.winfo_exists():
+            self.settings.set('diagram_geometry',self.window.geometry())
+            self.window.workspace.save_layout()
         self.settings.save()

@@ -164,7 +164,7 @@ class NativeDynamicCase:
 
     def __init__(self, pf_dir=DEFAULT_PF_DIR, model=None):
         self.pf_dir = Path(pf_dir)
-        self.model = copy.deepcopy(model if model is not None else read_json(MODEL_FILE))
+        self.model = copy.deepcopy(model if model is not None else read_json(self.pf_dir / "model.json"))
         self.inventory = native_inventory(self.pf_dir)
         with (self.pf_dir / "E39-LF-01/buses.csv").open(encoding="utf-8-sig", newline="") as handle:
             buses_pf = {r["path"]: r for r in csv.DictReader(handle)}

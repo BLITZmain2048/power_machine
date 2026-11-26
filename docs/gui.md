@@ -6,13 +6,6 @@ Start the Spanish-language desktop interface with `power-machine gui ieee39`. It
 
 ![Load-flow results](images/02_flujo.png)
 
-![Short-circuit panel](images/03_cortocircuito.png)
-
-![N-1 ranking](images/04_n1.png)
-
-![Native RMS comparison view](images/05_rms_falla.png)
-
-The [five-action GIF](images/recorrido.gif) is recorded from the application.
 
 ## Workflow
 
@@ -20,6 +13,7 @@ Open a case or documented CSV export, inspect and edit the network, create or se
 
 The short-circuit panel requires declared source data and profile. RMS requires the corresponding dynamic profile. The N-1 view ranks calculated outcomes and keeps islanded operation, disconnected generation, and unsupplied load distinct.
 
-The native RMS screenshot compares IEEE 39 E39-DIN-01 data for B4 voltage and G32 speed over 0.9–1.2 s. Those two displayed channels meet their stated criteria. The project-wide native RMS evidence remains partial, as described in [validation.md](validation.md).
-
 Tk availability depends on the local desktop session. If startup fails, verify that Python includes Tcl/Tk and retry from an interactive graphical session.
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

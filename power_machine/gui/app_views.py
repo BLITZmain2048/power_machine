@@ -44,9 +44,8 @@ class ViewActions:
         self.bind('<Control-f>',lambda event:self.find_element_dialog())
 
     def reset_output_height(self):
-        if self.output_visible.get():
-            height=self.vertical.winfo_height()
-            self.vertical.sashpos(0,max(365,int(height*.78)))
+        # The output is a full result page, sharing the central workspace.
+        return
 
     def toggle_output_from_menu(self):
         self.set_output_visible(self.output_visible.get())
@@ -56,13 +55,9 @@ class ViewActions:
 
     def set_output_visible(self,visible):
         self.output_visible.set(visible)
-        panes=self.vertical.panes()
-        if visible and str(self.output) not in panes:
-            self.vertical.add(self.output,weight=1)
-            self.vertical.update_idletasks()
-            self.reset_output_height()
-        elif not visible and str(self.output) in panes:
-            self.vertical.forget(self.output)
+        if hasattr(self,'analysis'):
+            self.analysis.results.tab(self.analysis.result_hosts['log'],state='normal' if visible else 'hidden')
+            if visible:self.analysis.results.select(self.analysis.result_hosts['log'])
 
     def close_page(self,page):
         if str(self.diagrams.get(None)) == str(page):
@@ -388,39 +383,8 @@ class ViewActions:
         panel.integration_toolbar=toolbar
 
     def configure_plot_page(self,page):
-        """Monta acceso compacto a las acciones públicas de PlotPage."""
-        from .app_shell import icon,Tooltip
-        page.toolbar.master.pack_forget()
-        canvas_widget=page.canvas.get_tk_widget()
-        canvas_widget.pack_forget()
-        for child in page.winfo_children():
-            if isinstance(child,ttk.Label) and str(child.cget('textvariable')) in (str(page.statistics),str(page.cursor)):
-                child.pack_configure(side='bottom',fill='x')
-        toolbar=ttk.Frame(page,padding=(2,1))
-        toolbar.pack(side='bottom',fill='x')
-        page.integration_images=[]
-        def toggle():
-            page.show_pf.set(not page.show_pf.get())
-            page.toggle_reference()
-        actions=[(tr('shell.reset_view'),page.toolbar.home),(tr('shell.previous_view'),page.toolbar.back),
-            (tr('shell.next_view'),page.toolbar.forward),('Desplazar',page.toolbar.pan),(tr('shell.zoom_region'),page.toolbar.zoom),
-            (tr('shell.export_csv_5755f9'),page.export_csv),(tr('shell.export_png_5fe908'),page.export_png),(tr('shell.export_pdf_3dd7d5'),page.export_pdf),
-            (tr('shell.show_or_hide_the_available_reference'),toggle)]
-        for number,(title,action) in enumerate(actions):
-            picture=icon(page,number)
-            page.integration_images.append(picture)
-            button=ttk.Button(toolbar,image=picture,style='Compact.TButton',command=action)
-            button.pack(side='left',padx=1)
-            Tooltip(button,title)
-        ttk.Label(toolbar,textvariable=page.reference_note,style='Muted.TLabel').pack(side='left',padx=5)
-        def wrap(event):
-            if event.widget==page and event.width>100:
-                for child in page.winfo_children():
-                    if isinstance(child,ttk.Label) and str(child.cget('textvariable')) in (str(page.statistics),str(page.cursor)):
-                        child.configure(wraplength=event.width-15)
-        page.bind('<Configure>',wrap,add='+')
-        canvas_widget.pack(fill='both',expand=True)
-        page.integration_toolbar=toolbar
+        """PlotPage owns the single compact toolbar and its public actions."""
+        return page
 
     def open_data_table(self,group='loads',kind=None):
         from .app_data_views import open_data_table

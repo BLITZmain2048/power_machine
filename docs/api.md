@@ -20,17 +20,6 @@ Public exceptions are `MissingStudyDataError`, `UnsupportedStudyError`, `Invalid
 
 ## Study functions
 
-| Function | Result | Important inputs |
-| --- | --- | --- |
-| `loadflow(net, options=None)` | `LoadflowResult` | `LoadflowOptions` uses p.u. tolerance and Q limits |
-| `contingency(net, elements=None, criterion="N-1", options=None)` | `ContingencyResult` | `ContingencyOptions`, including `island_reference` |
-| `shortcircuit(net, bus=None, fault="3ph", sc_data=..., options=None)` | `ShortCircuitResult` | Explicit source document and a `ShortCircuitOptions` profile |
-| `pv_curve`, `qv_curve`, `sensitivities` | `GenericStudyResult` | Explicit study inputs |
-| `rms(net, events, t_end_s=..., step_s=..., options=None)` | `RmsResult` | Seconds and an eligible dynamic profile |
-| `cct(net, fault, options=None)` | `CctResult` | Explicit fault and documented classical IEEE 39 profile |
-| `quasi_dynamic(net, series, options=None)` | `QuasiDynamicResult` | User `Series`, complete load factors, new output destination |
-| `compare_powerfactory(net, directory, study="loadflow")` | `GenericStudyResult` | Complete compatible export |
-
 Use `result.require_complete()` only when the intended decision requires full coverage. Electrical limit violations and missing study coverage are different conditions.
 
 ## Options and tables
@@ -46,3 +35,6 @@ Short circuit never creates source or sequence parameters. Pass a `ShortCircuitD
 Set `POWER_MACHINE_OUTPUT_DIR` to choose where user-created networks, tables, RMS, QSS, and batch outputs are written. Otherwise the library uses its default user result directory. Keep generated results outside the source checkout.
 
 For CLI equivalents, see [cli.md](cli.md). For the portable model schema, see [network_format.md](network_format.md).
+
+
+Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.

@@ -3,7 +3,7 @@ import tkinter as tk
 from .theme import theme
 
 
-def icon(master, number, state="normal"):
+def icon(master, number, state="normal", *, size=26):
     image = tk.PhotoImage(master=master, width=26, height=26)
     token = 'text_muted' if state == 'disabled' else 'accent' if state == 'active' else 'text'
     ink = theme.color(token)
@@ -18,7 +18,17 @@ def icon(master, number, state="normal"):
     def path(points, color=ink):
         for a, b in zip(points, points[1:]):
             line(*a, *b, color)
-    if number == 0:  # Hoja con signo más.
+    if number in ('undo','redo'):
+        points=[(5,10),(10,5),(10,9),(19,9),(23,13),(23,20),(19,20),(19,14),(10,14),(10,18),(5,10)]
+        path([(26-x,y) for x,y in points] if number=='redo' else points,blue)
+    elif number == 'network':
+        path([(5,6),(19,6),(19,20),(5,20),(5,6)],blue)
+        line(5,6,19,20,blue)
+        for x,y in ((5,6),(19,6),(19,20),(5,20)):box(x-2,y-2,x+3,y+3,theme.color('text_muted' if state=='disabled' else 'accent2'))
+    elif number == 'run':
+        amber=theme.color('text_muted' if state=='disabled' else 'ink' if state=='active' else 'accent2')
+        for x in range(7,22):box(x,5+(x-7)//2,x+1,23-(x-7)//2,amber)
+    elif number == 0:  # Hoja con signo más.
         path([(5,3),(16,3),(21,8),(21,23),(5,23),(5,3)])
         line(16,3,16,8)
         line(16,8,21,8)
@@ -70,4 +80,12 @@ def icon(master, number, state="normal"):
         path([(2,4),(24,4),(24,23),(2,23),(2,4)])
         path([(6,10),(10,13),(6,16)],green)
         line(13,17,20,17,green)
-    return image
+    if size==26:return image
+    if not isinstance(size,int) or size<12 or size>48:raise ValueError('Icon size must be an integer from 12 to 48')
+    resized=tk.PhotoImage(master=master,width=size,height=size)
+    for y in range(size):
+        for x in range(size):
+            sx,sy=min(25,x*26//size),min(25,y*26//size)
+            if not image.transparency_get(sx,sy):
+                resized.put('#%02x%02x%02x'%image.get(sx,sy),to=(x,y))
+    return resized

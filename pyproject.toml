@@ -10,7 +10,7 @@ requires-python = ">=3.10"
 dependencies = ["numpy"]
 license = "MIT"
 license-files = ["LICENSE", "NOTICE"]
-authors = [{ name = "BLITZmain2048" }]
+authors = [{ name = "Diego" }]
 readme = "README.md"
 keywords = ["power systems", "load flow", "contingency analysis", "short circuit", "dynamic simulation"]
 classifiers = [
@@ -57,28 +57,7 @@ power_machine = [
     "gui/locale/*.json",
     "cases/ieee39/case39.py",
     "cases/ieee39/model.json",
+    "cases/ieee39/shortcircuit_data.json",
     "cases/ieee39/dynamic_data.json",
     "cases/ieee39/LEEME.txt",
-    "cases/ieee39/results/CC/supplemental_data.json",
-    "cases/ieee39_pf/model.json",
-    "cases/ieee39_pf/modelo/*.json",
-    "cases/ieee39_pf/E39-DIN-01/configuration.json",
-    "cases/ieee39_pf/E39-DIN-01/effective_command_options.json",
-    "cases/ieee39_pf/E39-DIN-01/report.json",
-    "cases/ieee39_pf/E39-DIN-01/assessment.json",
-    "cases/ieee39_pf/E39-DIN-02/configuration.json",
-    "cases/ieee39_pf/E39-DIN-02/effective_command_options.json",
-    "cases/ieee39_pf/E39-DIN-02/report.json",
-    "cases/ieee39_pf/E39-DIN-02/assessment.json",
-    "cases/ieee39_pf/E39-DIN-03/configuration.json",
-    "cases/ieee39_pf/E39-DIN-03/effective_command_options.json",
-    "cases/ieee39_pf/E39-DIN-03/report.json",
-    "cases/ieee39_pf/E39-DIN-03/assessment.json",
-    "cases/ieee39_pf/E39-LF-01/*.csv",
-    "cases/ieee39_pf/E39-LF-01/*.json",
-    "cases/ieee39_pf/E39-CC-01/*.csv",
-    "cases/ieee39_pf/E39-CC-01/*.json",
-    "cases/ieee39_pf/E39-CC-01/*.txt",
-    "cases/ieee39_pf/E39-CC-02/*.json",
-    "cases/ieee39_pf/E39-CC-03/*.json",
 ]
