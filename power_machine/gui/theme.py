@@ -1,8 +1,8 @@
 """Semantic light and dark palettes for Tk and matplotlib."""
 import weakref
 from .bus import bus
-LIGHT=dict(bg='#edf1f6',surface='#ffffff',surface_alt='#e4eaf2',border='#c2cddd',text='#162337',text_muted='#53647b',accent='#1768ba',accent_text='#ffffff',ok='#1e7c50',warn='#946000',error='#b73040',selection='#c9dff9',grid='#d5dce7',diagram_bg='#ffffff',bus='#205db0',branch='#53647b',deenergized='#929cab',kv_345='#2464bc',kv_230='#8b4ea6',kv_138='#bf6a15',kv_low='#22836f',v_low='#bd414c',v_ok='#288c66',v_high='#bc7330')
-DARK=dict(bg='#151b26',surface='#1e2837',surface_alt='#29364a',border='#40516a',text='#e6edf7',text_muted='#a7b7ce',accent='#67adff',accent_text='#11253e',ok='#65d0a0',warn='#f2c46c',error='#ff8591',selection='#304f78',grid='#39485c',diagram_bg='#192230',bus='#8abaff',branch='#acbed4',deenergized='#637083',kv_345='#8abaff',kv_230='#cea5ff',kv_138='#ffc383',kv_low='#77d9be',v_low='#ff8591',v_ok='#65d0a0',v_high='#f2c46c')
+LIGHT=dict(bg='#edf1f6',surface='#ffffff',surface_alt='#e4eaf2',border='#c2cddd',text='#162337',text_muted='#53647b',accent='#1768ba',accent_text='#ffffff',ok='#1e7c50',warn='#946000',error='#b73040',selection='#c9dff9',grid='#d5dce7',diagram_bg='#ffffff',bus='#205db0',branch='#53647b',deenergized='#636e7b',kv_345='#2464bc',kv_230='#8b4ea6',kv_138='#bf6a15',kv_low='#22836f',v_low='#bd414c',v_ok='#288c66',v_high='#bc7330')
+DARK=dict(bg='#151b26',surface='#1e2837',surface_alt='#29364a',border='#40516a',text='#e6edf7',text_muted='#a7b7ce',accent='#67adff',accent_text='#11253e',ok='#65d0a0',warn='#f2c46c',error='#ff8591',selection='#304f78',grid='#39485c',diagram_bg='#192230',bus='#8abaff',branch='#acbed4',deenergized='#98a6b9',kv_345='#8abaff',kv_230='#cea5ff',kv_138='#ffc383',kv_low='#77d9be',v_low='#ff8591',v_ok='#65d0a0',v_high='#f2c46c')
 for palette in (LIGHT,DARK):
     for i in range(121):
         palette['load_'+str(i)]=palette['ok'] if i<80 else palette['warn'] if i<100 else palette['error']

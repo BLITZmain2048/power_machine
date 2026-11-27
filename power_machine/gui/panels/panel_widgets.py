@@ -94,10 +94,12 @@ class ScrollForm(ttk.Frame):
         self.canvas = tk.Canvas(self, height=330, highlightthickness=0, takefocus=True)
         bar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.hint = ttk.Label(self, text=tr('int2.more_options'), style='Muted.TLabel', wraplength=302)
-        self.hint.pack(side='bottom', fill='x')
+        self.hint.grid(row=1,column=0,columnspan=2,sticky='ew')
         self.canvas.configure(yscrollcommand=lambda first,last: self._scroll_status(bar,first,last))
-        self.canvas.pack(side="left", fill="both", expand=True)
-        bar.pack(side="right", fill="y")
+        self.rowconfigure(0,weight=1)
+        self.columnconfigure(0,weight=1)
+        self.canvas.grid(row=0,column=0,sticky="nsew")
+        bar.grid(row=0,column=1,sticky="ns")
         self.content = ttk.Frame(self.canvas, padding=6)
         self.window = self.canvas.create_window(0, 0, anchor="nw", window=self.content)
         self.content.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
@@ -108,9 +110,10 @@ class ScrollForm(ttk.Frame):
         self.canvas.bind("<Prior>", lambda e: self.canvas.yview_scroll(-1, "pages"))
     def _scroll_status(self, bar, first, last):
         bar.set(first,last)
-        if float(last)<0.999:
-            if not self.hint.winfo_manager():self.hint.pack(side='bottom',fill='x',before=self.canvas)
-        else:self.hint.pack_forget()
+        overflow=self.content.winfo_reqheight()>self.winfo_height()+1
+        if overflow and float(last)<0.999:
+            if not self.hint.winfo_manager():self.hint.grid(row=1,column=0,columnspan=2,sticky='ew')
+        else:self.hint.grid_remove()
 
     def wheel(self, event):
         self.canvas.yview_scroll(-int(event.delta / 120), "units")

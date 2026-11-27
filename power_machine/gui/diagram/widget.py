@@ -53,7 +53,7 @@ class DiagramWidget(DiagramEditing,DiagramView):
         self._options_bar = ttk.Frame(self)
         self._options_bar.pack(fill='x', before=self._body)
         self._edit_bar = ttk.Frame(self)
-        self._edit_bar.pack(fill='x', before=self._body)
+        # Editing is grouped with selection tools, not on an isolated third row.
         self._legend_label = ttk.Label(self, textvariable=self._legend_var)
         self._legend_label.pack(fill='x', before=self._body)
         self.canvas.pack_configure(side='left')
@@ -184,7 +184,7 @@ class DiagramWidget(DiagramEditing,DiagramView):
         if not hasattr(self, '_detail_panel'):
             return
         symbol = self.scene.symbols.get(self.selected_id)
-        if not self.detail_expanded or not symbol or not self.show_results:
+        if self.cursor_t is not None or not self.detail_expanded or not symbol or not self.show_results:
             self._detail_panel.pack_forget()
             return
         item = self.index.get(symbol.item.get('id', symbol.id), symbol.item)
@@ -459,6 +459,9 @@ class DiagramWidget(DiagramEditing,DiagramView):
         self.draw()
 
     def draw(self):
+        self._cursor_styles={}
+        self._cursor_handles={}
+        self._pin_cache={}
         super().draw()
         if getattr(self,'_status_scale',None)!=self.scale:
             self._set_status()
@@ -493,8 +496,9 @@ class DiagramWidget(DiagramEditing,DiagramView):
             self._time_corner=None
             return
         from ..results_tables import display_value
-        text=tr('v3.diagram.time',value=display_value(self.cursor_t,precision=3))
-        ident=c.create_text(0,0,text=text,anchor='nw',font=theme.font('body'),
+        source=getattr(self,'cursor_source','RMS')
+        text=(source if len(source)<36 else source[:33]+'…')+' · '+tr('v3.fix.temporal_layer',value=display_value(self.cursor_t,precision=3), count=sum(isinstance(v,dict) and isinstance(v.get('u_pu'),(int,float)) and math.isfinite(v['u_pu']) for v in self.cursor_buses.values()), total=len(self.model.get('buses',[])))
+        ident=c.create_text(0,0,text=text,anchor='nw',font=theme.font('small'),width=max(100,c.winfo_width()-40),
             fill=theme.color('ink'),tags='time_cursor')
         box=c.bbox(ident)
         width,height=box[2]-box[0]+12,box[3]-box[1]+8
@@ -516,16 +520,20 @@ class DiagramWidget(DiagramEditing,DiagramView):
         x,y=corners[self._time_corner]
         c.coords(ident,x+6,y+4)
         rect=c.create_rectangle(x,y,x+width,y+height,fill=theme.color('surface'),
-            stipple='gray50',outline=theme.color('border'),tags='time_cursor')
+            outline=theme.color('border'),tags='time_cursor')
         c.tag_lower(rect,ident)
 
     def _time_cursor(self,t=None,bus_state=None,branch_state=None,**_):
         """Consume only explicitly supplied, finite time-state values."""
-        previous=set(self.cursor_buses)|set(self.cursor_branches)
+        self.cursor_source=_.get('run_name',getattr(self,'cursor_source','RMS'))
+        was_temporal=self.cursor_t is not None
+        previous=set(self.index) if was_temporal != (t is not None) else set(self.cursor_buses)|set(self.cursor_branches)
         self.cursor_t=float(t) if isinstance(t,(int,float)) and math.isfinite(t) else None
         self.cursor_buses=dict(bus_state or {}) if self.cursor_t is not None else {}
         self.cursor_branches=dict(branch_state or {}) if self.cursor_t is not None else {}
         # Playback changes colors, not geometry. Keep wheel/pan and labels intact.
+        styles=getattr(self,'_cursor_styles',{})
+        handles=getattr(self,'_cursor_handles',{})
         for ident in previous|set(self.cursor_buses)|set(self.cursor_branches):
             item=self.index.get(ident)
             if item is None:continue
@@ -533,18 +541,32 @@ class DiagramWidget(DiagramEditing,DiagramView):
             color=self.element_color(item,self.results.get(ident,{}),symbol.un_kv if symbol else None)
             if self.cursor_t is None and (ident==self.contingency_id or ident in self.ranking_ids):
                 color=theme.color('error' if ident==self.contingency_id else 'warn')
-            for handle in self.canvas.find_withtag('element:'+ident):
-                tags=self.canvas.gettags(handle)
-                kind=self.canvas.type(handle)
+            state=self.cursor_buses.get(ident,{}) if self.cursor_t is not None else self.results.get(ident,{})
+            off=item.get('outserv') or (isinstance(state,dict) and state.get('energized') is False)
+            signature=(color,bool(off))
+            if styles.get(ident)==signature:continue
+            styles[ident]=signature
+            if ident not in handles:
+                handles[ident]=[(handle,self.canvas.type(handle),self.canvas.gettags(handle)) for handle in self.canvas.find_withtag('element:'+ident)]
+            for handle,kind,tags in handles[ident]:
                 if not any(tag in tags for tag in ('symbol','wire','flow_arrow')):continue
-                if kind in ('line','text'):self.canvas.itemconfigure(handle,fill=color)
+                if kind=='line':self.canvas.itemconfigure(handle,fill=color,dash=(5,3) if off else ())
+                elif kind=='text':self.canvas.itemconfigure(handle,fill=color)
                 elif kind in ('rectangle','polygon','oval'):self.canvas.itemconfigure(handle,outline=color)
+        self._cursor_styles,self._cursor_handles=styles,handles
+        if was_temporal != (self.cursor_t is not None):
+            for tag in ('flow_arrow','result','selected_detail'):
+                self.canvas.itemconfigure(tag,state='hidden' if self.cursor_t is not None else 'normal')
+        if self.cursor_t is not None:self._detail_panel.pack_forget()
+        elif was_temporal:self.draw()  # Restore LF items omitted by a temporal pan/zoom redraw.
         self._draw_time_cursor()
         self._refresh_cards()
 
     def element_color(self,item,result,un_kv):
         ident=item.get('id')
         state=getattr(self,'cursor_buses',{}).get(ident,{})
+        if item.get('outserv') or (isinstance(state,dict) and state.get('energized') is False):
+            return theme.color('deenergized')
         value=state.get('u_pu') if isinstance(state,dict) else None
         if isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value):
             low,high=self.voltage_limits
@@ -553,6 +575,8 @@ class DiagramWidget(DiagramEditing,DiagramView):
         value=state.get('loading_pct') if isinstance(state,dict) else state
         if isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value):
             return theme.color('load_'+str(min(120,max(0,round(value)))))
+        if getattr(self,'cursor_t',None) is not None:
+            return theme.color('text_muted')
         return super().element_color(item,result,un_kv)
 
     def _draw_footer(self):
@@ -574,8 +598,8 @@ class DiagramWidget(DiagramEditing,DiagramView):
         elif self.color_mode == 'voltage_band':
             entries.extend([(tr('diagram.voltage_ok'),theme.color('ok')),
                             (tr('diagram.voltage_bad'),theme.color('error'))])
-        entries.extend([(tr('diagram.missing_off'),theme.color('deenergized')),
-                        (tr('diagram.deenergized'),theme.color('deenergized'))])
+        entries.extend([(tr('v3.fix.no_signal'),theme.color('text_muted')),
+                        (tr('v3.fix.offline'),theme.color('deenergized'))])
         width=max(200,c.winfo_width())
         from tkinter import font as tkfont
         font=tkfont.Font(c,font=theme.font('small'))

@@ -129,11 +129,12 @@ class PanelCoordination:
 
     def start_task(self, name, function, callback):
         self.set_busy(True, name)
+        operation_context=dict(study=getattr(getattr(self,'analysis',None),'active_study','flow'),operation=name,case=self.case_label.get(),case_token=(id(self.document),self.document.active_case_id))
         def work():
             try:
                 self.tasks.put(('task', callback, function(), None))
             except Exception:
-                self.tasks.put(('task', callback, None, traceback.format_exc()))
+                self.tasks.put(('task', callback, operation_context, traceback.format_exc()))
         threading.Thread(target=work, daemon=True, name='power_machine-calculo').start()
 
     def poll_tasks(self):
@@ -149,8 +150,12 @@ class PanelCoordination:
                 if kind == 'task':
                     self.set_busy(False)
                 if error:
-                    self.output.log('ERROR', error)
-                    self.state_text.set(tr('shell.calculation_error'))
+                    if isinstance(value,dict) and 'case_token' in value:
+                        self._failed_worker_study=value['study']
+                        self._failed_worker_operation=value['operation']
+                        self._failed_worker_case=value['case']
+                        self._failed_worker_case_token=value['case_token']
+                    self.show_error(error)
                     if self.selftest and kind == 'task':
                         self.finish_selftest(error)
                         return

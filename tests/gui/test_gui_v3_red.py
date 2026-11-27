@@ -140,11 +140,12 @@ def test_time_cursor_explicit_coverage_and_clear(shell,name):
     assert view.element_color(app.index['B01'],{},345)==theme.color('v_low')
     bus_lines=[handle for handle in view.canvas.find_withtag('element:B01') if 'symbol' in view.canvas.gettags(handle) and view.canvas.type(handle)=='line']
     assert bus_lines and all(view.canvas.itemcget(handle,'fill')==theme.color('v_low') for handle in bus_lines)
-    assert view.element_color(app.index['B02'],{},345)==before['B02']
+    assert view.element_color(app.index['B02'],{},345)==theme.color('text_muted')
     assert view.element_color(app.index[branch],{},345)==theme.color('load_120')
     assert view.results==original_results
     texts=[view.canvas.itemcget(item,'text') for item in view.canvas.find_withtag('time_cursor') if view.canvas.type(item)=='text']
-    assert texts==['t = 0,320 s']
+    assert len(texts)==1
+    assert tr('v3.fix.temporal_layer',value='0,320',count=1,total=len(app.model['buses'])) in texts[0]
     app.bus.publish('time.cursor',t=None,source='analysis')
     assert not view.canvas.find_withtag('time_cursor')
     assert not view.cursor_buses and not view.cursor_branches

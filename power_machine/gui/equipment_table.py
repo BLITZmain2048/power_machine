@@ -82,6 +82,11 @@ class EquipmentTable(ttk.Frame):
         self.tree.configure(xscrollcommand=sx.set,yscrollcommand=sy.set)
         self.tree.bind('<<TreeviewSelect>>',self._select)
         self.tree.bind('<Double-1>',self._edit_cell)
+        self.tree.bind('<Button-1>',self._remember_column,add='+')
+        self.tree.bind('<Left>',lambda e:self._cycle_column(-1))
+        self.tree.bind('<Right>',lambda e:self._cycle_column(1))
+        self.tree.bind('<F2>',self._keyboard_edit)
+        self.tree.bind('<Return>',self._keyboard_edit)
         self.tree.bind('<Control-z>',lambda e:self.history(False))
         self.tree.bind('<Control-y>',lambda e:self.history(True))
         self.message=tk.StringVar(self)
@@ -132,7 +137,7 @@ class EquipmentTable(ttk.Frame):
             short_kind=self.kind in ('ElmLod','ElmTerm','ElmLne','ElmCoup','StaSwitch')
             widths=dict(name=120,**{'class':75 if short_kind else 155},connection=90,nominal=110,p_mw=85,q_mvar=90,scale=65)
             self.tree.column(key,width=widths.get(key,100),minwidth=85 if key=='name' else 55,
-                anchor='w' if key in ('name','class','connection') else 'e',stretch=key==self.columns[-1])
+                anchor='w' if key in ('name','class','connection') else 'e',stretch=key=='connection')
         def order(item):
             value=equipment_value(item,self.sort_key)
             if value is None:return (2,'')
@@ -147,7 +152,9 @@ class EquipmentTable(ttk.Frame):
                 values=[(tr('v3.red.kind.'+item['class']) if item['class'] in KINDS else item['class']) if key=='class' else display_value(equipment_value(item,key),key.rsplit('.',1)[-1]) for key in self.columns]
                 self.tree.insert('','end',iid=item['id'],values=values)
             ident=getattr(self.app,'selected_id',None)
-            if ident and self.tree.exists(ident):self.tree.selection_set(ident)
+            if ident and self.tree.exists(ident):
+                self.tree.selection_set(ident)
+                self.tree.see(ident)
         finally:self._receiving=False
         self.message.set(tr('v3.red.table_note',count=len(self.rows)))
 
@@ -186,6 +193,31 @@ class EquipmentTable(ttk.Frame):
             return False
         self.refresh()
         return True
+
+    def _cycle_column(self,direction):
+        columns=['#'+str(i+1) for i,key in enumerate(self.columns) if key not in ('class','connection','nominal')]
+        current=getattr(self,'_active_column',None)
+        index=columns.index(current) if current in columns else -1
+        self._active_column=columns[(index+direction)%len(columns)]
+        key=self.columns[int(self._active_column[1:])-1]
+        self.message.set(tr('v3.fix.active_cell',field=self.tree.heading(key,'text')))
+        return 'break'
+
+    def _remember_column(self,event):
+        self._active_column=self.tree.identify_column(event.x)
+
+    def _keyboard_edit(self,event=None):
+        from types import SimpleNamespace
+        selected=self.tree.selection()
+        if not selected:return 'break'
+        ident=selected[0]
+        path=getattr(self,'_active_column',None)
+        if not path or self.columns[int(path[1:])-1] in ('class','connection','nominal'):
+            path='#'+str(next((i+1 for i,key in enumerate(self.columns) if key in FIELDS.get(self.kind,('name',))),1))
+        self.tree.see(ident)
+        box=self.tree.bbox(ident,path)
+        if box:self._edit_cell(SimpleNamespace(x=box[0]+2,y=box[1]+2))
+        return 'break'
 
     def _edit_cell(self,event):
         ident=self.tree.identify_row(event.y)

@@ -4,9 +4,28 @@ import math
 import tkinter as tk
 from tkinter import ttk, messagebox
 from .presentation import target_labels, station, element_label
-from .i18n import tr
+from .i18n import tr, language
 from .theme import theme
 from .results_tables import display_value
+
+def input_number(value):
+    return float(str(value).strip().replace(',', '.'))
+
+
+def screen_number(value):
+    # Preserve round-trip precision in editable values, including sub-ms times.
+    text=repr(input_number(value))
+    if 'e' not in text.lower():
+        whole,_,fraction=text.partition('.')
+        text=whole+'.'+fraction.ljust(3,'0')
+    return text.replace('.',',') if language()=='es' else text
+
+
+def parameter_display(value):
+    if isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value):
+        return screen_number(value)
+    return display_value(value)
+
 
 # Compatibilidad con el administrador de datos mientras migra sus propios rótulos.
 KINDS = {
@@ -95,7 +114,7 @@ class EventsForm:
         form = ttk.LabelFrame(self.form_scroll.content, text=tr('events.definition'), padding=8)
         form.pack(fill='x')
         self.form = form
-        self.time = tk.StringVar(value='1.0')
+        self.time = tk.StringVar(value=screen_number(1.))
         self.kind = tk.StringVar(value=kind_label((preset or {}).get('kind', 'short_circuit')))
         self.target = tk.StringVar()
         self.time_label = ttk.Label(form, text=tr('events.time'))
@@ -148,7 +167,7 @@ class EventsForm:
         if preset:
             self.target.set(self.target_labels.get(preset.get('target_id'), ''))
             for key, value in preset.get('params', {}).items():
-                if key in self.params: self.params[key].set(str(value))
+                if key in self.params: self.params[key].set(screen_number(value) if key != 'action' else str(value))
         bar = ttk.Frame(self, padding=6)
         bar.pack(side='bottom',fill='x',before=self.tree)
         self.action_bar=bar
@@ -188,11 +207,27 @@ class EventsForm:
             variable.trace_add('write', self.update_pending)
         self.update_pending()
         self.form_scroll.wire()
+        self.bind('<FocusOut>',lambda e:self._format_numbers(),add='+')
+        def wire_numeric(widget):
+            if isinstance(widget,ttk.Entry):widget.bind('<FocusOut>',lambda e:self._format_numbers(),add='+')
+            for child in widget.winfo_children():wire_numeric(child)
+        wire_numeric(self.form)
+
+    def _format_numbers(self):
+        for variable in (self.time,self.clearing_time,*[v for k,v in self.params.items() if k!='action']):
+            try:
+                if variable.get().strip():
+                    formatted=screen_number(variable.get())
+                    if formatted!=variable.get():variable.set(formatted)
+            except ValueError:pass
 
     def form_signature(self):
-        return (self.time.get(), self.kind_key(), self.target.get(),
-                tuple((k, v.get()) for k, v in self.params.items()),
-                self.include_clearing.get(), self.clearing_time.get())
+        def canonical(value):
+            try:return input_number(value)
+            except ValueError:return value
+        return (canonical(self.time.get()), self.kind_key(), self.target.get(),
+                tuple((k, v.get() if k=='action' else canonical(v.get())) for k, v in self.params.items()),
+                self.include_clearing.get(), canonical(self.clearing_time.get()))
 
     def form_pending(self):
         return self._form_baseline != self.form_signature()
@@ -221,11 +256,12 @@ class EventsForm:
                   'switch_element': [('action', 'events.action', 'open')], 'switch': [('action', 'events.action', 'open')]}.get(kind, [])
         for key, label, default in fields:
             ttk.Label(self.param_frame, text=tr(label)).pack(side='left', padx=(0, 6))
-            var = tk.StringVar(value=default)
+            var = tk.StringVar(value=default if key == 'action' else screen_number(default))
             self.params[key] = var
             var.trace_add('write', self.update_pending)
             widget = ttk.Combobox(self.param_frame, textvariable=var, values=['open', 'close'], state='readonly', width=12) if key == 'action' else ttk.Entry(self.param_frame, textvariable=var, width=12)
             widget.pack(side='left', padx=(0, 16))
+            if key!='action':widget.bind('<FocusOut>',lambda e:self._format_numbers(),add='+')
 
     def filter_targets(self, *_):
         labels = sorted(label for ident, label in getattr(self, 'target_labels', {}).items()
@@ -238,15 +274,15 @@ class EventsForm:
     def store(self, update):
         try:
             ident = next(k for k, v in self.target_labels.items() if v == self.target.get())
-            params = {k: ('open' if v.get() in ('open', tr('integration.open')) else 'close') if k == 'action' else float(v.get()) for k, v in self.params.items()}
-            row = dict(time_s=float(self.time.get()), kind=self.kind_key(), target_id=ident, params=params)
+            params = {k: ('open' if v.get() in ('open', tr('integration.open')) else 'close') if k == 'action' else input_number(v.get()) for k, v in self.params.items()}
+            row = dict(time_s=input_number(self.time.get()), kind=self.kind_key(), target_id=ident, params=params)
             if not math.isfinite(row['time_s']):
                 raise ValueError(tr('integration.time_must_be_finite'))
             selection = self.tree.selection()
             index = self._editing_index if self._editing_index is not None else int(selection[0]) if selection else None
             clearing = None
             if row['kind'] == 'short_circuit' and self.include_clearing.get():
-                clearing_s = float(self.clearing_time.get())
+                clearing_s = input_number(self.clearing_time.get())
                 if not math.isfinite(clearing_s) or clearing_s <= row['time_s']:
                     raise ValueError(tr('int2.clear_after_fault'))
                 clearing = dict(time_s=clearing_s, kind='clear_short_circuit', target_id=ident, params={})
@@ -272,7 +308,7 @@ class EventsForm:
         self.tree.delete(*self.tree.get_children())
         for i, row in enumerate(self.rows):
             units = {'r_ohm': tr('events.rf'), 'x_ohm': tr('events.xf'), 'dp_pct': tr('events.dp'), 'dq_pct': tr('events.dq'), 'action': tr('events.action')}
-            params = ', '.join(f'{units.get(k, k)}: {tr("events." + str(v)) if k == "action" else v}' for k, v in row.get('params', {}).items())
+            params = ', '.join(f'{units.get(k, k)}: {tr("events." + str(v)) if k == "action" else parameter_display(v)}' for k, v in row.get('params', {}).items())
             self.tree.insert('', 'end', iid=str(i), values=(display_value(row['time_s'],'time_s'), kind_label(row['kind']), element_label(self.index.get(row['target_id'], {}), self.index), params))
         callback = getattr(self, 'on_rows_changed', None)
         if callback:
@@ -298,11 +334,11 @@ class EventsForm:
         self.station_filter.set(tr('events.all_stations'))
         self.kind.set(kind_label(row['kind']))
         self.change_kind()
-        self.time.set(str(row['time_s']))
+        self.time.set(screen_number(row['time_s']))
         self.target.set(self.target_labels.get(row['target_id'], ''))
         for key, value in row.get('params', {}).items():
             if key in self.params:
-                self.params[key].set(str(value))
+                self.params[key].set(screen_number(value) if key != 'action' else str(value))
         self._form_baseline = self.form_signature()
         self.update_pending()
 
@@ -331,6 +367,12 @@ class EventsForm:
         self.kind.set(kind_label(current_kind))
         self.clearing_check.configure(text=tr('int2.propose_clear'))
         self.clearing_hint.configure(text=tr('int2.clear_hint'))
+        for variable in (self.time,self.clearing_time,*[v for k,v in self.params.items() if k!='action']):
+            try:
+                if variable.get().strip():
+                    formatted=screen_number(variable.get())
+                    if formatted!=variable.get():variable.set(formatted)
+            except ValueError:pass
         self.refresh()
         self.update_pending()
 
@@ -458,9 +500,7 @@ class EventCards(ttk.Frame):
                 time_label = ttk.Label(card, text=number(row['time_s'])+' s',
                                        style='Event.Time.TLabel', width=11)
                 time_label.pack(side='left')
-                text = ttk.Frame(card, style='Event.Card.TFrame')
-                text.pack(side='left', fill='x', expand=True)
-                ttk.Label(text, text=kind+' · '+target, style='Event.Card.TLabel').pack(anchor='w')
+                ttk.Label(card, text=kind+' · '+target, style='Event.Card.TLabel').pack(side='left',fill='x',expand=True)
                 def bind(widget, n=i):
                     widget.bind('<Button-1>', lambda event: self._schedule_seek(n))
                     widget.bind('<Double-1>', lambda event: self._double_click(n))

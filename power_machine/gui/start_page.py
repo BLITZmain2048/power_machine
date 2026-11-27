@@ -1,4 +1,4 @@
-﻿"""Guided analysis entry point using the public workspace API."""
+"""Guided analysis entry point using the public workspace API."""
 import tkinter as tk
 from tkinter import ttk
 from .i18n import tr, language
@@ -152,6 +152,8 @@ class GuidedStart(ttk.Frame):
         self.canvas.itemconfigure(self.body_window, width=width)
         self.canvas.coords(self.body_window,max(0,(event.width-width)/2),min(32,max(0,(event.height-self.body.winfo_reqheight())/5)))
         columns = 2 if width >= 740 else 1
+        self.body.columnconfigure(0,weight=1,uniform='cards')
+        self.body.columnconfigure(1,weight=1 if columns==2 else 0,uniform='cards' if columns==2 else '',minsize=0)
         for i, card in enumerate(self.cards.values()):
             card.grid_configure(row=i//columns, column=i%columns)
         for label in (self.case_summary, self.configuration):
@@ -196,6 +198,7 @@ class GuidedStart(ttk.Frame):
         self.app.settings.save()
 
     def on_event(self, topic, **_):
+        if topic=='network.edited':self.app.analysis._results_stale()
         if topic == 'results.updated':
             self._freshness = 'ready'
             self._result_study = self.app.analysis.active_study
@@ -214,13 +217,12 @@ class GuidedStart(ttk.Frame):
         model = getattr(app, 'operational', None) or getattr(app, 'model', {}) or {}
         ready = getattr(app, 'document', None) is not None
         study = app.analysis.active_study
-        freshness = self._freshness
-        if freshness == 'ready' and study != self._result_study:
-            freshness = 'stale'
+        state = app.analysis.study_states.get(study, 'never')
+        freshness = {'current':'ready', 'stale':'stale', 'error':'error','cancelled':'cancelled'}.get(state, 'pending')
         self.states = dict(case='ready' if ready else 'pending', study='ready' if ready and study else 'pending',
                            run='ready' if ready and study else 'pending', results=freshness)
         for step, state in self.states.items():
-            self.status_labels[step].configure(text=tr('v3.start.'+state))
+            self.status_labels[step].configure(text=tr('v3.fix.cancelled') if state=='cancelled' else tr('v3.fix.failed') if state=='error' else tr('v3.start.'+state))
         name = app.case_label.get() if ready else tr('v3.start.no_case')
         frequency = model.get('meta', {}).get('f_nom_hz')
         hz = f'{frequency:g}' if isinstance(frequency, (int, float)) else '—'
@@ -247,6 +249,9 @@ class GuidedStart(ttk.Frame):
         else:
             self.buttons['events'].grid_remove()
         for key in STUDIES:
+            from .analysis_workspace import study_state_label
+            state=self.app.analysis.study_states.get(key,'never')
+            self.buttons[key].configure(text=tr('v3.start.'+key)+'\n'+study_state_label(state))
             self.buttons[key].state(['pressed'] if key == study else ['!pressed'])
 
     def retranslate(self, **_):

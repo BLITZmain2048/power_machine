@@ -16,7 +16,7 @@ def test_start_construction_and_locales(shell):
     for code in ('es', 'en'):
         set_language(code)
         assert shell.book.tab(page, 'text') == tr('v3.start.title')
-        assert page.buttons['flow'].cget('text') == tr('v3.start.flow')
+        assert page.buttons['flow'].cget('text').startswith(tr('v3.start.flow'))
     for name in ('light', 'dark'):
         theme.set(name)
         from tkinter import ttk
@@ -38,6 +38,7 @@ def test_start_event_states_and_case_switch(shell):
     # Same public variable path used when activating a case in the shell.
     old = shell.document.active_case_id
     page._case = (id(shell.document), old + '-previous')
+    shell.analysis.study_states={key:'never' for key in shell.analysis.study_states}
     shell.case_label.set(shell.case_label.get())
     assert page.states['results'] == 'pending'
 

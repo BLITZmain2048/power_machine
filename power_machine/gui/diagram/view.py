@@ -226,6 +226,8 @@ class DiagramView(CanvasNavigation, ElementCards, ttk.Frame):
         self.canvas.bind("<ButtonRelease-2>", self._release)
         self.canvas.bind("<Double-Button-1>", self._double)
         self.canvas.bind("<Button-3>", self._context)
+        self.canvas.bind('<Shift-F10>',self._keyboard_context)
+        self.canvas.bind('<Key-Menu>',self._keyboard_context)
         self.canvas.bind("<Motion>", self._hover)
         self.bind("<Destroy>", self._destroy, add=True)
         self.draw()
@@ -375,6 +377,7 @@ class DiagramView(CanvasNavigation, ElementCards, ttk.Frame):
                 warning=display_value(warning), limit=display_value(limit)),
             'state': tr('diagram.legend.state'),
         }[self.color_mode])
+        self._legend_var.set(self._legend_var.get()+' · '+tr('v3.fix.consult_help'))
         if self.historical:
             self._legend_var.set(tr('diagram.historical') + self._legend_var.get())
 
@@ -626,9 +629,18 @@ class DiagramView(CanvasNavigation, ElementCards, ttk.Frame):
                 self.event_generate("<<DiagramOpenGroup>>")
             self.callbacks.on_open_properties(key)
 
+    def _keyboard_context(self,event=None):
+        from types import SimpleNamespace
+        key=self.selected_id
+        symbol=self.scene.symbols.get(key)
+        if symbol:
+            x,y=self._xy(symbol.x,symbol.y)
+            self._context(SimpleNamespace(x=x,y=y,x_root=self.canvas.winfo_rootx()+int(x),y_root=self.canvas.winfo_rooty()+int(y),object_id=key))
+        return 'break'
+
     def _context(self, event):
         from .context_menu import ElementContextMenu
-        key = self._hit(event)
+        key = getattr(event,'object_id',None) or self._hit(event)
         if not key:
             return
         self.highlight(key)

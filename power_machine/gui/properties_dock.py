@@ -37,7 +37,7 @@ class PropertiesDock(ttk.Frame):
         PanelHeader(self,'v3.inspector').pack(fill='x')
         head=ttk.Frame(self,style='Inspector.TFrame',padding=12)
         head.pack(fill='x')
-        self.code=ttk.Label(head,text='·',style='Inspector.Code.TLabel')
+        self.code=ttk.Label(head,text='—',style='Inspector.Code.TLabel')
         self.code.pack(side='left',padx=(0,9),anchor='n')
         titles=ttk.Frame(head,style='Inspector.TFrame')
         titles.pack(fill='x',expand=True)
@@ -102,9 +102,9 @@ class PropertiesDock(ttk.Frame):
                 self.code.configure(text=str(self.editor.item.get('name',ident)).split(' · ')[0][:9])
                 self._object_heading()
         if not self.editor:
-            self.code.configure(text='·')
-            self.heading.configure(text=tr('tools.properties'))
-            self.subtitle.configure(text=tr('tools.select_element'))
+            self.code.configure(text='—')
+            self.heading.configure(text=tr('tools.properties'),anchor='center')
+            self.subtitle.configure(text=tr('tools.select_element'),anchor='center',justify='center')
         self._render()
 
     def _section_for(self,path):
@@ -120,6 +120,8 @@ class PropertiesDock(ttk.Frame):
     def _object_heading(self):
         from .equipment_table import KINDS,nominal_value
         item=self.editor.item
+        self.heading.configure(anchor='w')
+        self.subtitle.configure(anchor='w',justify='left')
         self.heading.configure(text=tr('v3.red.kind.'+item['class']) if item['class'] in KINDS else item['class'])
         self.subtitle.configure(text=' · '.join(part for part in (object_connection(item,self.app.index),nominal_value(item)) if part and part!='—'))
 
@@ -167,8 +169,20 @@ class PropertiesDock(ttk.Frame):
         ttk.Separator(parent).pack(fill='x')
         self.rows[path]=(row,value)
         self._update_value(path)
-        if path not in self.editor._port_fields:value.bind('<Button-1>',lambda e,p=path:self.begin_edit(p))
+        if path not in self.editor._port_fields:
+            value.configure(takefocus=True)
+            value.bind('<Button-1>',lambda e,p=path:self.begin_edit(p))
+            for sequence in ('<Return>', '<F2>'):
+                value.bind(sequence,lambda e,p=path:self.begin_edit(p))
+            value.bind('<FocusIn>',lambda e,w=value:self._reveal(w))
         for child in [row,*row.winfo_children()]:child.bind('<MouseWheel>',self._wheel)
+
+    def _reveal(self,widget):
+        self.update_idletasks()
+        y=widget.winfo_rooty()-self.fields.winfo_rooty()
+        top=self.canvas.canvasy(0)
+        if y<top or y+widget.winfo_height()>top+self.canvas.winfo_height():
+            self.canvas.yview_moveto(max(0,y-10)/max(1,self.fields.winfo_height()))
 
     def _wheel(self,event):
         self.canvas.yview_scroll(-1 if event.delta>0 else 1,'units')
@@ -256,6 +270,7 @@ class PropertiesDock(ttk.Frame):
         if not holder or not holder.winfo_exists():return
         for child in holder.winfo_children():child.destroy()
         result=getattr(self.app,'result',None) or {}
+        if result:ttk.Label(holder,text=tr('v3.fix.lf_values'),style='Inspector.Key.TLabel',wraplength=270).pack(fill='x',pady=4)
         row=next((r for group in ('buses','branches','gens','loads','branches3') for r in result.get(group,[]) if r.get('id')==self.current_id),{})
         if result:
             for view in getattr(self.app,'diagrams',{}).values():
@@ -283,6 +298,7 @@ class PropertiesDock(ttk.Frame):
     def _styles(self):
         style=ttk.Style(self)
         style.configure('Inspector.RedValue.TLabel',font=theme.font('body'),background=theme.color('panel'),foreground=theme.color('ink'),anchor='e')
+        style.map('Inspector.RedValue.TLabel',background=[('focus',theme.color('select'))])
         style.configure('Inspector.RedKey.TLabel',font=theme.font('small'),background=theme.color('panel'),foreground=theme.color('muted'))
         style.configure('Inspector.RedSection.TButton',font=(*theme.font('small'),'bold'),background=theme.color('panel'),
             foreground=theme.color('muted'),borderwidth=0,lightcolor=theme.color('panel'),darkcolor=theme.color('panel'),
@@ -297,8 +313,8 @@ class PropertiesDock(ttk.Frame):
             self._object_heading()
             self._render()
         else:
-            self.heading.configure(text=tr('tools.properties'))
-            self.subtitle.configure(text=tr('tools.select_element'))
+            self.heading.configure(text=tr('tools.properties'),anchor='center')
+            self.subtitle.configure(text=tr('tools.select_element'),anchor='center',justify='center')
     def _dispose(self,event):
         if event.widget is self:
             for token in self._tokens:self.app.bus.unsubscribe(token)

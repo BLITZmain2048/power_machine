@@ -34,11 +34,12 @@ def test_actions_are_unique_and_language_independent(shell):
             shell.close_parity_panel(ident)
 
 def test_fault_defaults_and_explicit_preset(shell):
+    from power_machine.gui.events_editor import input_number
     for params in ({},{'r_ohm':.2,'x_ohm':.5}):
         editor=EventsEditor(shell,shell.document,shell.api,shell.root_path,shell.model,shell.index,
                             lambda:None,preset=dict(kind='short_circuit',target_id='B01',params=params))
-        assert float(editor.params['r_ohm'].get())==params.get('r_ohm',0)
-        assert float(editor.params['x_ohm'].get())==params.get('x_ohm',0)
+        assert input_number(editor.params['r_ohm'].get())==params.get('r_ohm',0)
+        assert input_number(editor.params['x_ohm'].get())==params.get('x_ohm',0)
         editor.destroy()
 
 def test_worker_status_topics(shell):

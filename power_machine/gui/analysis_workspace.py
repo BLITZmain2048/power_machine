@@ -21,7 +21,11 @@ MODULE_STUDIES={'loadflow':'flow','rms':'rms','simulation':'rms','contingency':'
                 'small_signal':'modal','modal':'modal','cct':'calc_cct','pvqv':'calc_pvqv',
                 'voltage_stability':'calc_pvqv','sensitivity':'calc_sens','sensitivities':'calc_sens',
                 'qds':'calc_qds','qds_panel':'calc_qds','metrics':'calc_met','dyn_metrics':'calc_met','lf_controls':'calc_lfctl'}
-STATUS_SYMBOLS={'never':'○','current':'●','stale':'◷','error':'!'}
+STATUS_SYMBOLS={'never':'○','current':'●','stale':'◷','error':'!','cancelled':'■'}
+
+
+def study_state_label(state):
+    return tr('v3.fix.cancelled') if state=='cancelled' else tr('v3.analysis.state.'+state)
 
 
 class AnalysisWorkspace(ttk.Frame):
@@ -39,7 +43,7 @@ class AnalysisWorkspace(ttk.Frame):
         self._current=''
         self.owners={}
         self.study_states={key:'never' for key,_,_ in STUDIES}
-        self._state_case=None
+        self._state_case=(id(app.document), app.document.active_case_id) if getattr(app,'document',None) else None
         self._events_signature=None
         self._refresh_id=None
         self.panes=ttk.Panedwindow(self,orient='horizontal')
@@ -109,6 +113,8 @@ class AnalysisWorkspace(ttk.Frame):
         self.results.bind('<<NotebookTabChanged>>',self._area_changed,add='+')
         self.time_cursor=TimeCursor(self.result_hosts['curves'],app,on_ready=self._temporal_ready)
         self.time_cursor.pack(fill='x',before=self.books['curves'].bar)
+        self.maximize_curves_button=ttk.Button(self.time_cursor.controls,command=self.toggle_curve_area,style='Toolbar.TButton',text=tr('v3.fix.maximize_curves'))
+        self.maximize_curves_button.pack(side='right',padx=3)
         self.curve_events=EventCards(self.result_hosts['curves'],self.seek_event,self.edit_event,compact=True)
         self.curve_events.on_seek=lambda index:self.seek_event(index,self.curve_events.rows)
         self.curve_events.pack(fill='x',before=self.books['curves'].bar)
@@ -134,9 +140,19 @@ class AnalysisWorkspace(ttk.Frame):
         self._render_states()
         self._refresh_id=self.after(400,self._refresh_summary)
 
+    def toggle_curve_area(self):
+        expanded=str(self.sidebar) not in self.panes.panes()
+        if expanded:
+            self.panes.insert(0,self.sidebar,weight=0)
+            self.curve_events.pack(fill='x',before=self.books['curves'].bar)
+        else:
+            self.panes.forget(self.sidebar)
+            self.curve_events.pack_forget()
+        self.maximize_curves_button.configure(text=tr('v3.fix.maximize_curves' if expanded else 'v3.fix.restore_curves'))
+
     def _resize_studies(self,event=None):
         if event is not None and event.widget is not self:return
-        height=18 if self.winfo_toplevel().winfo_height()>=900 else 10
+        height=18 if self.winfo_toplevel().winfo_height()>=900 else 9
         if int(self.study_tree.cget('height'))!=height:self.study_tree.configure(height=height)
 
     def add(self,child,**kwargs):
@@ -278,7 +294,7 @@ class AnalysisWorkspace(ttk.Frame):
             for link in reversed(app.document.runs_for_case()):
                 key=link.get('panel_id') if link.get('panel_id') in self.study_states else MODULE_STUDIES.get(link.get('module'),link.get('module'))
                 if key in self.study_states:
-                    self.study_states[key]='error' if link.get('status') in ('error','failed') else 'current' if link.get('freshness')=='current' else 'stale'
+                    self.study_states[key]='cancelled' if link.get('cancelled') or link.get('status')=='cancelled' else 'error' if link.get('status') in ('error','failed') else 'current' if link.get('freshness')=='current' else 'stale'
             self._render_states()
         self.refresh_configuration()
         self._refresh_events()
@@ -351,8 +367,8 @@ class AnalysisWorkspace(ttk.Frame):
             result=getattr(self.app,'parity_results',{}).get(link.get('module',study),{})
             if key=='flow':result=self.app.result or {}
             status=link.get('status',result.get('status'))
-            failed=status in ('error','failed','cancelled','invalid','not_evaluable','blocked') or result.get('converged') is False
-            self.study_states[key]='error' if failed else 'current'
+            failed=bool(link.get('cancelled',result.get('cancelled',False))) or status in ('error','failed','cancelled','invalid','not_evaluable','blocked') or result.get('converged') is False
+            self.study_states[key]='cancelled' if bool(link.get('cancelled',result.get('cancelled',False))) or status=='cancelled' else 'error' if failed else 'current'
             self._render_states()
         if key=='rms':self.time_cursor._read_source()
 
@@ -362,11 +378,13 @@ class AnalysisWorkspace(ttk.Frame):
 
     def _render_states(self):
         self.study_tree.tag_configure('section',foreground=theme.color('muted'),font=(*theme.font('small'),'bold'))
-        for state,token in [('never','text'),('current','ok'),('stale','text_muted'),('error','error')]:
+        for state,token in [('never','text'),('current','ok'),('stale','text_muted'),('error','error'),('cancelled','warn')]:
             self.study_tree.tag_configure('status:'+state,foreground=theme.color(token))
         for key,state in self.study_states.items():
             self.study_tree.item(key,values=(STATUS_SYMBOLS[state],),tags=('status:'+state,))
-        self.state_legend.configure(text='   '.join(STATUS_SYMBOLS[state]+' '+tr('v3.analysis.state.'+state) for state in STATUS_SYMBOLS))
+        self.state_legend.configure(text='   '.join(STATUS_SYMBOLS[state]+' '+study_state_label(state) for state in STATUS_SYMBOLS))
+        welcome=getattr(self.app,'welcome_page',None)
+        if welcome and welcome.winfo_exists():welcome.refresh()
 
     def refresh_configuration(self):
         app=self.app
@@ -406,6 +424,8 @@ class AnalysisWorkspace(ttk.Frame):
         self._refresh_id=self.after(400,self._refresh_summary)
 
     def retranslate(self,**_):
+        expanded=str(self.sidebar) not in self.panes.panes()
+        self.maximize_curves_button.configure(text=tr('v3.fix.restore_curves' if expanded else 'v3.fix.maximize_curves'))
         for key,label,_ in STUDIES:self.study_tree.item(key,text='   '+tr(label))
         for group,_ in STUDY_GROUPS:self.study_tree.item('group:'+group,text=tr('v3.analysis.group.'+group))
         self._render_states()

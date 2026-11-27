@@ -238,10 +238,12 @@ class SignalBuffer:
         self.keys = []
         self.rows = []
         self.version = 0
+        self.generation = 0
 
     def reset(self, keys):
         self.keys = list(keys)
         self.rows.clear()
+        self.generation += 1
         self.version += 1
 
     def append(self, rows):
@@ -794,7 +796,7 @@ class PlotPage(ttk.Frame):
             if entries:
                 title = (tr('plots.pf_legend') if self.source_label == 'Modelo' else tr('plots.runs_legend')) if self.reference is not None and self.show_pf.get() else tr('plots.single_run')
                 if self.spec.get('source_legend'):title=tr('plots.source_legend')
-                layout = dict(loc='upper right', borderaxespad=.7) if self._time_enabled else dict(loc='upper left', bbox_to_anchor=(1.01, 1), borderaxespad=0)
+                layout = dict(loc='lower right', bbox_to_anchor=(1,1.04), borderaxespad=0, ncol=max(1,len(entries))) if self._time_enabled else dict(loc='upper left', bbox_to_anchor=(1.01, 1), borderaxespad=0)
                 labels = [(line, label+'  0,0000 '+sources[id(line)][0].rsplit('|',1)[-1]) for line,label in entries] if self._time_enabled else entries
                 ax.legend(*zip(*labels), fontsize=8 if self._time_enabled else 7 if len(self.axes) < 5 else 6, title=None if self._time_enabled else title, title_fontsize=7,
                           **layout,

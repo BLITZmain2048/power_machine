@@ -199,18 +199,31 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
 
     def _worker_progress(self, kind, completed=0, total=None, cancelling=False, terminal=None, **payload):
         if not hasattr(self,'progress'): return
+        from .analysis_workspace import MODULE_STUDIES
+        if completed==0 and not terminal:
+            self._active_worker_study=MODULE_STUDIES.get(kind,getattr(self.analysis,'active_study','flow'))
         if total and completed is not None:
             self.progress.stop()
             self.progress.configure(mode='determinate',value=max(0,min(100,100*float(completed)/float(total))))
+        if terminal=='error' and hasattr(self,'analysis'):
+            self.analysis.study_states[getattr(self,'_active_worker_study',self.analysis.active_study)]='error'
+            self._failed_worker_study=getattr(self,'_active_worker_study',self.analysis.active_study)
+            self.analysis._render_states()
         if terminal:
             self.progress.stop()
             self.state_text.set(tr('integration.worker_finished',kind=kind))
         else:
             self.state_text.set(tr('integration.worker_progress',kind=kind,completed=completed or 0,total=total or '?'))
-        if cancelling: self._worker_cancelled(kind,True)
+        if cancelling: self._worker_cancelled(kind,not bool(terminal))
 
     def _worker_cancelled(self, kind, requested=True, **payload):
         self.state_text.set(tr('integration.worker_cancelling' if requested else 'integration.worker_cancelled',kind=kind))
+        if not requested and hasattr(self,'analysis'):
+            from .analysis_workspace import MODULE_STUDIES
+            key=MODULE_STUDIES.get(kind,kind)
+            if key in self.analysis.study_states:
+                self.analysis.study_states[key]='cancelled'
+                self.analysis._render_states()
 
     def _selection_from_bus(self, ids, source=None):
         if source != 'main':
@@ -260,6 +273,8 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         for page in self.table_pages:
             suffix = tr('shell.stale') if self.result is None else ''
             self.book.tab(page, text='LF · '+tr(labels[page.kind])+suffix)
+        if not getattr(self,'selected_id',None) and hasattr(self,'selection_text'):
+            self.selection_text.set(tr('tools.select_element'))
         if self.result:
             self.lf_state_text.set('LF · '+loadflow_status(self.result)[1])
         if hasattr(self.book, 'sync'):
@@ -472,7 +487,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         self.data_manager.populate()
         self.data_manager.tree.delete('active-case') if self.data_manager.tree.exists('active-case') else None
         for case in self.document.to_data()['cases']:
-            self.data_manager.tree.insert('studies','end',iid='case:'+case['case_id'],text=case['name'])
+            self.data_manager.tree.insert('studies','end',iid='case:'+case['case_id'],text=name if case['case_id']==self.document.active_case_id else case['name'])
         self.case_label.set(name)
         identity=self.study_identity()
         original=clean_text(self.document.study.name)
@@ -645,7 +660,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         host.select(view)
 
     def select(self, ident, *, publish=True):
-        if self.selected_id==ident:return
+        if self.selected_id==ident and ident is not None:return
         self.selected_id = ident
         if ident and hasattr(self,'properties_dock'):
             self.properties_dock.show_element(ident)
@@ -654,7 +669,12 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             self.selection_text.set(element_label(self.index[ident],self.index) if ident in self.index else tr('v3.no_selection'))
         if publish:
             self.bus.publish('selection.changed', ids=[ident] if ident else [], source='main')
-        if hasattr(self,'data_manager'):self.data_manager.locate(ident)
+        if hasattr(self,'data_manager'):
+            if ident is None:
+                tree=self.data_manager.tree
+                tree.selection_remove(*tree.selection())
+                tree.focus('')
+            self.data_manager.locate(ident)
         for window,manager in getattr(self,'data_windows',[]):
             if window.winfo_exists():manager.locate(ident)
         for view in self.diagrams.values():
@@ -1122,6 +1142,9 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
                 self.output.log('INFO', tr('shell.signals_saved_in', value0=summary['signals_csv']))
             if failure:
                 self.output.log('ERROR', failure)
+                if not self.selftest:
+                    self._failed_worker_study='rms'
+                    self.show_error(failure)
             for page in self.plot_pages:
                 page.redraw(force=True)
             if summary.get('event') and summary.get('signals_csv'):
@@ -1133,6 +1156,9 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         elif kind == 'error':
             self.set_busy(False, tr('shell.simulation_error'))
             self.output.log('ERROR', payload[0])
+            if not self.selftest:
+                self._failed_worker_study='rms'
+                self.show_error(payload[0])
             if self.selftest:
                 self.after(250, lambda: self.finish_selftest(payload[0]))
 
@@ -1317,12 +1343,28 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             messagebox.showinfo(tr('shell.validity_domain'), text, parent=self)
 
     def show_error(self, error):
-        self.output.log('ERROR', error)
+        from .analysis_workspace import STUDIES
+        from .display import public_text
+        analysis=getattr(self,'analysis',None)
+        key=self.__dict__.pop('_failed_worker_study',getattr(analysis,'active_study','flow'))
+        operation=next((tr(label) for study,label,_ in STUDIES if study==key),key)
+        operation=self.__dict__.pop('_failed_worker_operation',operation)
+        case=self.__dict__.pop('_failed_worker_case',self.case_label.get() if hasattr(self,'case_label') else '—')
+        case_token=self.__dict__.pop('_failed_worker_case_token',None)
+        recovery=tr('v3.fix.error_recovery', operation=operation, case=case, cause=public_text(clean_text(error)))
+        self.output.log('ERROR', recovery)
+        if analysis and (case_token is None or case_token==(id(self.document),self.document.active_case_id)):
+            analysis.study_states[key]='error'
+            analysis._render_states()
+            page=getattr(self,'welcome_page',None)
+            if page:page.refresh()
+        if hasattr(self,'state_text'):self.state_text.set(tr('v3.fix.failed'))
+        if analysis:analysis.results.select(analysis.result_hosts['log'])
         if self.selftest:
             self.finish_selftest(str(error))
         else:
             from .display import public_text
-            messagebox.showerror('Power Machine', public_text(clean_text(error)), parent=self)
+            messagebox.showerror('Power Machine', recovery, parent=self)
 
     def begin_selftest(self):
         if not self.api or not self.document:

@@ -249,6 +249,7 @@ class ExplorerPainter:
         self.hovered=ident
         if ident:
             text=self.full_text.get(ident,self.tree.item(ident,'text'))
+            if (ident=='active-case' or ident.startswith('case:')) and self.tree.item(ident,'text').rstrip().endswith('*'):text+='\n'+tr('v3.polish.unsaved')
             self.tip_job=self.tree.after(650,lambda:self.show_tip(text,event.x_root,event.y_root))
 
     def show_tip(self,text,x,y):

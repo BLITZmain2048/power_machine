@@ -91,7 +91,8 @@ def test_event_cards_seek_and_open_same_editor_row(shell):
     from power_machine.gui.theme import theme
     assert ttk.Style(app).lookup('Panel.EventTime.TLabel','foreground')==theme.color('accent2')
     assert editor._editing_index==1
-    assert editor.time.get()=='1'
+    from power_machine.gui.events_editor import input_number
+    assert input_number(editor.time.get())==1
     assert len(app.analysis.event_cards.widgets)==2
     app.analysis.event_cards._schedule_seek(0)
     app.analysis.event_cards._double_click(0)
@@ -106,9 +107,16 @@ def test_study_tree_states_and_real_rms_configuration(shell):
     groups=area.study_tree.get_children()
     assert groups==('group:stationary','group:dynamic','group:tools')
     assert sum(len(area.study_tree.get_children(group)) for group in groups)==12
+    app.maxsize(5000,4000)
+    app.deiconify()
     app.geometry('1904x1040')
     app.update()
-    assert int(area.study_tree.cget('height'))>=15
+    app.update_idletasks()
+    area._resize_studies()
+    # Windows can clamp a requested size to the current remote-desktop work area.
+    assert int(area.study_tree.cget('height')) == (18 if app.winfo_height()>=900 else 9)
+    if app.winfo_height()<900:area.study_tree.see('calc_lfctl')
+    app.update_idletasks()
     assert area.study_tree.bbox('calc_lfctl')
     assert all(area.study_tree.item(group,'open') for group in groups)
     app.bus.publish('results.updated',study='loadflow',result_id='loadflow')

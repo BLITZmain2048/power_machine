@@ -47,12 +47,14 @@ def element_data(view, key):
     if t is not None:
         state = getattr(view, 'cursor_buses', {}).get(identity,
                     getattr(view, 'cursor_branches', {}).get(identity, {}))
-        result = state if isinstance(state, dict) else {'loading_pct': state}
+        result = dict(state) if isinstance(state, dict) else {'loading_pct': state}
+        nominal=item.get('un_kv',getattr(symbol,'un_kv',None))
+        if kind=='bus' and not finite(result.get('u_kv')) and finite(result.get('u_pu')) and finite(nominal) and nominal>0:
+            result['u_kv']=result['u_pu']*nominal
         note = tr('v3.diagram.time', value=display_value(t, precision=3))
-        if not result:
-            note += ' · ' + tr('v3.diagram.no_time_data')
+        note += ' · ' + tr('v3.fix.temporal_missing')
     else:
-        note = tr('v3.diagram.last_result') if result else tr('v3.diagram.no_results')
+        note = tr('v3.fix.last_lf') if result else tr('v3.diagram.no_results')
     rows = []
     def add(label, field, unit, precision=2):
         value = result.get(field)
@@ -64,13 +66,21 @@ def element_data(view, key):
                 token = 'v_low' if value < low else 'v_high' if value > high else 'v_ok'
             elif field.startswith('loading'):
                 token = 'load_' + str(min(120, max(0, round(value))))
+                if value>getattr(view,'loading_bands',(80,100))[1]:label+=' !'
         else:
             text, token = '— ' + unit, 'text_muted'
         rows.append(DataRow(label, text, token))
     if kind == 'bus':
-        add('U', 'u_pu', 'p.u.', 3)
+        add('U', 'u_pu', 'p.u.', 4)
         add('U', 'u_kv', 'kV', 2)
         add(tr('v3.diagram.angle'), 'angle_deg', '°', 2)
+        value=result.get('u_pu')
+        if finite(value):
+            low,high=view.voltage_limits
+            if value<low or value>high:
+                limit=low if value<low else high
+                rows.append(DataRow(tr('v3.fix.voltage_limit'),
+                    display_value(value,precision=6)+(' < ' if value<low else ' > ')+display_value(limit,precision=6)+' p.u.', 'error'))
     elif kind in ('branch', 'transformer', 'switch'):
         ends = [end for end in ('from', 'to', 'hv', 'mv', 'lv')
                 if 'bus_' + end in item or 'bus_' + end in result or
@@ -93,7 +103,7 @@ def element_data(view, key):
             if t is None and 'u_pu' not in result:
                 terminal = view.results.get(item.get('bus'), {})
                 result = dict(result, **{k: terminal[k] for k in ('u_pu', 'u_kv') if k in terminal})
-            add('U', 'u_pu', 'p.u.', 3)
+            add('U', 'u_pu', 'p.u.', 4)
     return ElementData(clean_label(item.get('name', key)),
         clean_label(key) + ' · ' + tr('v3.diagram.type.' + kind), note, tuple(rows))
 
@@ -224,6 +234,7 @@ class ElementCards:
 
     def unpin_data(self, key):
         self.pinned_data.pop(key, None)
+        getattr(self,'_pin_cache',{}).pop(key,None)
         self.canvas.delete('pin:' + key)
 
     def _pin_close_hit(self, event):
@@ -245,7 +256,11 @@ class ElementCards:
 
     def _draw_pins(self):
         c = self.canvas
-        c.delete('pinned_data')
+        cache=getattr(self,'_pin_cache',{})
+        for key in set(cache)-set(self.pinned_data):
+            c.delete('pin:'+key)
+            cache.pop(key,None)
+        self._pin_cache=cache
         for key, (dx,dy) in self.pinned_data.items():
             anchor = self._element_anchor(key)
             if anchor is None:
@@ -254,14 +269,32 @@ class ElementCards:
             x, y = self._xy(anchor[0]+dx, anchor[1]+dy)
             data = element_data(self, key)
             tags = ('pinned_data', 'pin:' + key, 'data_for:' + key)
-            c.create_line(ax,ay,x,y,fill=theme.color('accent'),dash=(2,3),tags=tags)
             texts = [(data.title,'text','heading'),(data.subtitle,'text_muted','small'),
                      (data.note,'text_muted','small')]
             texts += [(r.label + '  ' + r.value,r.token,'small') for r in data.rows]
+            cached=cache.get(key)
+            geometry=(ax,ay,x,y,self.scale)
+            if cached and len(cached['texts'])==len(texts):
+                if cached['geometry']!=geometry:
+                    c.coords(cached['connector'],ax,ay,x,y)
+                    c.coords(cached['rectangle'],x,y,x+cached['size'][0],y+cached['size'][1])
+                    c.coords(cached['close'],x+cached['size'][0]-12,y+12)
+                    for handle,(ox,oy) in zip(cached['handles'],cached['offsets']):c.coords(handle,x+ox,y+oy)
+                    cached['geometry']=geometry
+                commands=[]
+                for handle,old,new in zip(cached['handles'],cached['texts'],texts):
+                    if old!=new:commands.extend([(c._w,'itemconfigure',handle,'-text',new[0],'-fill',theme.color(new[1])),';'])
+                if commands:c.tk.call('eval',*commands)
+                cached['texts']=texts
+                continue
+            c.delete('pin:'+key)
+            connector=c.create_line(ax,ay,x,y,fill=theme.color('accent'),dash=(2,3),tags=tags)
+            text_handles=[]
             top, right = y+8, x+150
             for text, token, font in texts:
                 handle = c.create_text(x+10,top,text=text,anchor='nw',fill=theme.color(token),
                     font=theme.font(font),width=300,tags=tags)
+                text_handles.append(handle)
                 box = c.bbox(handle)
                 top, right = box[3]+3, max(right,box[2]+28)
             rect = c.create_rectangle(x,y,right,top+5,fill=theme.color('surface'),
@@ -269,6 +302,25 @@ class ElementCards:
             c.tag_lower(rect, tags[1])
             close = c.create_text(right-12,y+12,text='×',font=theme.font('heading'),
                 fill=theme.color('text_muted'),tags=tags+('pin_close:'+key,))
+            # Fit newly created/resized cards using their measured bounds. Keep
+            # their element anchor fixed, and leave room for the source badge.
+            top_limit,bottom_limit=4,c.winfo_height()-4
+            badge=c.bbox('time_cursor')
+            if badge:
+                if badge[1]>c.winfo_height()/2:bottom_limit=min(bottom_limit,badge[1]-4)
+                else:top_limit=max(top_limit,badge[3]+4)
+            width,height=right-x,top+5-y
+            nx=max(4,min(x,c.winfo_width()-width-4))
+            ny=max(top_limit,min(y,bottom_limit-height))
+            sx,sy=nx-x,ny-y
+            if sx or sy:
+                c.move(tags[1],sx,sy)
+                c.coords(connector,ax,ay,nx,ny)
+                self.pinned_data[key]=(dx+sx/(self.scale*self.x_factor),dy+sy/self.scale)
+                x,y,right,top=nx,ny,right+sx,top+sy
+                geometry=(ax,ay,x,y,self.scale)
+            cache[key]=dict(geometry=geometry,texts=texts,handles=text_handles,connector=connector,rectangle=rect,close=close,
+                size=(right-x,top+5-y),offsets=[(c.coords(h)[0]-x,c.coords(h)[1]-y) for h in text_handles])
             c.tag_bind(close,'<Enter>',lambda e:c.configure(cursor='hand2'))
             c.tag_bind(close,'<Leave>',lambda e:c.configure(cursor=''))
 
@@ -289,5 +341,6 @@ class ElementCards:
         card.set_data(element_data(self,key))
         card.pack(fill='x',pady=(0,4))
         menu.add_command(label=tr('v3.diagram.pin'),command=lambda:self.pin_data(key))
+        if key in self.pinned_data:menu.add_command(label=tr('v3.fix.unpin'),command=lambda:self.unpin_data(key))
         menu.add_command(label=tr('v3.diagram.properties'),command=lambda:self.view_properties(key))
         menu.add_separator()

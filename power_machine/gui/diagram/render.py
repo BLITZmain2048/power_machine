@@ -64,6 +64,7 @@ def text_in_box(view, text, box, tags, *, fill=None, bold=False, background=None
 def draw(view):
     from .view import result_text
     c, s = view.canvas, view.scale
+    view._pin_cache={}
     c.delete('all')
     view.zoom_text.set(f'{s * 100:.0f} %')
     lx = 10
@@ -77,7 +78,7 @@ def draw(view):
         item = view.index.get(wire.id, {})
         color = view.element_color(item, view.results.get(wire.id, {}), wire.un_kv)
         view._line(wire.points, fill=color, width=max(1, 1.2 * s), tags=('wire', 'element:' + wire.id))
-        power = wire_power(wire, view.results.get(wire.id, {}))
+        power = None if getattr(view,'cursor_t',None) is not None else wire_power(wire, view.results.get(wire.id, {}))
         if power is not None and power != 0 and not item.get('outserv') and view.results.get(wire.id, {}).get('energized') is not False and len(wire.points) > 1:
             a, b = wire.points[:2]
             if power < 0:
@@ -96,7 +97,7 @@ def draw(view):
         if kind == 'bus':
             view._line([(symbol.x - symbol.width / 2, symbol.y), (symbol.x + symbol.width / 2, symbol.y)],
                        fill=color, width=max(2, 3 * s), tags=tags,
-                       dash=(5, 3) if view.results.get(key, {}).get('energized') is False else ())
+                       dash=(5, 3) if item.get('outserv') or (view.cursor_buses.get(key,{}) if getattr(view,'cursor_t',None) is not None else view.results.get(key,{})).get('energized') is False else ())
         elif kind == 'group':
             c.create_rectangle(x - symbol.width * s / 2, y - symbol.height * s / 2,
                                x + symbol.width * s / 2, y + symbol.height * s / 2,
@@ -162,6 +163,7 @@ def draw(view):
 def draw_result_labels(view):
     """Only result labels intersecting the current viewport are materialized."""
     from .view import result_text
+    if getattr(view,'cursor_t',None) is not None:return
     for key,symbol in view.scene.symbols.items():
         if not view.result_visible(symbol):
             continue

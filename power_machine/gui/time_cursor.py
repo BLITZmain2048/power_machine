@@ -21,16 +21,22 @@ class TemporalResult:
     se toma la última muestra, que representa el estado posterior al evento.
     La energización solo se publica cuando existe un canal explícito.
     """
-    def __init__(self, buffer, model=None):
+    def __init__(self, buffer, model=None, *, _matrix=None):
         self.keys = list(buffer.keys)
-        rows = np.asarray(buffer.rows, dtype=float)
+        rows = np.asarray(buffer.rows if _matrix is None else _matrix, dtype=float)
         time_key=next((key for key in ('time|b:tnow|s','time_s') if key in self.keys),None)
         if rows.ndim != 2 or len(rows) < 2 or time_key is None:
             raise ValueError('Temporal samples required')
         column = self.keys.index(time_key)
         valid = np.isfinite(rows[:, column])
-        rows = rows[valid]
-        rows = rows[np.argsort(rows[:, column], kind='stable')]
+        self._ordered=bool(np.all(valid) and np.all(np.diff(rows[:,column])>=0))
+        if not np.all(valid):rows=rows[valid]
+        if not self._ordered:rows=rows[np.argsort(rows[:,column],kind='stable')]
+        self.matrix=rows
+        self._source_id=id(buffer)
+        self._source_generation=getattr(buffer,'generation',None)
+        self._raw_count=len(buffer.rows)
+        self._time_column=column
         self.times = rows[:, column]
         if len(self.times) < 2 or self.times[-1] <= self.times[0]:
             raise ValueError('A temporal interval is required')
@@ -56,6 +62,23 @@ class TemporalResult:
                 self.channels.append((ident, 'energized', key))
             elif group != 'buses' and variable in ('c:loading', 'm:loading', 'loading_pct') and unit == '%':
                 self.channels.append((ident, 'loading_pct', key))
+
+    @classmethod
+    def from_buffer(cls,buffer,model=None,previous=None):
+        # Only SignalBuffer append/reset generations qualify for incremental use.
+        generation=getattr(buffer,'generation',None)
+        matrix=None
+        if (previous is not None and generation is not None and
+                previous._source_id==id(buffer) and previous._source_generation==generation and
+                previous.keys==list(buffer.keys) and previous._ordered and
+                len(buffer.rows)>=previous._raw_count):
+            tail=buffer.rows[previous._raw_count:]
+            if not tail:return previous
+            extra=np.asarray(tail,dtype=float)
+            times=extra[:,previous._time_column]
+            if np.all(np.isfinite(times)) and times[0]>=previous.end and np.all(np.diff(times)>=0):
+                matrix=np.concatenate((previous.matrix,extra),axis=0)
+        return cls(buffer,model,_matrix=matrix)
 
     def sample(self, key, t, *, discrete=False):
         values = self.columns.get(key)
@@ -94,14 +117,16 @@ class TimeCursor(ttk.Frame):
         self.data = None
         self.t = 0.
         self.playing = False
+        self.source_name='RMS'
         self.source_buffer = getattr(app, 'buffer', None)
         self._signature = None
+        self._source_cache={}
         self._case = self._case_token()
         self._poll_id = self._tick_id = None
         self.frames = []
         self.time_text = tk.StringVar(value=number(0))
         self.speed = tk.StringVar(value='1×')
-        controls=ttk.Frame(self,style='Toolbar.TFrame')
+        controls=self.controls=ttk.Frame(self,style='Toolbar.TFrame')
         controls.pack(fill='x')
         self.play_button = ttk.Button(controls, command=self.toggle, style='Toolbar.TButton')
         self.play_button.pack(side='left')
@@ -112,7 +137,8 @@ class TimeCursor(ttk.Frame):
         self.entry = ttk.Entry(controls, textvariable=self.time_text, width=8, justify='right')
         self.entry.pack(side='left')
         self.entry.bind('<Return>', self._entered)
-        ttk.Label(controls, text='s', style='Toolbar.TLabel').pack(side='left', padx=3)
+        self.range_label = ttk.Label(controls, style='Toolbar.TLabel')
+        self.range_label.pack(side='left', padx=3)
         self.speed_box = ttk.Combobox(controls, state='readonly', textvariable=self.speed, width=6)
         self.speed_box.pack(side='left', padx=5)
         self.note = ttk.Label(self, style='Toolbar.TLabel')
@@ -136,6 +162,7 @@ class TimeCursor(ttk.Frame):
     def attach_page(self, page):
         self.check_case()
         self.pages.add(page)
+        page.bind('<Map>',lambda event:page.set_time_cursor(self.t) if self.data is not None else None,add='+')
         page.bind('<Destroy>', lambda event: self.pages.discard(page) if event.widget is page else None, add='+')
         page.time_transport = self
         if hasattr(page, 'enable_time_cursor'):
@@ -145,10 +172,12 @@ class TimeCursor(ttk.Frame):
 
     def use_page(self,page):
         """La página activa determina la corrida publicada al diagrama."""
+        self.source_name=tr(page.spec['name_key']) if getattr(page,'spec',{}).get('name_key') else getattr(page,'spec',{}).get('name','RMS')
         if self.source_buffer is not page.buffer:
             self.pause()
             self.source_buffer=page.buffer
         self._read_source()
+        if self.data is not None:page.set_time_cursor(self.t)
 
     def _controls(self, enabled):
         for control in (self.scale, self.entry, self.play_button, self.stop_button, self.speed_box):
@@ -164,7 +193,10 @@ class TimeCursor(ttk.Frame):
             return
         self._signature = signature
         try:
-            data = TemporalResult(buffer, getattr(self.app, 'model', {}))
+            data=self._source_cache.get(signature)
+            if data is None:
+                data = TemporalResult.from_buffer(buffer,getattr(self.app,'model',{}),previous=self.data)
+                self._source_cache={signature:data}
         except (ValueError, TypeError, AttributeError):
             if self.data is not None:
                 self.invalidate()
@@ -172,16 +204,19 @@ class TimeCursor(ttk.Frame):
         self.set_data(data)
 
     def set_data(self, data):
+        previous=self.data
         self.data = data
-        self.scale.configure(to=data.end)
+        self.scale.configure(from_=data.start, to=data.end)
         self._controls(True)
+        self.range_label.configure(text=f's [{number(data.start)} … {number(data.end)}]')
         if self.on_ready:
             self.on_ready()
-        self.seek(min(self.t, data.end))
+        self.seek(self.t if previous is not None else data.start)
 
     def invalidate(self, **_):
         self.pause()
         self.data = None
+        self._source_cache.clear()
         self._signature = (id(self.source_buffer), getattr(self.source_buffer, 'version', None))
         self._controls(False)
         self.t = 0.
@@ -210,15 +245,17 @@ class TimeCursor(ttk.Frame):
         t = float(t)
         if not math.isfinite(t):
             return False
-        self.t = max(0., min(self.data.end, t))
+        self.t = max(self.data.start, min(self.data.end, t))
         self._updating = True
         self.scale.set(self.t)
         self._updating = False
         self.time_text.set(number(self.t))
         for page in list(self.pages):
-            page.set_time_cursor(self.t)
+            if page.winfo_ismapped():page.set_time_cursor(self.t)
+        if hasattr(self.app, 'state_text'):
+            self.app.state_text.set(tr('v3.fix.cursor_status', state=tr('v3.fix.playing' if self.playing else 'v3.fix.paused'), time=number(self.t)))
         buses, branches = self.data.state(self.t)
-        self.event_bus.publish('time.cursor', t=self.t, bus_state=buses, branch_state=branches, source='analysis')
+        self.event_bus.publish('time.cursor', t=self.t, bus_state=buses, branch_state=branches, source='analysis', run_name=self.source_name)
         return True
 
     def _slide(self, value):
@@ -227,11 +264,20 @@ class TimeCursor(ttk.Frame):
             self.seek(float(value))
 
     def _entered(self, _=None):
+        self.pause()
         try:
-            self.pause()
-            self.seek(float(self.time_text.get().replace(',', '.')))
+            value = float(self.time_text.get().replace(',', '.'))
+            if self.data is None or not math.isfinite(value) or not self.data.start <= value <= self.data.end:
+                raise ValueError()
+            self.seek(value)
+            self.entry.state(['!invalid'])
+            self.note.pack_forget()
         except ValueError:
             self.time_text.set(number(self.t))
+            self.entry.state(['invalid'])
+            self.note.configure(text=tr('v3.fix.cursor_range', start=number(self.data.start) if self.data else '—', end=number(self.data.end) if self.data else '—'))
+            self.note.pack(fill='x', pady=(4,0))
+        return 'break'
 
     def pause(self):
         self.playing = False
@@ -247,7 +293,7 @@ class TimeCursor(ttk.Frame):
         if self.data is None:
             return
         if self.t >= self.data.end:
-            self.seek(0.)
+            self.seek(self.data.start if self.data else 0.)
         self.playing = True
         self._clock = time.perf_counter()
         self.play_button.configure(text=tr('v3.analysis.pause'))
@@ -271,11 +317,11 @@ class TimeCursor(ttk.Frame):
 
     def stop(self):
         self.pause()
-        self.seek(0.)
+        self.seek(self.data.start if self.data else 0.)
 
     def retranslate(self, **_):
         self.play_button.configure(text=tr('v3.analysis.pause' if self.playing else 'v3.analysis.play'))
-        self.stop_button.configure(text=tr('v3.analysis.stop'))
+        self.stop_button.configure(text=tr('v3.fix.playback_stop'))
         self.speed_box.configure(values=tuple((str(v).replace('.', ',') if language()=='es' else str(v))+'×'
                                              for v in (.25, .5, 1, 2, 4)))
         speed=self.speed.get().replace('×','').replace(',','.')

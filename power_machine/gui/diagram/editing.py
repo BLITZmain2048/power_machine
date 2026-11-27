@@ -34,7 +34,7 @@ class DiagramEditing:
 
     def editing_toolbar(self):
         if not hasattr(self,'_edit_var'):return
-        parent=self._edit_bar
+        parent=self._toolbar
         ttk.Separator(parent,orient='vertical').pack(side='left',fill='y',padx=4)
         ttk.Checkbutton(parent,text=tr('edit.enable'),variable=self._edit_var,
                         command=self.toggle_editing).pack(side='left',padx=4)

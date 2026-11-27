@@ -114,9 +114,9 @@ def test_hover_waits_300ms_and_reuses_one_localized_card(diagram):
     wait(view.winfo_toplevel(),340)
     assert view._tooltip_key=='B1'
     card=view._tooltip
-    assert '1,012 p.u.' in texts(card)
+    assert '1,0120 p.u.' in texts(card)
     assert '111,32 kV' in texts(card) and '-2,45 °' in texts(card)
-    assert tr('v3.diagram.last_result') in texts(card)
+    assert tr('v3.fix.last_lf') in texts(card)
     view._hide_tooltip()
     view.show_element_tooltip('LD1',200,120)
     assert view._tooltip is card
@@ -134,7 +134,7 @@ def test_branch_both_ends_and_generator_solved_terminal_voltage(diagram):
     assert '12.30 MW' in text and '-12.10 MW' in text
     assert '4.50 Mvar' in text and '-4.20 Mvar' in text
     assert '0.071 kA' in text and '0.069 kA' in text
-    assert any(row.value=='1.012 p.u.' for row in element_data(view,'G1').rows)
+    assert any(row.value=='1.0120 p.u.' for row in element_data(view,'G1').rows)
 
 
 def test_time_cursor_refreshes_visible_tooltip_and_pin_without_steady_values(diagram):
@@ -144,7 +144,7 @@ def test_time_cursor_refreshes_visible_tooltip_and_pin_without_steady_values(dia
     view.show_element_tooltip('B1',100,100)
     bus.publish('time.cursor',t=.32,bus_state={'B1':dict(u_pu=.82)},branch_state={'L1':112.3})
     text=texts(view._tooltip)
-    assert 't = 0,320 s' in text and '0,820 p.u.' in text
+    assert 't = 0,320 s' in text and '0,8200 p.u.' in text
     assert '111,32' not in text
     data=element_data(view,'B1')
     assert data.rows[0].token=='v_low'
@@ -156,8 +156,8 @@ def test_time_cursor_refreshes_visible_tooltip_and_pin_without_steady_values(dia
     assert not any(row.value=='12,30 MW' for row in branch.rows)
     assert all('—' in row.value for row in element_data(view,'G1').rows)
     bus.publish('time.cursor',t=None)
-    assert '1,012 p.u.' in texts(view._tooltip)
-    assert tr('v3.diagram.last_result') in texts(view._tooltip)
+    assert '1,0120 p.u.' in texts(view._tooltip)
+    assert tr('v3.fix.last_lf') in texts(view._tooltip)
 
 
 def test_drag_updates_only_incident_traces_and_keeps_other_handles(diagram,monkeypatch):
@@ -248,7 +248,7 @@ def test_time_badge_chooses_free_corner_and_stays_fixed_during_gestures(diagram)
     assert view._time_corner!='nw'
     handles=c.find_withtag('time_cursor')
     rectangle=next(i for i in handles if c.type(i)=='rectangle')
-    assert c.itemcget(rectangle,'stipple')=='gray50'
+    assert c.itemcget(rectangle,'stipple')==''  # Opaque source badge keeps underlying symbols out of its text.
     before={i:c.coords(i) for i in handles}
     view._pan_press(event(50,50))
     view._motion(event(70,80))
