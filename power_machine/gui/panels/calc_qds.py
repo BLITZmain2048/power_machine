@@ -106,7 +106,7 @@ class PanelController:
         self.stale_reason = None
         request = build_request(self.context, **kwargs)
         self.job = self.context.submit_job(MODULE, request, self.on_message)
-        self.context.log("info", tr('integration.quasi_dynamic_simulation_no_pf_validation'))
+        self.context.log("info", tr('integration.quasi_dynamic_simulation_no_ref_validation'))
         return request
 
     def on_message(self, message):
@@ -278,7 +278,7 @@ def create_panel(parent, context) -> ttk.Frame:
         elif message.get("schema") == RESULT_SCHEMA:
             show_summary(message)
             status_var.set(STATUS_TEXT.get(message.get("status"), message.get("status", tr('integration.no_state'))))
-            stale_var.set(tr('integration.no_pf_validation_f85232'))
+            stale_var.set(tr('integration.no_ref_validation_f85232'))
             draw_plot()
 
     controller = PanelController(context, update)

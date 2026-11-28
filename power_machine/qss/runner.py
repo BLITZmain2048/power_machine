@@ -9,7 +9,7 @@ from pathlib import Path
 
 from ..loadflow import run_loadflow
 from ..lf_status import energized_status
-from ..benchmarks.ieee39_pf import LDF_OPTIONS
+from ..benchmarks.ieee39_ref import LDF_OPTIONS
 from .dispatch import dispatch_base, plan_dispatch
 from .series import digest, model_digest
 
@@ -106,7 +106,7 @@ def run_series(model, series, output, *, rule="reference", warm_start=True,
     base = dispatch_base(model, base_result)
     output.mkdir(parents=True, exist_ok=False)
     (output / "checkpoints").mkdir()
-    metadata = {"schema": "pm-qss-v1", "validation_status": "sin validar contra PF",
+    metadata = {"schema": "pm-qss-v1", "validation_status": "sin validar contra la referencia externa",
                 "series_name": series.name, "fingerprint": fingerprint,
                 "rule": rule, "policy": policy, "warm_start": bool(warm_start),
                 "lf_options": lf_options, "provenance": series.provenance,

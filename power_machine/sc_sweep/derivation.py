@@ -175,7 +175,7 @@ def build_preflight(model, *, model_source_path=None):
     for record in sources:
         record["source_sha256"] = model_sha256
     return {"schema": "power_machine-sc-preflight-v1", "model_source": "model.json", "model_sha256": model_sha256,
-            "verification": "not validated against PowerFactory", "records": records, "buses": buses, "sources": sources}
+            "verification": "not validated against the external reference", "records": records, "buses": buses, "sources": sources}
 
 
 def write_preflight(model, destination, *, model_source_path=None):

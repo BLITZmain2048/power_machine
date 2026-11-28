@@ -84,7 +84,7 @@ def simulate_benchmark(root, model, model_path, event, end_s, step_s, queue, can
                 raise InterruptedError(tr('integration.cancellation_requested'))
             return original_rhs(state)
         system.rhs = rhs
-        queue.put(('log', 'INFO', event + tr('integration.classical_model_no_pf_validation')))
+        queue.put(('log', 'INFO', event + tr('integration.classical_model_no_ref_validation')))
         result = run(system, event, end_s=end_s, step_s=step_s)
         if cancel_event.is_set():
             raise InterruptedError(tr('integration.cancellation_requested'))

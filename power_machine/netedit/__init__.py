@@ -26,7 +26,7 @@ def execute_request(request: dict, *, cancel=None, progress=None) -> dict:
               "provenance": {"inputs": [], "formulas": [{"edition": "power_machine existente",
                              "profile": "variantes LF de secuencia positiva"}],
                              "analytical_checks": [], "normative_evidence": [],
-                             "pf_comparison": "sin validar contra PF"},
+                             "ref_comparison": "sin validar contra la referencia externa"},
               "diagnostics": [], "payload": {}}
     def cancelled():
         return cancel is not None and (cancel.is_set() if hasattr(cancel, "is_set") else cancel())

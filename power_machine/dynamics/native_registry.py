@@ -1,6 +1,6 @@
 'Native registry support for power-system RMS dynamics.'
 from power_machine.dynamics.errors import coded_error as _coded_error
-from .avr_ieeet1 import IEEET1AVR, AVR_PROFILES, PF_IDENTIFIED_STATUS
+from .avr_ieeet1 import IEEET1AVR, AVR_PROFILES, REF_IDENTIFIED_STATUS
 from .governors_ieeeg import IEEEG1Governor, IEEEG3Governor
 from .load_general import GeneralLoad
 
@@ -10,7 +10,7 @@ CONTROLLER_MODELS = {
     "gov_IEEEG3.BlkDef": IEEEG3Governor,
 }
 LOAD_MODELS = {"general_load_t1": GeneralLoad}
-VALIDATION_STATUS = 'Not validated against PF. Standard IEEE equations without exported BlkDef'
+VALIDATION_STATUS = 'Not validated against the external reference. Standard IEEE equations without exported BlkDef'
 
 
 class NativeControllerCatalog:
@@ -63,7 +63,7 @@ class NativeControllerCatalog:
                 result[slot] = cls(row["object_id"], row["relative_path"],
                                    attrs["params"], **kwargs)
                 record["status"] = VALIDATION_STATUS
-                if slot == "avr" and self.avr_profile == "pf_identificado":
-                    record.update(avr_profile=self.avr_profile, status=PF_IDENTIFIED_STATUS)
+                if slot == "avr" and self.avr_profile == "ref_identificado":
+                    record.update(avr_profile=self.avr_profile, status=REF_IDENTIFIED_STATUS)
             self.coverage.append(record)
         return comp, result["avr"], result["governor"]

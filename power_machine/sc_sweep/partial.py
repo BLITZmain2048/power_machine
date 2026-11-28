@@ -532,7 +532,7 @@ def prepare_partial(model, *, mode, case, thevenin=None, bus_ids=None, host_bus_
     host = next(b for b in result["buses"] if b["id"] == host_id)
     if mode == "thevenin":
         data["sources"].update(_thevenin_record(host, case, thevenin or {}))
-        label = "Positive-sequence three-phase short circuit, partial study with a user-supplied boundary equivalent, not validated against PowerFactory"
+        label = "Positive-sequence three-phase short circuit, partial study with a user-supplied boundary equivalent, not validated against the external reference"
     else:
         label = "Machines from the boundary equivalent dynamic equivalent, not accredited as a short-circuit equivalent"
     converters = [g for g in model.get("gens", ()) if g.get("class") in ("ElmGenstat", "ElmPvsys")]
@@ -738,25 +738,25 @@ def contract_ideal_for_solver(model, supplement):
     return result, data, aliases, {node_id: sorted(bus_ids) for node_id, bus_ids in groups.items()}
 
 
-def load_pf_sc_export(folder, supplement):
-    "Enrich supplementary data from a PowerFactory export with a normalized parameter table."
+def load_ref_sc_export(folder, supplement):
+    "Enrich supplementary data from a reference simulator export with a normalized parameter table."
     path = Path(folder) / "supplemental.json"
     document = json.loads(path.read_text(encoding="utf-8"))
     if document.get("schema") != DATA_SCHEMA:
-        raise ValueError('[invalid_input] ' + "PF supplemental.json does not use power_machine-sc-data-v1")
+        raise ValueError('[invalid_input] ' + "REF supplemental.json does not use power_machine-sc-data-v1")
     merged = copy.deepcopy(supplement)
     for section in ("elements", "sources"):
         merged.setdefault(section, {}).update(document.get(section, {}))
-    merged.setdefault("assumptions", []).append({"kind": "pf_export", "path": str(path)})
+    merged.setdefault("assumptions", []).append({"kind": "ref_export", "path": str(path)})
     return merged
 
 
-def compare_pf_rows(rows, pf_csv, *, tolerance_relative=0.02):
+def compare_ref_rows(rows, ref_csv, *, tolerance_relative=0.02):
     "Compare initial symmetrical current only when both sides contain finite values."
     if tolerance_relative <= 0:
         raise ValueError('[invalid_input] ' + "Relative tolerance must be positive")
     reference = {}
-    with Path(pf_csv).open(encoding="utf-8", newline="") as stream:
+    with Path(ref_csv).open(encoding="utf-8", newline="") as stream:
         for row in csv.DictReader(stream):
             try:
                 reference[row["object_id"]] = float(row["Ikss_kA"])
@@ -768,7 +768,7 @@ def compare_pf_rows(rows, pf_csv, *, tolerance_relative=0.02):
         if actual is None or expected in (None, 0):
             continue
         relative = abs(actual-expected)/abs(expected)
-        results.append({"object_id": row["object_id"], "pf_ikss_ka": expected, "sweep_ik_initial_ka": actual,
+        results.append({"object_id": row["object_id"], "ref_ikss_ka": expected, "sweep_ik_initial_ka": actual,
                         "relative_error": relative, "within_tolerance": relative <= tolerance_relative})
-    return {"metric": "abs(Ik''_sweep-Ik''_PF)/abs(Ik''_PF)", "tolerance_relative": tolerance_relative,
+    return {"metric": "abs(Ik''_sweep-Ik''_REF)/abs(Ik''_REF)", "tolerance_relative": tolerance_relative,
             "rows": results, "status": "not_evaluable" if not results else "compared"}

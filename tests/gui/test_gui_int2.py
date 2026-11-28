@@ -108,24 +108,24 @@ def test_rms_recovery_opens_network_data_selector(shell, monkeypatch):
     assert calls == ['model']
 
 
-def test_pf_reference_overlay_never_qualifies_current_run():
+def test_ref_reference_overlay_never_qualifies_current_run():
     from types import SimpleNamespace
-    from power_machine.gui.pf_context import comparison_context
-    page = SimpleNamespace(reference={}, reference_label='E39-DIN-01 / PowerFactory')
+    from power_machine.gui.ref_context import comparison_context
+    page = SimpleNamespace(reference={}, reference_label='E39-DIN-01 / REF')
     badge, detail = comparison_context(page)
-    assert badge == tr('int2.pf_reference_only')
+    assert badge == tr('int2.ref_reference_only')
     assert 'E39-DIN-01' in detail
     page.reference_label = 'User run B'
     badge, detail = comparison_context(page)
-    assert badge == tr('int2.pf_no_comparison')
+    assert badge == tr('int2.ref_no_comparison')
     assert 'User run B' in detail
 
 
-@pytest.mark.pfdata
+@pytest.mark.refdata
 def test_native_case_does_not_replace_a_modified_network_or_scenario():
     from power_machine.resources import readonly_path
     from power_machine.gui.native_case import is_native_case
-    model = json.loads(readonly_path('cases', 'ieee39_pf', 'model.json').read_text(encoding='utf-8-sig'))
+    model = json.loads(readonly_path('cases', 'ieee39_ref', 'model.json').read_text(encoding='utf-8-sig'))
     assert is_native_case(model, {'scenario': {}})
     assert not is_native_case(model, {'scenario': {'load_scale': {'L1': 1.1}}})
     model['meta']['f_nom_hz'] = 50

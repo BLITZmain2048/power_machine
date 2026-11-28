@@ -1,6 +1,6 @@
 """Ejecutor regulador experimental optativo para los comparadores native RMS, sin registro permanente.
 
-La opción exponencial es un HALLAZGO experimental, sin validar contra PF.
+La opción exponencial es un HALLAZGO experimental, sin validar contra la referencia externa.
 Las referencias se inicializan desde LF, nunca desde señales DIN o Amat.
 """
 from __future__ import annotations
@@ -12,17 +12,17 @@ from pathlib import Path
 
 import numpy as np
 
-from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR, WORKSPACE, build_rms_case
+from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR, WORKSPACE, build_rms_case
 from power_machine.dynamics.avr_exponential import ExponentialIEEET1AVR
 from power_machine.dynamics.regulator_diagnostics import coordinate_transform
-from power_machine.pfcompare import rms_network as rms_replay
-from power_machine.pfcompare import modal_network as mod
-from power_machine.pfcompare.rms_replay import inside_workspace, write_json
+from power_machine.refcompare import rms_network as rms_replay
+from power_machine.refcompare import modal_network as mod
+from power_machine.refcompare.rms_replay import inside_workspace, write_json
 
 
-def build_variant(pf_dir, variant):
+def build_variant(ref_dir, variant):
     """Construye base independiente del objetivo y sustituye solo AVR."""
-    rms = build_rms_case(pf_dir)
+    rms = build_rms_case(ref_dir)
     if variant == "baseline":
         return rms
     if variant not in ("exponential", "exponential_frozen"):
@@ -66,7 +66,7 @@ def comparator_options(variant, label):
         rms_replay.build_rms_case, mod.build_rms_case, rms_replay.fresh_output, mod.fresh_output, mod.state_transform = old
 
 
-def run(pf_dir, output_dir, variant, label, trials):
+def run(ref_dir, output_dir, variant, label, trials):
     """Usa rms_network y modal_network con tolerancias intactas."""
     inside_workspace(output_dir)
     # El manifiesto y las tolerancias se publican antes de medir.
@@ -76,8 +76,8 @@ def run(pf_dir, output_dir, variant, label, trials):
     plan.parent.mkdir(parents=True, exist_ok=True)
     code = [Path(__file__), WORKSPACE/"dynamics/avr_exponential.py",
             WORKSPACE/"dynamics/regulator_diagnostics.py"]
-    write_json(plan, {"variant": variant, "trials": trials, "pf_dir": str(pf_dir),
-                      "parameters_fitted": False, "status": "hallazgo, sin validar contra PF",
+    write_json(plan, {"variant": variant, "trials": trials, "ref_dir": str(ref_dir),
+                      "parameters_fitted": False, "status": "hallazgo, sin validar contra la referencia externa",
                       "code_sha256": {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in code},
                       "din_tolerances": rms_replay.TOLERANCES,
                       "mod_tolerances": {"real_absolute_per_s": mod.REAL_TOL_PER_S,
@@ -85,14 +85,14 @@ def run(pf_dir, output_dir, variant, label, trials):
     with comparator_options(variant, label):
         for trial in trials:
             if trial == "E39-MOD-02":
-                summary = mod.run_comparison(pf_dir, output_dir)
+                summary = mod.run_comparison(ref_dir, output_dir)
                 summary["auxiliary_avr_poles_per_s"] = ([] if variant.endswith("_frozen") else [-10000.]*9)
                 summary["frozen_avr_rows"] = 9 if variant.endswith("_frozen") else 0
                 summary["hypotheses"] = ["xf=Xf según proyección local E2",
                                           "Saturación exponencial solo si variante E2 explícita",
                                           "Bloques y límites sin confirmar por BlkDef"]
             else:
-                summary = rms_replay.run_trial(pf_dir, output_dir, trial,
+                summary = rms_replay.run_trial(ref_dir, output_dir, trial,
                                         progress=lambda s: print(s, flush=True))
             summary.update(variant_e2=variant, parameters_fitted=False,
                            normative_formula_verified=False,
@@ -103,13 +103,13 @@ def run(pf_dir, output_dir, variant, label, trials):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
     parser.add_argument("--output-dir", type=Path, default=rms_replay.OUTPUT_DIR)
     parser.add_argument("--variant", choices=("baseline", "exponential", "exponential_frozen"), required=True)
     parser.add_argument("--label", required=True)
     parser.add_argument("--trial", choices=(*rms_replay.CASES, "E39-MOD-02"), action="append")
     args = parser.parse_args()
-    run(args.pf_dir, args.output_dir, args.variant, args.label, args.trial or [*rms_replay.CASES, "E39-MOD-02"])
+    run(args.ref_dir, args.output_dir, args.variant, args.label, args.trial or [*rms_replay.CASES, "E39-MOD-02"])
 
 
 if __name__ == "__main__":

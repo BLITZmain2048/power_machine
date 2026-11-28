@@ -45,7 +45,7 @@ def parse_fields(draft):
     for key, value in fields.items():
         if not isinstance(value, list) or not all(isinstance(x, str) for x in value):
             raise EditorError("invalid_fields", f"{key}: se requiere lista de cadenas")
-    # La misma función de normalización del compilador conserva las declaraciones PF.
+    # La misma función de normalización del compilador conserva las declaraciones REF.
     from power_machine.dynamics.dsl_compile import _names
     for key in FIELDS - {"sAddEquat"}:
         fields[key] = list(_names(fields.get(key)))
@@ -321,7 +321,7 @@ def block_view(draft):
                    "state_bindings": list(n.state_bindings), "ir": ir_view(n.ir) if n.ir else None} for n in block.nodes],
         "wires": [asdict(w) for w in block.wires], "coverage": coverage_catalog(),
         "modal_continuity": "requiere análisis de ramas y memoria por modal",
-        "pf_comparison": "sin validar contra PF"}
+        "ref_comparison": "sin validar contra la referencia externa"}
 
 
 def coverage_catalog():
@@ -329,4 +329,4 @@ def coverage_catalog():
     nonsmooth = {"abs", "min", "max", "lim", "lim_const", "limstate", "limstate_const", "select", "select_const", "selfix", "selfix_const", "time", "picontrol_const", "lapprox", "invlapprox"}
     return [{"name": name, "supported": name not in rejected,
              "modal_status": "unsupported" if name in rejected else "requires_branch_analysis" if name in nonsmooth or name in STATEFUL_FUNCTIONS else "requires_operating_point",
-             "pf_comparison": "sin validar contra PF"} for name in sorted(PURE_FUNCTIONS | STATEFUL_FUNCTIONS)]
+             "ref_comparison": "sin validar contra la referencia externa"} for name in sorted(PURE_FUNCTIONS | STATEFUL_FUNCTIONS)]

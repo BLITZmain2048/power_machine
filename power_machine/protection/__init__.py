@@ -1,4 +1,4 @@
-"""API pública protection, worker serializable sin acceso a tkinter ni PowerFactory."""
+"""API pública protection, worker serializable sin acceso a tkinter ni simulador comercial de referencia."""
 from __future__ import annotations
 
 from copy import deepcopy

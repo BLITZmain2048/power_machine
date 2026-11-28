@@ -59,7 +59,7 @@ La [guía de API](docs/api.md) explica tablas tipadas y diagnósticos. Los ejemp
 
 ```mermaid
 flowchart LR
-    Source["model.json o CSV de PowerFactory"] --> Network["Network"]
+    Source["model.json o CSV de tablas de elementos"] --> Network["Network"]
     Network --> Studies["Flujo, contingencias, cortocircuito, RMS, CCT, modal, PV/QV, QSS"]
     Studies --> Results["Resultados tipados"]
     Results --> API["API Python"]
@@ -150,7 +150,7 @@ Todas las corridas de flujo completadas convergieron. Las corridas dispersas de 
 - El ranking N-1 informa restricciones y resultados topológicos calculados. No establece factibilidad operativa, coordinación de protecciones, respuesta de frecuencia ni reservas.
 - Los tiempos son mediciones de la configuración indicada y no comparaciones con otro producto.
 
-PowerFactory es una marca de su titular. Este proyecto no está afiliado ni cuenta con el respaldo de su titular.
+
 
 ## Estructura del repositorio
 
@@ -169,4 +169,4 @@ Ejecute `python -m pytest -m "not gui"` para la suite sin GUI y `python -m valid
 El código fuente tiene licencia MIT. Los datos IEEE 39  tienen procedencia y términos separados, descritos en [NOTICE](NOTICE), y no están cubiertos por la licencia del código. Cite el software mediante [CITATION.cff](CITATION.cff).
 
 
-Incluye importadores y comparadores para exportaciones de PowerFactory proporcionadas por el usuario; no se distribuyen datos ni resultados de PowerFactory. Configure `POWER_MACHINE_PF_IEEE39` con la carpeta de su exportación. Las funciones dependientes informan `pf_reference_data_not_included` cuando faltan los datos.
+Los importadores aceptan exportaciones CSV de tablas de elementos. Los cotejos usan referencias externas proporcionadas por el usuario. Los datos y resultados de referencia externa se obtienen por separado. Configure `POWER_MACHINE_REF_IEEE39` con la carpeta de su exportación. Las funciones dependientes informan `reference_data_not_included` cuando faltan los datos.

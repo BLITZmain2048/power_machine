@@ -14,7 +14,7 @@ def test_published_frequency_rejects_non_monotonic_samples():
         history.accept(0.0, {"b": 1 + 0j})
 
 
-def test_pf04_filter_is_step_dependent_even_for_identical_trajectory():
+def test_ref04_filter_is_step_dependent_even_for_identical_trajectory():
     def at_end(step):
         history=PublishedFrequencyHistory()
         for t in np.arange(0.,.002+step/2,step):

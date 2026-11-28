@@ -7,7 +7,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
-from power_machine.resources import confined_output, output_root
+from power_machine.resources import confined_output, dynamic_catalog_root, output_root
 import uuid
 import numpy as np
 
@@ -90,7 +90,7 @@ def _envelope(request):
         "provenance": {"inputs": [], "formulas": [{"standard": 'Index-1 DAE algebra',
             "edition": 'Own modal derivation', "profile": "continuous_index1_real",
             "definition": 'A=fx-fz solve(gz,gx), W=solve(V,I), p_ki=V_ki W_ik'}],
-            "analytical_checks": [], "normative_evidence": [], "pf_comparison": 'not validated against PF'},
+            "analytical_checks": [], "normative_evidence": [], "ref_comparison": 'not validated against the external reference'},
         "diagnostics": [], "payload": {}}
 
 
@@ -148,7 +148,7 @@ def execute_request(request: dict, *, cancel=None, progress=None) -> dict:
         elif profile == "machine_admittance":
             adapter, point = prepare_machine(root, model, data)
         elif profile == "full_rms":
-            directory = root/"pf_dynamic"
+            directory = dynamic_catalog_root(root)
             for name in ("manifest.json", "objects.csv", "attributes.csv", "references.csv"):
                 result["provenance"]["inputs"].append(file_input(directory/name, root))
             adapter, point = prepare_rms(root, model, study, data)

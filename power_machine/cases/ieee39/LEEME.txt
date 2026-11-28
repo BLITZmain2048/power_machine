@@ -30,7 +30,7 @@ for comparison coverage and limits. Classical dynamic parameters in
 dynamic_data.json have separate provisional provenance, described in
 validation/DYNAMIC_DATA_PROVENANCE.md, and are not part of the static MATPOWER
 column transcription. Native RMS reference comparisons have partial coverage.
-These comparisons do not establish global equivalence with PowerFactory.
+These comparisons do not establish global equivalence with the external reference.
 
 Case data are not covered by this repository's MIT License. See NOTICE for
 provenance, the separate status of data and models, and distribution conditions.

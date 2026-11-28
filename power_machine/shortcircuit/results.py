@@ -71,7 +71,7 @@ def envelope(result, model, study, options, *, run_id=None, variant_sha256=None,
         "provenance": {"inputs": list(inputs), "formulas": formulas,
                        "analytical_checks": list(analytical_checks),
                        "normative_evidence": options.get("normative_evidence", []),
-                       "pf_comparison": "not validated against PowerFactory"},
+                       "ref_comparison": "not validated against the external reference"},
         "diagnostics": result.diagnostics,
         "payload": {"fault": result.fault, **result.quantities, "contributions": result.contributions}})
 

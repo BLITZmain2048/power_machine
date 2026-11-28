@@ -229,7 +229,7 @@ def _prepare_state(model, options, stamp_cache):
     ideal_ids = {edge["id"] for edge in provisional["ideal_edges"]}
     for edge in provisional["ideal_edges"]:
         if edge["class"] == "ElmLne":
-            warnings.append(f"[candidate_ideal_line] Candidate ideal line {edge['id']}: R1=X1=B1=0, no electrical type. Confirm against PF")
+            warnings.append(f"[candidate_ideal_line] Candidate ideal line {edge['id']}: R1=X1=B1=0, no electrical type. Confirm against REF")
         elif edge["class"] == "ElmZpu":
             warnings.append(f"[ideal_impedance] Ideal ElmZpu {edge['id']}: |z_ij| and |z_ji| < 1e-6 p.u., neutral tap, zero shunts. KCL flow")
     stamps = {}
@@ -262,7 +262,7 @@ def _prepare_state(model, options, stamp_cache):
     topology = build_topology(model, omitted) if omitted else provisional
     dangling = topology["dangling_branches"]
     if omitted:
-        warnings.append(f"[diagnostic_open_mode] Diagnostic open mode: {len(omitted)} excluded branches. Not suitable for PF validation")
+        warnings.append(f"[diagnostic_open_mode] Diagnostic open mode: {len(omitted)} excluded branches. Not suitable for REF validation")
     if any(item.get("type_class") == "TypLod" for item in model.get("loads", [])):
         warnings.append("[constant_pq_load] TypLod voltage exponents were not exported. Constant P/Q is used")
     return {"warnings":warnings,"s_base":s_base,"buses":buses_by_id,"items":items,

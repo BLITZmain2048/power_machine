@@ -1,4 +1,4 @@
-"""Governors estándar aislados, sin declarar equivalencia RMS/modal con PF."""
+"""Governors estándar aislados, sin declarar equivalencia RMS/modal con REF."""
 from __future__ import annotations
 
 from types import SimpleNamespace
@@ -6,9 +6,9 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 import json
-from power_machine.resources import pf_data_root, pf_data_available
-_private = json.loads((pf_data_root() / "governor_regression.json").read_text()) if pf_data_available() else {}
-pytestmark = pytest.mark.pfdata
+from power_machine.resources import ref_data_root, ref_data_available
+_private = json.loads((ref_data_root() / "governor_regression.json").read_text()) if ref_data_available() else {}
+pytestmark = pytest.mark.refdata
 
 from power_machine.dynamics.controllers import ControlledSynchronousMachine
 from power_machine.dynamics.governors_ieeeg import (
@@ -17,20 +17,20 @@ from power_machine.dynamics.governors_ieeeg import (
 from power_machine.dynamics.interfaces import finite_difference_jacobian
 
 
-PF_G1 = _private.get("PF_G1")
-PF_G3 = _private.get("PF_G3")
+REF_G1 = _private.get("REF_G1")
+REF_G3 = _private.get("REF_G3")
 
 # la potencia LF es total. Rstr=dpu=0 en estas nueve máquinas.
-PF_LF = _private.get("PF_LF")
+REF_LF = _private.get("REF_LF")
 
 
 def _governor(family, *, pgn_mw=500, turbine="HP", **changes):
-    names, vector = (IEEEG1_NAMES, PF_G1) if family == "G1" else (IEEEG3_NAMES, PF_G3)
+    names, vector = (IEEEG1_NAMES, REF_G1) if family == "G1" else (IEEEG3_NAMES, REF_G3)
     p = dict(zip(names, vector))
     p.update(changes)
     if family == "G1":
-        return IEEEG1Governor("pf_gov", "PF_relative_path", p, pgn_mw=pgn_mw, turbine=turbine)
-    return IEEEG3Governor("pf_gov", "PF_relative_path", p, pgn_mw=pgn_mw)
+        return IEEEG1Governor("ref_gov", "REF_relative_path", p, pgn_mw=pgn_mw, turbine=turbine)
+    return IEEEG3Governor("ref_gov", "REF_relative_path", p, pgn_mw=pgn_mw)
 
 
 def _trapezoid(gov, x0, inputs, step_s, end_s):
@@ -107,17 +107,17 @@ def test_reference_and_speed_steps_against_analytic_solution_and_h2(family, port
 
 
 @pytest.mark.parametrize("index", range(2, 11))
-def test_nine_pf_vectors_equilibrium_traceability_and_state_count(index):
+def test_nine_ref_vectors_equilibrium_traceability_and_state_count(index):
     family = "G1" if index < 10 else "G3"
-    cls, names, vector = ((IEEEG1Governor, IEEEG1_NAMES, PF_G1) if family == "G1"
-                          else (IEEEG3Governor, IEEEG3_NAMES, PF_G3))
-    gov = cls(f"pf_gov_{index}", f"GOV {index:02d}.ElmDsl", vector, pgn_mw=600)
+    cls, names, vector = ((IEEEG1Governor, IEEEG1_NAMES, REF_G1) if family == "G1"
+                          else (IEEEG3Governor, IEEEG3_NAMES, REF_G3))
+    gov = cls(f"ref_gov_{index}", f"GOV {index:02d}.ElmDsl", vector, pgn_mw=600)
     assert tuple(gov.parameters) == names
     assert gov.parameters["Uc"] == vector[-4]
     assert gov.parameters["Pmin"] == vector[-3]
     assert gov.parameters["Uo"] == vector[-2]
     assert gov.parameters["Pmax"] == vector[-1]
-    assert gov.object_id == f"pf_gov_{index}"
+    assert gov.object_id == f"ref_gov_{index}"
     assert gov.relative_path == f"GOV {index:02d}.ElmDsl"
     assert gov.n_states == len(set(gov.state_names)) == (6 if index < 10 else 4)
     assert all(base == 600 for base in gov.effective_bases_mw.values())
@@ -301,7 +301,7 @@ def test_invalid_parameters_are_explicit_errors(family, changes):
 
 @pytest.mark.parametrize("family", ["G1", "G3"])
 def test_missing_parameters_invalid_bases_states_and_inputs(family):
-    cls, vector = (IEEEG1Governor, PF_G1) if family == "G1" else (IEEEG3Governor, PF_G3)
+    cls, vector = (IEEEG1Governor, REF_G1) if family == "G1" else (IEEEG3Governor, REF_G3)
     with pytest.raises(ValueError, match="values"):
         cls("id", "path", vector[:-4], pgn_mw=500)
     with pytest.raises(ValueError, match="Missing"):
@@ -338,7 +338,7 @@ def test_exported_native_local_blocks_and_similarity_coordinates():
     g1 = _governor("G1")
     x, u = g1.initialize({"pm": .5})
     df = g1.jacobian(0, x, u)[0]
-    # La coordenada PF x0 es -K*speed_lag, las demás conservan escala.
+    # La coordenada REF x0 es -K*speed_lag, las demás conservan escala.
     scale = np.diag(_private["coordinate_scale"])
     native_g1 = np.array(_private["native_g1"])
     np.testing.assert_allclose(scale@df[:, :6]@np.linalg.inv(scale), native_g1, atol=1e-11)
@@ -352,7 +352,7 @@ def test_exported_native_local_blocks_and_similarity_coordinates():
 
 
 def test_backward_initialization_at_all_nine_exported_loadflow_powers():
-    for index, sgn_mva, n_units, p_total_mw in PF_LF:
+    for index, sgn_mva, n_units, p_total_mw in REF_LF:
         pgn_mw = sgn_mva*_private["cosn"]
         family = "G1" if index < 10 else "G3"
         gov = _governor(family, pgn_mw=pgn_mw)

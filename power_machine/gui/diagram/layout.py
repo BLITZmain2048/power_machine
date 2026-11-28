@@ -21,7 +21,7 @@ OFF_COLOR = theme.color('deenergized')
 
 
 def clean_label(value):
-    """Los rótulos nunca contienen punto y coma, incluso desde datos PF."""
+    """Los rótulos nunca contienen punto y coma, incluso desde datos REF."""
     return str(value).replace(chr(59), ",")
 
 
@@ -150,7 +150,7 @@ def intersections(scene):
 
 
 def build_scene(model, group=None, *, result_boxes=False):
-    """No fusiona nodos ni deduce tensiones calculadas. Conserva IDs PF."""
+    """No fusiona nodos ni deduce tensiones calculadas. Conserva IDs REF."""
     from .design import make_scene
     return make_scene(model, group, result_boxes=result_boxes)
 

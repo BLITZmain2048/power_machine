@@ -220,13 +220,13 @@ def run_cct(model, study, options: CCTOptions, request: CCTInput, *, root=None,
         if dynamic_data is None:
             raise _coded_error(ValueError, 'missing_runner_data', 'The IEEE39 classical engine requires dynamic_data')
         run_one = lambda duration, current: _run_classical_trial(model, dynamic_data, request, current, duration)
-        validity = ['Independent IEEE39 benchmark, not validated against PowerFactory',
+        validity = ['Independent IEEE39 benchmark, not validated against the external reference',
                     'Bolted fault at B16 at 1 s. Simple clearing or L16-17 opening as supported by the classical engine']
     elif engine == "pm_rms":
         if root is None:
             raise _coded_error(ValueError, 'missing_runner_data', 'The RMS engine requires root')
         run_one = lambda duration, current: _run_pm_trial(Path(root), model, study, request, current, duration, cancel, progress)
-        validity = ['RMS engine, not validated against PowerFactory',
+        validity = ['RMS engine, not validated against the external reference',
                     'Outside the application reference case if fault, switching, step or horizon changes']
     else:
         raise _coded_error(ValueError, 'invalid_runner_data', 'Unknown CCT engine')

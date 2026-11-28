@@ -137,7 +137,7 @@ def validate(data):
     def paths(value):
         if isinstance(value, dict):
             if 'id' in value and ('class' in value or 'provenance' in value):
-                # path y relative_path aquí identifican objetos PF, no archivos.
+                # path y relative_path aquí identifican objetos REF, no archivos.
                 return
             for k, v in value.items():
                 if (k.endswith('_path') or k in ('path', 'gui_model_path')) and isinstance(v, str) and v:

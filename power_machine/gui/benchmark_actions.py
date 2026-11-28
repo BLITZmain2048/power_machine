@@ -34,9 +34,9 @@ class BenchmarkActions:
     def open_native_comparison(self, directory=None):
         """Abre una corrida nativa existente junto a la referencia IEEE 39 incluida."""
         if not self.available():return
-        from power_machine.resources import pf_data_available
-        if not pf_data_available():
-            self.show_error(ValueError(tr("pf_reference_data_not_included")))
+        from power_machine.resources import ref_data_available
+        if not ref_data_available():
+            self.show_error(ValueError(tr("reference_data_not_included")))
             return
         if directory is None:
             directory=filedialog.askdirectory(parent=self,title=tr('integration.native_e39_din_01_run_with_signals'),initialdir=self.root_path)
@@ -49,10 +49,10 @@ class BenchmarkActions:
             summary=json.loads((Path(directory)/'summary.json').read_text(encoding='utf-8-sig'))
             if summary.get('state_count')!=166 or summary.get('trial')!='E39-DIN-01':
                 raise ValueError(tr('integration.select_a_native_166_state_run_of'))
-            spec,own,reference=native_comparison(directory,readonly_path('cases','ieee39_pf','E39-DIN-01'))
-            page=EngineeringPlotPage(self.book,spec,own,reference,source_label='Power Machine',reference_label='PowerFactory')
-            page.gui_validation_label=tr('integration.compared_with_powerfactory_selected_channels_1_2')
-            self.book.add(page,text=tr('integration.ieee_39_native_rms_powerfactory'))
+            spec,own,reference=native_comparison(directory,readonly_path('cases','ieee39_ref','E39-DIN-01'))
+            page=EngineeringPlotPage(self.book,spec,own,reference,source_label='Power Machine',reference_label='REF')
+            page.gui_validation_label=tr('integration.compared_with_reference_simulator_selected_channels_1_2')
+            self.book.add(page,text=tr('integration.ieee_39_native_rms_reference_simulator'))
             self.book.select(page)
             self.output.log('INFO',tr('integration.native_rms_166_states_e39_din_01'))
             return page
@@ -80,7 +80,7 @@ class BenchmarkActions:
                     curves.append(dict(key=key,axis=axis,label=f'{ident} · {label}'))
                     if key not in study.monitored:study.monitored.append(key)
             study.plots=[dict(name=tr('integration.three_phase_fault_machine_response'),axes=2,curves=curves,
-                show_pf=False,frequency_base_hz=60.,events=[dict(time_s=1.,label=tr('integration.fault_b16')),dict(time_s=1.1,label='Despeje')])]
+                show_ref=False,frequency_base_hz=60.,events=[dict(time_s=1.,label=tr('integration.fault_b16')),dict(time_s=1.1,label='Despeje')])]
         self.document.edit(configure)
         self.update_document()
         self.rebuild_plots()
@@ -113,7 +113,7 @@ class BenchmarkActions:
             self.catalog = self.api.signal_catalog(self.root_path, model=model)
             self.install_document(Document(case))
 
-            self.output.log('INFO', tr('integration.network_loaded_from_hz_no_pf_validation', value0=path, value1=model['meta']['f_nom_hz']))
+            self.output.log('INFO', tr('integration.network_loaded_from_hz_no_ref_validation', value0=path, value1=model['meta']['f_nom_hz']))
         except Exception as exc:
             self.show_error(exc)
 
@@ -129,13 +129,13 @@ class BenchmarkActions:
             return path / 'model.json' if (path / 'model.json').is_file() else None
         return path
 
-    def import_pf(self):
-        folder = filedialog.askdirectory(parent=self, title=tr('integration.import_powerfactory_csv'))
+    def import_csv(self):
+        folder = filedialog.askdirectory(parent=self, title=tr('integration.import_csv_export'))
         if not folder or not self.available() or not self.maybe_save():
             return
         try:
-            from .case_io import import_powerfactory
-            network = import_powerfactory(folder)
+            from .case_io import import_csv_export
+            network = import_csv_export(folder)
             self.activate_network(network_model(network), None)
         except Exception as exc:
             self.show_error(exc)

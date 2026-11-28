@@ -1,4 +1,4 @@
-"""PowerFactory-style drawing gestures on the shared diagram surface."""
+"""Network drawing gestures on the shared diagram surface."""
 import tkinter as tk
 from tkinter import ttk,messagebox
 from ..theme import theme

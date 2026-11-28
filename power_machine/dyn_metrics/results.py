@@ -44,7 +44,7 @@ def envelope(options):
             ],
             "analytical_checks": [],
             "normative_evidence": [],
-            "pf_comparison": "sin validar contra PF",
+            "ref_comparison": "sin validar contra la referencia externa",
             "threshold_basis": "Perfil de referencia configurable, no es verificación normativa",
             "profile_label": "referencial, verificar contra la criterios aplicables al estudio",
         },

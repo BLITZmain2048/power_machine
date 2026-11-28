@@ -16,11 +16,11 @@ import time
 
 import numpy as np
 
-from power_machine.pfcompare import rms_network as rms_replay
-from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR, WORKSPACE, build_rms_case
+from power_machine.refcompare import rms_network as rms_replay
+from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR, WORKSPACE, build_rms_case
 from power_machine.dynamics.published_frequency_grid import FrequencyObservers
-from power_machine.dynamics.avr_ieeet1 import PF_IDENTIFIED_STATUS
-from power_machine.pfcompare.rms_replay import inside_workspace, load_reference, signal_metrics, values, write_csv, write_json
+from power_machine.dynamics.avr_ieeet1 import REF_IDENTIFIED_STATUS
+from power_machine.refcompare.rms_replay import inside_workspace, load_reference, signal_metrics, values, write_csv, write_json
 
 CASES, OUTPUT_DIR, TOLERANCES, STATUS = rms_replay.CASES, rms_replay.OUTPUT_DIR, rms_replay.TOLERANCES, rms_replay.STATUS
 compare_channel, provenance = rms_replay.compare_channel, rms_replay.provenance
@@ -30,7 +30,7 @@ frequency_voltages = rms_replay.frequency_voltages
 def simulate(rms, trial, channels, *, stop_s=10., progress=None, freq_estimator='accepted_step', partial=None):
     """Paso nominal 1 ms, muestra 10 ms, límite izquierdo en eventos exactos.
 
-    No consume trayectorias PF. El calendario de salida se genera aquí.
+    No consume trayectorias REF. El calendario de salida se genera aquí.
     Euler implícito en el primer paso después de salto, luego trapezoidal.
     Las proyecciones de límites solo se aplican a pasos aceptados.
     """
@@ -106,9 +106,9 @@ def simulate(rms, trial, channels, *, stop_s=10., progress=None, freq_estimator=
                               "elapsed_s": time.monotonic()-started}
 
 
-def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_profile="pf_identificado", freq_estimator="accepted_step", decision_path=None):
-    if avr_profile != "pf_identificado":
-        raise ValueError("frequency observers requiere el perfil oficial pf_identificado")
+def run_trial(ref_dir, output_dir, trial, *, stop_s=10., progress=print, avr_profile="ref_identificado", freq_estimator="accepted_step", decision_path=None):
+    if avr_profile != "ref_identificado":
+        raise ValueError("frequency observers requiere el perfil oficial ref_identificado")
     if freq_estimator not in ("accepted_step", "nominal_grid"):
         raise ValueError("Estimador desconocido")
     if trial not in CASES:
@@ -120,8 +120,8 @@ def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_prof
     target.mkdir(parents=True, exist_ok=False)
     write_json(target/"tolerances_before_measurement.json", TOLERANCES)
     write_json(target/"manifest_before_measurement.json", campaign_manifest(trial, freq_estimator, decision_path=decision_path))
-    rms = (build_rms_case(pf_dir) if avr_profile == "dyn_a" else
-           build_rms_case(pf_dir, avr_profile=avr_profile))
+    rms = (build_rms_case(ref_dir) if avr_profile == "dyn_a" else
+           build_rms_case(ref_dir, avr_profile=avr_profile))
     write_json(target/"equilibrium.json", rms.equilibrium)
     write_csv(target/"state_manifest.csv", rms.manifest)
     write_csv(target/"controller_coverage.csv", rms.catalog.coverage)
@@ -130,20 +130,20 @@ def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_prof
              "ve_initial_pu": d.machine.ve, "pt_initial_pu": d.machine.pt}
             for d in rms.devices if hasattr(d, "machine")]
     write_csv(target/"references_from_lf.csv", refs)
-    time_pf, reference, channels = load_reference(Path(pf_dir)/trial)
+    time_ref, reference, channels = load_reference(Path(ref_dir)/trial)
     time_s, predicted, diagnostics = simulate(rms, trial, channels, stop_s=stop_s, progress=progress,
         freq_estimator=freq_estimator, partial=partial_writer(target, channels))
     variants = diagnostics.pop("variants")
     np.savez(target/"report_10ms.npz", time_s=time_s,
              **{name: np.column_stack([p[ch["signal"]] for ch in channels])
                 for name, p in variants.items()})
-    if not np.allclose(time_s, time_pf[:len(time_s)], rtol=0., atol=1e-12):
-        raise ValueError("Fechas pm/PF diferentes")
+    if not np.allclose(time_s, time_ref[:len(time_s)], rtol=0., atol=1e-12):
+        raise ValueError("Fechas pm/REF diferentes")
     metrics = [compare_channel(time_s, reference[ch["signal"]][:len(time_s)],
                                predicted[ch["signal"]], ch) for ch in channels]
-    if avr_profile == "pf_identificado":
+    if avr_profile == "ref_identificado":
         for row in metrics:
-            row.update(status=PF_IDENTIFIED_STATUS, avr_profile=avr_profile)
+            row.update(status=REF_IDENTIFIED_STATUS, avr_profile=avr_profile)
     write_csv(target/"metrics.csv", metrics)
     windows = []
     for label, lower, upper in (("pre", 0., 1.), ("transient", 1., 3.), ("post", 3., 10.00001)):
@@ -172,22 +172,22 @@ def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_prof
                "peak_pass_count": sum(r["peak_pass"] is True for r in metrics),
                "accepted": bool(stop_s == 10. and all(r["complete_samples"] and r["initial_pass"]
                                  and r["max_pass"] is True and r["peak_pass"] is not False for r in metrics)),
-               "validated_against_pf": False, "parameters_fitted": False,
-               "frequency_method": "PublishedFrequencyHistory PF-04, paso aceptado en marco G02",
+               "validated_against_ref": False, "parameters_fitted": False,
+               "frequency_method": "PublishedFrequencyHistory REF-04, paso aceptado en marco G02",
                "event_output_side": "left", "step_s": .001, "output_s": .01,
                "undefined_channels": [r["signal"] for r in metrics if not r["complete_samples"]],
                "zero_voltage_phase_policy": "ángulo y frecuencia ausentes a V=0 sólido, nunca aceptados por muestras parciales",
                "integrator": "trapezoidal implícito, primer paso posevento Euler, límites proyectados tras aceptación",
                "input_sha256": provenance(rms, trial)}
-    if avr_profile == "pf_identificado":
-        summary.update(status=PF_IDENTIFIED_STATUS, avr_profile=avr_profile,
+    if avr_profile == "ref_identificado":
+        summary.update(status=REF_IDENTIFIED_STATUS, avr_profile=avr_profile,
                        validated_against_blkdef=False, evidence_scope="FUERA DE MUESTRA")
     summary.update(freq_estimator=freq_estimator,
-                   frequency_method=("PublishedFrequencyHistory PF-04, paso aceptado en marco G02"
+                   frequency_method=("PublishedFrequencyHistory REF-04, paso aceptado en marco G02"
                                      if freq_estimator == "accepted_step" else
                                      "PublishedFrequencyHistory en malla nominal 1 ms, fasor complejo lineal"),
                    interpolation_decision="linear_complex_interpolation",
-                   frequency_estimator_validated_against_pf=False)
+                   frequency_estimator_validated_against_ref=False)
     audit = audit_variants(target, trial, time_s, reference, channels, variants)
     summary["identity_audit"] = audit
     write_json(target/"summary.json", summary)
@@ -201,17 +201,17 @@ def campaign_manifest(trial, freq_estimator, *, decision_path=None):
                 {"timestamp": None, "interpolation": "complex_linear", "sensitivity_only": "polar_linear"})
     decision_hash = (sha256(record) if record is not None else hashlib.sha256(
         json.dumps(decision, sort_keys=True).encode("utf-8")).hexdigest())
-    sources = [WORKSPACE/"pfcompare/frequency_observers.py",
+    sources = [WORKSPACE/"refcompare/frequency_observers.py",
                WORKSPACE/"dynamics/published_frequency_grid.py"]
     return {"timestamp": datetime.datetime.now().astimezone().isoformat(),
-            "trial": trial, "freq_estimator": freq_estimator, "avr_profile": "pf_identificado",
+            "trial": trial, "freq_estimator": freq_estimator, "avr_profile": "ref_identificado",
             "decision_timestamp": decision["timestamp"], "decision_sha256": decision_hash, "decision_source": "caller_file" if record is not None else "built_in_policy",
             "tolerances": TOLERANCES, "nominal_step_s": .001, "output_s": .01,
             "interpolation": "complex_linear", "sensitivity_only": "polar_linear",
             "source_sha256": {str(p.relative_to(WORKSPACE)): sha256(p) for p in sources},
             "environment": {k: os.environ.get(k) for k in
                             ("OPENBLAS_NUM_THREADS", "PYTHONDONTWRITEBYTECODE")},
-            "status": "sin validar contra PF"}
+            "status": "sin validar contra la referencia externa"}
 
 
 def sha256(path):
@@ -249,7 +249,7 @@ def variant_metrics(time_s, reference, channels, predicted):
     metrics = [compare_channel(time_s, reference[ch["signal"]][:len(time_s)],
                                predicted[ch["signal"]], ch) for ch in channels]
     for row in metrics:
-        row.update(status=PF_IDENTIFIED_STATUS, avr_profile="pf_identificado")
+        row.update(status=REF_IDENTIFIED_STATUS, avr_profile="ref_identificado")
     return metrics
 
 
@@ -322,20 +322,20 @@ def audit_variants(target, trial, time_s, reference, channels, variants):
              "physical_channels_float64_identical": all(r["identical"] for r in physical_hashes),
              "full_horizon_s": float(time_s[-1]), "samples": len(time_s),
              "frequency_variants_same_physical_solve": True,
-             "status": "sin validar contra PF"}
+             "status": "sin validar contra la referencia externa"}
     write_json(target/"identity_audit.json", audit)
     return audit
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--trial", required=True, choices=CASES)
     parser.add_argument("--freq-estimator", choices=("accepted_step", "nominal_grid"), default="accepted_step")
     parser.add_argument("--stop-s", type=float, default=10.)
     args = parser.parse_args()
-    summary = run_trial(args.pf_dir, args.output_dir, args.trial, stop_s=args.stop_s,
+    summary = run_trial(args.ref_dir, args.output_dir, args.trial, stop_s=args.stop_s,
                         progress=lambda s: print(s, flush=True), freq_estimator=args.freq_estimator)
     print(args.trial, summary["identity_audit"], flush=True)
 

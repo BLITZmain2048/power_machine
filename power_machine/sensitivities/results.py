@@ -46,7 +46,7 @@ def envelope(model, scenario, options):
                   "voltage_sensitivity_p": "p.u./MW", "voltage_sensitivity_q": "p.u./Mvar",
                   "ptdf": "MW/MW", "lodf": "MW/MW", "loss_sensitivity": "MW/MW"},
         "provenance": {
-            "pf_comparison": "sin validar contra PF",
+            "ref_comparison": "sin validar contra la referencia externa",
             "formulas": [{"profile": "ac_finite_difference_v1",
                           "formula": "dX/dz = (X(z+h)-X(z-h))/(2h)"},
                          {"profile": "lodf_linear_v1",

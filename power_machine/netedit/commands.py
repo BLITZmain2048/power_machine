@@ -21,7 +21,7 @@ def index_model(model):
 
 
 def port_field(group, element, port):
-    """Puerto PF explícito a campo real. No se resuelve por nombre visible."""
+    """Puerto REF explícito a campo real. No se resuelve por nombre visible."""
     aliases = {"bus1": "bus", "bus2": "bus"} if group in ("loads", "gens", "shunts") else {}
     if group == "branches":
         aliases = ({"bushv": "bus_from", "buslv": "bus_to"} if element["class"] == "ElmTr2"
@@ -53,8 +53,8 @@ def create_command(variant_id, group, data):
         item.pop(key, None)
     item["class"] = data.get("class", CLASSES.get(group, (None,))[0])
     item.update(id=item_id, path=f"power_machine://variants/{variant_id}/{item_id}",
-                provenance={"origin": "power_machine_created", "pf_object_id": None,
-                            "pf_relative_path": None})
+                provenance={"origin": "power_machine_created", "ref_object_id": None,
+                            "ref_relative_path": None})
     item["origin"] = "power_machine_created"
     if data.get("provenance", {}).get("conversions"):
         item["provenance"]["conversions"] = deepcopy(data["provenance"]["conversions"])
@@ -138,8 +138,8 @@ def replay_commands(base_model, variant):
                 fail("invalid_identity", "Identidad o ruta sintética inconsistente")
             provenance = item.get("provenance", {})
             if any(provenance.get(key, "missing") != value for key, value in
-                   {"origin": "power_machine_created", "pf_object_id": None, "pf_relative_path": None}.items()):
-                fail("invalid_origin", "La procedencia nueva no puede fabricar identidad PF")
+                   {"origin": "power_machine_created", "ref_object_id": None, "ref_relative_path": None}.items()):
+                fail("invalid_origin", "La procedencia nueva no puede fabricar identidad REF")
             sync_power_fields(item, command.data)
             model.setdefault(command.group, []).append(item)
             continue

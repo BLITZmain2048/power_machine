@@ -5,11 +5,11 @@ import json
 def is_native_case(model, study):
     from power_machine.resources import readonly_path
     from power_machine.modal.results import fingerprint
-    if model.get('meta', {}).get('benchmark') != 'ieee39_pf' or any(study.get('scenario', {}).values()):
+    if model.get('meta', {}).get('benchmark') != 'ieee39_ref' or any(study.get('scenario', {}).values()):
         return False
-    from power_machine.resources import pf_data_available, PFReferenceDataError
-    if not pf_data_available(): raise PFReferenceDataError()
-    reference = json.loads(readonly_path('cases', 'ieee39_pf', 'model.json').read_text(encoding='utf-8-sig'))
+    from power_machine.resources import ref_data_available, ReferenceDataError
+    if not ref_data_available(): raise ReferenceDataError()
+    reference = json.loads(readonly_path('cases', 'ieee39_ref', 'model.json').read_text(encoding='utf-8-sig'))
     try:
         return fingerprint(model) == fingerprint(reference)
     except (ValueError, TypeError):
@@ -22,14 +22,14 @@ def simulate_native(root, study, model, queue, cancel):
     import math
     import time
     from power_machine.resources import readonly_path
-    from power_machine.benchmarks.ieee39_pf import build_rms_case
+    from power_machine.benchmarks.ieee39_ref import build_rms_case
     from power_machine.dynamics.events import EventTimeline
     from power_machine.study import SimEvent, _translate_event, element_index
     from .paths import run_directory
     from .i18n import tr
     started = time.monotonic()
     options = study['options']
-    rms = build_rms_case(readonly_path('cases', 'ieee39_pf'), step_s=options['dt_s'])
+    rms = build_rms_case(readonly_path('cases', 'ieee39_ref'), step_s=options['dt_s'])
     index = element_index(model)
     events = [_translate_event(SimEvent.from_dict(row), index, model['meta']['s_base_mva'])
               for row in study.get('events', [])]
@@ -68,7 +68,7 @@ def simulate_native(root, study, model, queue, cancel):
     report = dict(completed=True, cancelled=False, steps=len(rows), wall_s=time.monotonic() - started,
                   states=len(rms.initial.x), profile='ieee39_native', avr_profile=rms.avr_profile,
                   events=study.get('events', []), f_nom_hz=model['meta']['f_nom_hz'],
-                  pf_validation=False, signals_csv=str(directory / 'signals.csv'))
+                  ref_validation=False, signals_csv=str(directory / 'signals.csv'))
     (directory / 'run_report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     queue.put(('header', ['time|b:tnow|s'] + keys))
     queue.put(('samples', rows))

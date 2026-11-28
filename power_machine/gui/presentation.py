@@ -34,7 +34,7 @@ def element_label(item, index):
     """One display label shared by panels, event targets and data views."""
     index = _label_index(index)
     ident = str(item.get('id',item.get('object_id','')))
-    name = item.get('name') if ident.startswith('pf_') else ident
+    name = item.get('name') if ident.startswith(('pf_', 'ref_')) else ident
     name = name or item.get('name') or tr('integration.unnamed_element')
     substation = station(item) or station(_label_bus(item,index))
     return ' · '.join(str(v) for v in (name,substation,voltage(item,index)) if v)
@@ -55,7 +55,7 @@ def human_message(text, index):
     def replace(match):
         item = index.get(match[0])
         return f"{item.get('name', tr('integration.element_49fa9f'))} ({station(item)})" if item else tr('integration.unlisted_element')
-    return re.sub(r'pf_[a-zA-Z0-9]+', replace, str(text)).replace(';', ',')
+    return re.sub(r'(?:pf_|ref_)[a-zA-Z0-9]+', replace, str(text)).replace(';', ',')
 
 
 def plot_events(events):
@@ -92,5 +92,5 @@ def default_plot(study, catalog, index):
         if row['key'] not in study.monitored:
             study.monitored.append(row['key'])
     return dict(name=tr('integration.main_signals'), axes=4 if study.reference_case else 3, curves=curves,
-                show_pf=True, frequency_mode='absolute', frequency_base_hz=50.0,
+                show_ref=True, frequency_mode='absolute', frequency_base_hz=50.0,
                 events=plot_events(getattr(study, 'events', [])))

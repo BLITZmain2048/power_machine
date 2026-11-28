@@ -27,7 +27,7 @@ def envelope(model, study, options):
         "options": options,
         "units": {"clearing_time": "s", "resolution": "ms", "angle": "deg",
                   "voltage": "p.u.", "time": "s"},
-        "provenance": {"pf_comparison": 'not validated against PF',
+        "provenance": {"ref_comparison": 'not validated against the external reference',
                        "formulas": [{"profile": "cct_rms_bisection_v1",
                                      "formula": 'Bisection with stable/unstable endpoints, COI angular criterion and voltage recovery'}],
                        "validity_messages": [], "assumptions": []},

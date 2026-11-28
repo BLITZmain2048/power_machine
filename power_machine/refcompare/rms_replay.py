@@ -1,9 +1,9 @@
-"""Cotejo RMS offline IEEE39 PF, con frontera explícita de representabilidad.
+"""Cotejo RMS offline IEEE39 REF, con frontera explícita de representabilidad.
 
-No ejecuta PowerFactory. Inicializa diez máquinas nativas desde el LF PF.
+No ejecuta el simulador comercial de referencia. Inicializa diez máquinas nativas desde el LF REF.
 El caso completo se rechaza si faltan controles o cargas. El cotejo parcial
 integra flujos de rotor y velocidad absoluta de G39, con U, ángulo de barra y
-ángulo relativo del rotor impuestos por PF. P, Q, velocidad y excitación son
+ángulo relativo del rotor impuestos por REF. P, Q, velocidad y excitación son
 predicciones independientes. Esta reproducción de un subsistema NO es una
 simulación de la red IEEE39 ni una validación de su respuesta a contingencias.
 """
@@ -22,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-from ..benchmarks.ieee39_pf import DEFAULT_PF_DIR, WORKSPACE, LDF_OPTIONS
+from ..benchmarks.ieee39_ref import DEFAULT_REF_DIR, WORKSPACE, LDF_OPTIONS
 from ..dynamics.machine_init import initialize_machine
 from ..dynamics.network import DynamicNetwork
 from ..dynamics.synchronous import SynchronousMachine
@@ -33,8 +33,8 @@ LABEL = "comparación parcial por diferencia de modelo"
 MAX_ERROR_LIMIT = 0.02
 ANGLE_PEAK_LIMIT = 0.01
 INITIAL_LIMITS = {"p.u.": 1e-8, "rad": 1e-8, "deg": 1e-6, "Hz": 1e-8, "MW": 1e-5, "Mvar": 1e-5}
-MODEL_FILE = required_readonly_path("cases", "ieee39_pf", "model.json")
-OUTPUT_DIR = output_root() / "comparison_results/ieee39_pf"
+MODEL_FILE = required_readonly_path("cases", "ieee39_ref", "model.json")
+OUTPUT_DIR = output_root() / "comparison_results/ieee39_ref"
 MACHINE_FIELDS = """sgn ugn cosn h tag iner_inp iturbo model_inp i_exactConv
 xd xq xds xqs xdss xqss tds0 tqs0 tdss0 tqss0 tds tqs tdss tqss xl xrl xrlq
 rstr dpu dkd dpe isat isatSalient iusesat sg10 sg12 sg10q sg12q satv satse
@@ -50,7 +50,7 @@ ENGINE_COVERAGE = {
     "machine_initialization": "LF, bases sgn/ugn/ngnum, saturación isat e i_speedVar",
     "ControlledSynchronousMachine": "AVR y governor con puertos expl?citos del caso",
     "IEEET1_IEEEG1_IEEEG3": "sin acoplamiento genérico del marco IEEE39",
-    "DynamicCatalog": "requiere export pf-dynamic-v1, parnam, ecuaciones BlkDef, límites y conexiones",
+    "DynamicCatalog": "requiere export ref-dynamic-v1, parnam, ecuaciones BlkDef, límites y conexiones",
     "PSS_CONV": "outserv=1 en las nueve instancias, no necesita ejecución en estos ensayos",
     "RMSLoad": "corrección estática sin t1, faltan alias kpu1/kqu1 y régimen de baja tensión",
     "network": "DynamicNetwork Z coincide solo en LF, no se usa para simular los ensayos",
@@ -122,18 +122,18 @@ def load_reference(case_dir):
     return time_s, {c["signal"]: matrix[:, i] for i, c in enumerate(channels)}, channels
 
 
-def native_inventory(pf_dir):
+def native_inventory(ref_dir):
     """Extrae datos y procedencia campo por campo sin copiar JSON voluminosos."""
-    pf_dir = Path(pf_dir)
+    ref_dir = Path(ref_dir)
     types = {}
-    for obj in read_json(pf_dir / "modelo/types.json"):
+    for obj in read_json(ref_dir / "modelo/types.json"):
         names = MACHINE_FIELDS if obj["cls"] == "TypSym" else LOAD_FIELDS
         if obj["cls"] in ("TypSym", "TypLod"):
             types[obj["path"]] = {**identity(obj["path"]),
                 "path": obj["path"], "name": obj["name"], "class": obj["cls"],
                 "fields": projected_fields(obj, names)}
     controllers = []
-    for obj in read_json(pf_dir / "modelo/controllers.json"):
+    for obj in read_json(ref_dir / "modelo/controllers.json"):
         controller = {**identity(obj["path"]), "name": obj["name"], "path": obj["path"],
                       "class": obj["cls"], "fields": projected_fields(obj, ("params", "typ_id", "outserv")),
                       "type_fields": obj["type_fields"]}
@@ -148,15 +148,15 @@ def native_inventory(pf_dir):
             else "no representable, faltan grafos BlkDef y nombres de límites")
         controllers.append(controller)
     composites = []
-    for obj in read_json(pf_dir / "modelo/composites.json"):
+    for obj in read_json(ref_dir / "modelo/composites.json"):
         composites.append({**identity(obj["path"]), "path": obj["path"],
                            "fields": projected_fields(obj, ("pelm", "typ_id", "outserv"))})
     generator_attributes = {obj["path"]: projected_fields(obj,
         ("ngnum", "ip_ctrl", "efdBaseRatio", "ifdBase", "addmt", "typ_id", "bus1"))
-        for obj in read_json(pf_dir / "modelo/generators.json")}
+        for obj in read_json(ref_dir / "modelo/generators.json")}
     trials = {}
     for case in CASES:
-        directory = pf_dir / case
+        directory = ref_dir / case
         config = read_json(directory / "configuration.json")
         options = read_json(directory / "effective_command_options.json")
         report = read_json(directory / "report.json")
@@ -243,7 +243,7 @@ def dominant_mode(time_s, signal):
 
 
 def signal_metrics(time_s, reference, predicted):
-    """ECM relativo = mean(error²)/mean(PF²), normalización máxima por ptp(PF)."""
+    """ECM relativo = mean(error²)/mean(REF²), normalización máxima por ptp(REF)."""
     t, ref, pred = map(np.asarray, (time_s, reference, predicted))
     mask = np.isfinite(ref) & np.isfinite(pred)
     if not mask.any():
@@ -251,23 +251,23 @@ def signal_metrics(time_s, reference, predicted):
     error = pred[mask]-ref[mask]
     span, rms_level = float(np.ptp(ref[mask])), float(np.mean(ref[mask]**2))
     mse, maximum = float(np.mean(error**2)), float(np.max(abs(error)))
-    pf_peak, pm_peak = first_peak(t, ref), first_peak(t, pred)
-    return {"matched_samples": int(mask.sum()), "pf_excursion": span,
+    ref_peak, pm_peak = first_peak(t, ref), first_peak(t, pred)
+    return {"matched_samples": int(mask.sum()), "ref_excursion": span,
             "relative_mse": mse/rms_level if rms_level > 1e-24 else None,
             "rmse_absolute": math.sqrt(mse), "max_absolute": maximum,
             "nrmse_excursion": math.sqrt(mse)/span if span > 1e-10 else None,
             "max_normalized": maximum/span if span > 1e-10 else None,
-            "normalization_status": "zero or near-zero excursion" if span <= 1e-10 else "ptp(PF)",
-            "pf_first_peak_s": pf_peak, "pm_first_peak_s": pm_peak,
-            "first_peak_difference_s": pm_peak-pf_peak if pf_peak is not None and pm_peak is not None else None}
+            "normalization_status": "zero or near-zero excursion" if span <= 1e-10 else "ptp(REF)",
+            "ref_first_peak_s": ref_peak, "pm_first_peak_s": pm_peak,
+            "first_peak_difference_s": pm_peak-ref_peak if ref_peak is not None and pm_peak is not None else None}
 
 
 class ReplayInputs:
     """Interpolación explícita de entradas, nunca a través de saltos de U.
 
-    PF exporta el lado previo en 1 y 1,1 s. El límite derecho no está medido.
+    REF exporta el lado previo en 1 y 1,1 s. El límite derecho no está medido.
     Se extrapolan las primeras dos muestras del segmento nuevo hasta el evento.
-    No se usa P/Q ni velocidad PF como excitación ni como ajuste de parámetros.
+    No se usa P/Q ni velocidad REF como excitación ni como ajuste de parámetros.
     """
 
     def __init__(self, time_s, signals, events):
@@ -366,7 +366,7 @@ def simulate_g39_replay(case, time_s, signals, event_times, *, step_s=.001):
     return result, {"integration_method": "trapezoidal implícito", "step_s": step_s,
                     "integration_steps": steps, "max_step_residual": max_residual,
                     "initial_dynamic_state": initial.tolist(), "predicted_state_count": len(x),
-                    "boundary_inputs_pf": ["B39_U_pu", "B39_angle_deg", "G39_rotor_rad"],
+                    "boundary_inputs_ref": ["B39_U_pu", "B39_angle_deg", "G39_rotor_rad"],
                     "held_from_native_lf": {"ve_pu": machine.ve, "pt_pu_Pgn": machine.pt},
                     "output_side_at_events": "pre_event", "full_network_simulation": False}
 
@@ -396,7 +396,7 @@ def write_csv(path, rows, fields=None):
 
 
 def field_correspondence(case):
-    """Filas largas con identidad, campo PF, unidad y destino pm."""
+    """Filas largas con identidad, campo REF, unidad y destino pm."""
     rows = []
     aliases = {"h": "h [s], tag prevalece en SynchronousMachine", "rstr": "ra, circuit.rstr",
         "xds": "xd prima", "xqs": "xq prima", "xdss": "xd segunda", "xqss": "xq segunda",
@@ -404,7 +404,7 @@ def field_correspondence(case):
     for obj in case.inventory["types"].values():
         for field, value in obj["fields"].items():
             rows.append({"object_id": obj["object_id"], "relative_path": obj["relative_path"],
-                "name": obj["name"], "pf_class": obj["class"], "pf_field": field,
+                "name": obj["name"], "ref_class": obj["class"], "ref_field": field,
                 "value_json": json.dumps(value["value"], ensure_ascii=False), "unit": value["unit"],
                 "description": value["description"],
                 "pm_target": aliases.get(field, "SynchronousMachine.typ."+field) if obj["class"] == "TypSym"
@@ -415,14 +415,14 @@ def field_correspondence(case):
             if field == "params":
                 continue
             rows.append({"object_id": obj["object_id"], "relative_path": obj["relative_path"],
-                "name": obj["name"], "pf_class": "ElmDsl/BlkDef", "pf_field": field,
+                "name": obj["name"], "ref_class": "ElmDsl/BlkDef", "ref_field": field,
                 "value_json": json.dumps(value["value"], ensure_ascii=False), "unit": value["unit"],
                 "description": value["description"], "pm_target": obj["execution_status"],
                 "source": "modelo/controllers.json:"+obj["path"]})
         names = obj["parameter_names_declared"]
         for index, value in enumerate(obj["fields"]["params"]["value"]):
             rows.append({"object_id": obj["object_id"], "relative_path": obj["relative_path"],
-                "name": obj["name"], "pf_class": "ElmDsl", "pf_field": "params["+str(index)+"]",
+                "name": obj["name"], "ref_class": "ElmDsl", "ref_field": "params["+str(index)+"]",
                 "value_json": json.dumps(value), "unit": "no exportada por parámetro",
                 "description": names[index] if index < len(names) else "nombre no exportado, no se infiere límite",
                 "pm_target": obj["execution_status"],
@@ -430,7 +430,7 @@ def field_correspondence(case):
     for gen in case.model["gens"]:
         for field, value in case.inventory["generator_attributes"][gen["path"]].items():
             rows.append({"object_id": gen["id"], "relative_path": gen["relative_path"], "name": gen["name"],
-                "pf_class": "ElmSym", "pf_field": field, "value_json": json.dumps(value["value"]),
+                "ref_class": "ElmSym", "ref_field": field, "value_json": json.dumps(value["value"]),
                 "unit": value["unit"], "description": value["description"],
                 "pm_target": "SynchronousMachine.elm."+field,
                 "source": "modelo/generators.json:"+gen["path"]+".attributes."+field})
@@ -438,9 +438,9 @@ def field_correspondence(case):
         for event in config["events"]:
             for field, value in event["fields"].items():
                 rows.append({**identity(event["path"]), "name": trial+" / "+event["name"],
-                    "pf_class": event["class"], "pf_field": field, "value_json": json.dumps(value["value"]),
+                    "ref_class": event["class"], "ref_field": field, "value_json": json.dumps(value["value"]),
                     "unit": value["unit"], "description": value["description"],
-                    "pm_target": "evento completo no ejecutado, frontera PF en replay",
+                    "pm_target": "evento completo no ejecutado, frontera REF en replay",
                     "source": trial+"/configuration.json:events"})
     return rows
 
@@ -449,20 +449,20 @@ def export_case(case, trial, output_dir, *, plots=True):
     """Exporta cotejo parcial con máscaras, canales omitidos y hashes."""
     output_dir = inside_workspace(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    time_s, signals, channels = load_reference(case.pf_dir / trial)
+    time_s, signals, channels = load_reference(case.ref_dir / trial)
     if len(time_s) != 1001 or not np.allclose(time_s, np.linspace(0, 10, 1001), atol=1e-10):
         raise ValueError("El ensayo no cumple las 1001 muestras 0..10 s")
     events = sorted(set(values(e["fields"])["time"] for e in case.inventory["trials"][trial]["events"]
                         if values(e["fields"]).get("outserv") == 0))
     initial = case.initial_signals(channels)
     initialization = [{"signal": c["signal"], "unit": c["unit"], "object_id": c["object_id"],
-        "relative_path": c["relative_path"], "pf_t0": float(signals[c["signal"]][0]),
-        "pm_t0": initial[c["signal"]], "delta_pm_minus_pf": initial[c["signal"]]-signals[c["signal"]][0],
+        "relative_path": c["relative_path"], "ref_t0": float(signals[c["signal"]][0]),
+        "pm_t0": initial[c["signal"]], "delta_pm_minus_ref": initial[c["signal"]]-signals[c["signal"]][0],
         "initial_absolute_limit": INITIAL_LIMITS[c["unit"]],
         "scope": "equilibrio de máquinas y red en LF, controles y estados de cargas no inicializados"}
         for c in channels]
     for row in initialization:
-        if not math.isfinite(row["pf_t0"]) or abs(row["delta_pm_minus_pf"]) > row["initial_absolute_limit"]:
+        if not math.isfinite(row["ref_t0"]) or abs(row["delta_pm_minus_ref"]) > row["initial_absolute_limit"]:
             raise ValueError("Condición inicial RMS no corresponde al caso nativo: "+row["signal"])
     predicted, replay = simulate_g39_replay(case, time_s, signals, events)
     metrics, modes, windows = [], [], []
@@ -474,18 +474,18 @@ def export_case(case, trial, output_dir, *, plots=True):
                 "declared_max_normalized_limit": MAX_ERROR_LIMIT,
                 "declared_angle_peak_delay_relative_limit": ANGLE_PEAK_LIMIT}
         ref = signals[key]
-        pf_mode = dominant_mode(time_s, ref)
-        modes.append({"signal": key, "origin": "PF", **pf_mode})
+        ref_mode = dominant_mode(time_s, ref)
+        modes.append({"signal": key, "origin": "REF", **ref_mode})
         if key in predicted:
             pm_mode = dominant_mode(time_s, predicted[key])
-            metrics.append({**base, "scope": "subsistema G39, phi y U impuestas por PF",
+            metrics.append({**base, "scope": "subsistema G39, phi y U impuestas por REF",
                 **signal_metrics(time_s, ref, predicted[key]),
-                "pf_dominant_frequency_hz": pf_mode["frequency_hz"],
-                "pf_damping_ratio": pf_mode["damping_ratio"], "pf_mode_status": pf_mode["status"],
+                "ref_dominant_frequency_hz": ref_mode["frequency_hz"],
+                "ref_damping_ratio": ref_mode["damping_ratio"], "ref_mode_status": ref_mode["status"],
                 "pm_dominant_frequency_hz": pm_mode["frequency_hz"],
                 "pm_damping_ratio": pm_mode["damping_ratio"], "pm_mode_status": pm_mode["status"],
-                "damping_ratio_difference": pm_mode["damping_ratio"]-pf_mode["damping_ratio"]
-                    if pm_mode["damping_ratio"] is not None and pf_mode["damping_ratio"] is not None else None})
+                "damping_ratio_difference": pm_mode["damping_ratio"]-ref_mode["damping_ratio"]
+                    if pm_mode["damping_ratio"] is not None and ref_mode["damping_ratio"] is not None else None})
             modes.append({"signal": key, "origin": "pm replay", **pm_mode})
             for window, mask in [("pre_event", time_s < 1),
                 ("transient", (time_s >= 1) & (time_s < 3)), ("post_event", time_s >= 3),
@@ -493,24 +493,24 @@ def export_case(case, trial, output_dir, *, plots=True):
                 windows.append({"signal": key, "window": window, **signal_metrics(
                     time_s[mask], ref[mask], predicted[key][mask])})
         else:
-            reason = ("entrada de frontera PF, no predicción" if key in replay["boundary_inputs_pf"]
-                else "requiere controles, carga y red cerrada o medición PF no representada")
+            reason = ("entrada de frontera REF, no predicción" if key in replay["boundary_inputs_ref"]
+                else "requiere controles, carga y red cerrada o medición REF no representada")
             metrics.append({**base, "scope": reason, "matched_samples": 0,
-                            "pf_excursion": float(np.ptp(ref[np.isfinite(ref)])),
-                            "pf_first_peak_s": first_peak(time_s, ref),
-                            "pf_dominant_frequency_hz": pf_mode["frequency_hz"],
-                            "pf_damping_ratio": pf_mode["damping_ratio"], "pf_mode_status": pf_mode["status"]})
+                            "ref_excursion": float(np.ptp(ref[np.isfinite(ref)])),
+                            "ref_first_peak_s": first_peak(time_s, ref),
+                            "ref_dominant_frequency_hz": ref_mode["frequency_hz"],
+                            "ref_damping_ratio": ref_mode["damping_ratio"], "ref_mode_status": ref_mode["status"]})
     write_csv(output_dir / "initialization.csv", initialization)
     write_csv(output_dir / "metrics.csv", metrics)
     write_csv(output_dir / "window_metrics.csv", windows)
     write_csv(output_dir / "dominant_modes.csv", modes)
     write_csv(output_dir / "field_correspondence.csv", field_correspondence(case))
     write_csv(output_dir / "channel_units.csv", [{"signal": c["signal"], "unit": c["unit"],
-        "variable_pf": c["variable"], "column_elmres": c["column"], "column_comres": c["column"]+1,
+        "variable_ref": c["variable"], "column_elmres": c["column"], "column_comres": c["column"]+1,
         "object_id": c["object_id"], "relative_path": c["relative_path"],
         "status": "predicción de subsistema" if c["signal"] in predicted else "sin predicción"} for c in channels])
     write_csv(output_dir / "signals_comparison.csv", [{"time_s": float(t),
-        **{"PF_"+key: float(series[i]) for key, series in signals.items()},
+        **{"REF_"+key: float(series[i]) for key, series in signals.items()},
         **{"pm_"+key: float(predicted[key][i]) if key in predicted else None
            for key in signals}} for i, t in enumerate(time_s)])
     terminal = next(m for m in case.machines.values() if m.name == "G 01")
@@ -518,7 +518,7 @@ def export_case(case, trial, output_dir, *, plots=True):
         "object_id": m.object_id, "relative_path": m.relative_path,
         "terminal_u_pu": abs(case.voltages[m.bus_id]),
         "terminal_angle_deg": np.rad2deg(np.angle(case.voltages[m.bus_id])),
-        "pf_rms_terminal_channel": "B39_U_pu" if m is terminal else "no exportado",
+        "ref_rms_terminal_channel": "B39_U_pu" if m is terminal else "no exportado",
         "order": m.order, "ve_pu": m.ve, "pt_pu_Pgn": m.pt,
         "h_machine_s": m.typ["h"], "sgn_unit_mva": m.sgn_mva, "n_units": m.n_units,
         "h_system_s": m.typ["h"]*m.sgn_mva*m.n_units/100.0,
@@ -536,25 +536,25 @@ def export_case(case, trial, output_dir, *, plots=True):
         "all_exported_initial_signals_within_limits": True,
         "initial_absolute_limits_by_unit": INITIAL_LIMITS,
         "initial_missing_states": "AVR, governors y retardo de cargas",
-        "tolerances_declared_before_comparison": {"max_error_over_pf_excursion": MAX_ERROR_LIMIT,
+        "tolerances_declared_before_comparison": {"max_error_over_ref_excursion": MAX_ERROR_LIMIT,
             "angle_first_peak_delay_relative_difference": ANGLE_PEAK_LIMIT,
             "apply_only_with_complete_model_parity": True},
         "native_configuration": config, "replay": replay,
         "engine_coverage": ENGINE_COVERAGE,
         "assumptions_not_exported": {"addmt": "0, entrada mecánica adicional no exportada",
-                                    "ifdBase": "1, normalización no exportada, ve0 cotejada con PF"},
+                                    "ifdBase": "1, normalización no exportada, ve0 cotejada con REF"},
         "boundary_uncertainty": "Límite derecho de U en eventos extrapolado desde salida de 10 ms, no medido",
         "native_method_interpretation": "iopt_lt=2 y alpha_rms=1, nombre del algoritmo no exportado",
-        "sha256_inputs": {str(p.relative_to(case.pf_dir)): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in [case.pf_dir / "modelo/types.json", case.pf_dir / "modelo/generators.json",
-                      case.pf_dir / "modelo/controllers.json", case.pf_dir / "modelo/composites.json",
-                      case.pf_dir / "E39-LF-01/buses.csv", case.pf_dir / "E39-LF-01/generators.csv",
-                      *sorted((case.pf_dir / trial).glob("*.json")), case.pf_dir / trial / "signals_native.csv"]},
+        "sha256_inputs": {str(p.relative_to(case.ref_dir)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in [case.ref_dir / "modelo/types.json", case.ref_dir / "modelo/generators.json",
+                      case.ref_dir / "modelo/controllers.json", case.ref_dir / "modelo/composites.json",
+                      case.ref_dir / "E39-LF-01/buses.csv", case.ref_dir / "E39-LF-01/generators.csv",
+                      *sorted((case.ref_dir / trial).glob("*.json")), case.ref_dir / trial / "signals_native.csv"]},
         "lf_model_sha256": hashlib.sha256(MODEL_FILE.read_bytes()).hexdigest(),
         "comparison_code_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     write_json(output_dir / "dynamic_case.json", {"machines": case.model["gens"],
         "native_inventory": case.inventory, "full_case_supported": False,
-        "static_model_ref": {"workspace_path": "data/ieee39_pf/model.json",
+        "static_model_ref": {"workspace_path": "data/ieee39_ref/model.json",
                              "sha256": summary["lf_model_sha256"]},
         "bases": {"s_base_mva": 100.0, "f_nom_hz": 60.0,
                   "machine_parameters": "TypSym.sgn, ugn por unidad, ngnum explícito"},
@@ -579,8 +579,8 @@ def make_plots(output_dir, time_s, signals, predicted, trial):
     with plt.rc_context({"font.size": 9}):
         fig, axes = plt.subplots(3, 1, figsize=(8, 8), layout="constrained")
         for ax, key, unit in zip(axes, PREDICTED[:3], ("pu", "MW", "Mvar")):
-            ax.plot(time_s, signals[key], color="black", label="PF")
-            ax.plot(time_s, predicted[key], color="gray", linestyle="--", label="pm, subsistema con frontera PF")
+            ax.plot(time_s, signals[key], color="black", label="REF")
+            ax.plot(time_s, predicted[key], color="gray", linestyle="--", label="pm, subsistema con frontera REF")
             ax.axvline(1, color="black", linestyle=":", linewidth=.7)
             if trial == CASES[0]:
                 ax.axvline(1.1, color="black", linestyle=":", linewidth=.7)
@@ -594,12 +594,12 @@ def make_plots(output_dir, time_s, signals, predicted, trial):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--no-plots", action="store_true")
     args = parser.parse_args()
     inside_workspace(args.output_dir)
-    case = NativeDynamicCase(args.pf_dir)
+    case = NativeDynamicCase(args.ref_dir)
     for trial in CASES:
         summary = export_case(case, trial, args.output_dir / trial, plots=not args.no_plots)
         print(trial, summary["label"], "29 canales iniciales, 4 predicciones del subsistema G39")

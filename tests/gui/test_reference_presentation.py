@@ -5,7 +5,7 @@ from dataclasses import asdict
 import pytest
 from power_machine.resources import readonly_path
 from power_machine.shortcircuit import ShortCircuitOptions,FaultSpec
-from power_machine.pfcompare.cc import build_supplement
+from power_machine.refcompare.cc import build_supplement
 from power_machine.gui.evidence import sc_reference_label,sc_result_matches_reference
 from power_machine.gui.reference_plots import native_comparison
 from power_machine.gui.panels.panel_widgets import element_label
@@ -13,10 +13,10 @@ from power_machine.gui.panels.panel_widgets import element_label
 
 @pytest.fixture
 def included_sc():
-    root=readonly_path('cases','ieee39_pf')
+    root=readonly_path('cases','ieee39_ref')
     model=json.loads((root/'model.json').read_text('utf-8-sig'))
     data=asdict(build_supplement(model,root))
-    options=ShortCircuitOptions('iec60909','maximum',frequency_hz=60,min_break_time_s=.1,profile='iec_pf2016_c1_v1')
+    options=ShortCircuitOptions('iec60909','maximum',frequency_hz=60,min_break_time_s=.1,profile='iec_ref2016_c1_v1')
     bus=next(b for b in model['buses'] if b['name']=='Bus 39')
     return model,data,options,FaultSpec(bus['id'],'3ph')
 
@@ -24,7 +24,7 @@ def included_sc():
 def test_sc_badge_requires_identical_model_options_and_sources(included_sc):
     model,data,options,fault=included_sc
     before=deepcopy((model,data))
-    assert sc_reference_label(model,options,data,fault)=='cotejado con PowerFactory (IEEE 39)'
+    assert sc_reference_label(model,options,data,fault)=='cotejado con la referencia externa (IEEE 39)'
     changed=deepcopy(model)
     changed['branches'][0]['params']['R1']+=.01
     assert sc_reference_label(changed,options,data,fault) is None
@@ -37,7 +37,7 @@ def test_sc_badge_requires_identical_model_options_and_sources(included_sc):
 
 def test_sc_badge_checks_actual_three_quantities(included_sc):
     model,_,_,fault=included_sc
-    with readonly_path('cases','ieee39_pf','E39-CC-01','fault_summary.csv').open(encoding='utf-8-sig',newline='') as f:
+    with readonly_path('cases','ieee39_ref','E39-CC-01','fault_summary.csv').open(encoding='utf-8-sig',newline='') as f:
         row=next(r for r in csv.DictReader(f) if r['fault_bus']=='39')
     result={'payload':{'fault':{'object_id':fault.bus_id},'Ik_initial_sym_ka':float(row['Ikss_kA']),
                        'ip_peak_ka':float(row['ip_kA']),'Ib_sym_ka':float(row['Ib_kA'])}}
@@ -55,7 +55,7 @@ def test_native_reader_preserves_samples_and_external_time_grid(tmp_path):
     with (tmp_path/'channel_units.csv').open('w',newline='',encoding='utf8') as f:
         w=csv.DictWriter(f,fieldnames=list(channels[0]));w.writeheader();w.writerows(channels)
     (tmp_path/'signals_native.csv').write_text('time;B4;G32\nb:tnow in s;m:u in p.u.;s:speed in p.u.\n0;1.01;1\n1.2;.97;1.001\n',encoding='utf8')
-    spec,own,reference=native_comparison(tmp_path,readonly_path('cases','ieee39_pf','E39-DIN-01'))
+    spec,own,reference=native_comparison(tmp_path,readonly_path('cases','ieee39_ref','E39-DIN-01'))
     assert own.rows==[[0.,1.01,1.],[1.2,.97,1.001]]
     assert len(reference.rows)==121 and reference.rows[-1][0]==pytest.approx(1.2)
     assert spec['source_legend'] and len(spec['curves'])==2
@@ -95,4 +95,4 @@ def test_n1_uses_engine_priority_and_published_generation():
     assert row['state'] == STATUS_TEXT['generation_disconnected'] and 'L1' in row['branch']
 
 import pytest
-pytestmark = [pytest.mark.pfdata]
+pytestmark = [pytest.mark.refdata]

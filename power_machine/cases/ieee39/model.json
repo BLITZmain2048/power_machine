@@ -4,7 +4,7 @@
     "benchmark": "ieee39",
     "source": "cases/ieee39/case39.py",
     "source_package": "MATPOWER case39",
-    "source_note": "Data from the published MATPOWER case39, not from the PowerFactory project. MATPOWER-native IDs and source paths, not PowerFactory identifiers.",
+    "source_note": "Data from the published MATPOWER case39, not from the reference simulator project. MATPOWER-native IDs and source paths, not reference simulator identifiers.",
     "source_sha256": "708e03e1076ea1e7060e1d78da3ee96edd2056ab76d66cc817294abbea25890d",
     "sha256_inputs": {
       "cases/ieee39/case39.py": "708e03e1076ea1e7060e1d78da3ee96edd2056ab76d66cc817294abbea25890d"
@@ -22,7 +22,7 @@
     },
     "generator_base_note": "sgn=100 MVA only for converting Q limits, not a physical rated power",
     "rating_note": "rateA retained in MVA, loading calculated as max(|S_from|, |S_to|)/rateA",
-    "pf_comparison": "No comparison against PowerFactory"
+    "ref_comparison": "No comparison against the external reference"
   },
   "buses": [
     {
@@ -5567,7 +5567,7 @@
   "interface": [],
   "other_elements": [],
   "warnings": [
-    "Data from the published MATPOWER case39, not from the PowerFactory project. MATPOWER-native IDs and source paths, not PowerFactory identifiers.",
+    "Data from the published MATPOWER case39, not from the reference simulator project. MATPOWER-native IDs and source paths, not reference simulator identifiers.",
     "Q limits disabled, the published case violates Qmin at G37.",
     "Balanced AC load flow only; dynamic and zero-sequence data are unavailable."
   ]

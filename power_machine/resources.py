@@ -13,8 +13,8 @@ def resource_root(root=None):
     return _resolved(root or os.environ.get(RESOURCE_ROOT_ENV) or Path(__file__).parent)
 def readonly_path(*parts, root=None):
     """Resolve a resource confined to the package directory."""
-    if len(parts) >= 2 and parts[:2] == ("cases", "ieee39_pf"):
-        return ExternalPFPath(*parts[2:])
+    if len(parts) >= 2 and parts[:2] == ("cases", "ieee39_ref"):
+        return ExternalReferencePath(*parts[2:])
     relative = Path(*parts)
     base = resource_root(root)
     target = (base / relative).resolve()
@@ -23,7 +23,7 @@ def readonly_path(*parts, root=None):
     return target
 def required_readonly_path(*parts, root=None):
     target = readonly_path(*parts, root=root)
-    if isinstance(target, ExternalPFPath):
+    if isinstance(target, ExternalReferencePath):
         return target
     if not target.exists():
         raise FileNotFoundError("Resource unavailable: " + str(target))
@@ -32,10 +32,18 @@ def model_path(root=None):
     return required_readonly_path("model.json", root=root) if root is not None else ieee39_root() / "model.json"
 def overrides_path(root=None):
     return required_readonly_path("overrides.json", root=root)
+def _export_subdirectory(root, name, legacy_name):
+    current = readonly_path(name, root=root)
+    if current.is_dir():
+        return current
+    legacy = readonly_path(legacy_name, root=root)
+    return legacy if legacy.is_dir() else current
+
 def dynamic_catalog_root(root=None):
-    return required_readonly_path("pf_dynamic", root=root)
-def pf_reference_root(root=None):
-    return required_readonly_path("pf_reference", root=root)
+    return _export_subdirectory(root, "ref_dynamic", "pf_dynamic")
+
+def reference_tables_root(root=None):
+    return _export_subdirectory(root, "ref_tables", "pf_reference")
 def ieee39_root(root=None):
     return required_readonly_path("cases", "ieee39", root=root)
 def source_package_root(source_package, root=None):
@@ -75,41 +83,41 @@ def work_path(category, root=None):
     return target
 
 
-PF_DATA_ENV = "POWER_MACHINE_PF_IEEE39"
-PF_DATA_MESSAGE = "PowerFactory reference data is not distributed; supply your own export via POWER_MACHINE_PF_IEEE39"
+REF_DATA_ENV = "POWER_MACHINE_REF_IEEE39"
+REF_DATA_MESSAGE = "External reference data is not distributed; supply your own export via POWER_MACHINE_REF_IEEE39"
 
-class PFReferenceDataError(FileNotFoundError):
-    code = "pf_reference_data_not_included"
+class ReferenceDataError(FileNotFoundError):
+    code = "reference_data_not_included"
     def __init__(self):
-        super().__init__(self.code + ": " + PF_DATA_MESSAGE)
+        super().__init__(self.code + ": " + REF_DATA_MESSAGE)
 
-def pf_data_root(root=None):
-    value = root if root is not None else os.environ.get(PF_DATA_ENV)
+def ref_data_root(root=None):
+    value = root if root is not None else os.environ.get(REF_DATA_ENV)
     if not value:
-        raise PFReferenceDataError()
+        raise ReferenceDataError()
     return _resolved(value)
 
-def pf_data_available():
-    value = os.environ.get(PF_DATA_ENV)
+def ref_data_available():
+    value = os.environ.get(REF_DATA_ENV)
     return bool(value and _resolved(value).is_dir())
 
-class ExternalPFPath(os.PathLike):
+class ExternalReferencePath(os.PathLike):
     """Lazy external path: importing an optional comparator never needs data."""
     def __init__(self, *parts):
         self.parts = parts
     def __fspath__(self):
-        return os.fspath(pf_data_root().joinpath(*self.parts))
+        return os.fspath(ref_data_root().joinpath(*self.parts))
     def __str__(self):
         return self.__fspath__()
     def __truediv__(self, other):
-        return ExternalPFPath(*self.parts, other)
+        return ExternalReferencePath(*self.parts, other)
     def __getattr__(self, name):
         return getattr(Path(self), name)
 
 
-def pf_validation_data_root(root=None):
+def ref_validation_data_root(root=None):
     """Resolve optional compressed validation exports outside the package."""
-    value = root or os.environ.get("POWER_MACHINE_PF_VALIDATION")
+    value = root or os.environ.get("POWER_MACHINE_REF_VALIDATION")
     if value:
         return _resolved(value)
-    return pf_data_root().parent / "validation_data_ieee39"
+    return ref_data_root().parent / "validation_data_ieee39"

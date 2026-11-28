@@ -18,7 +18,7 @@ class Network:
 
 
 class Device:
-    object_id = 'pf_test'
+    object_id = 'ref_test'
     relative_path = 'Test.ElmDsl'
     bus_id = 'bus'
     n_states = 1
@@ -93,7 +93,7 @@ def test_inventory_preserves_model_macro_and_expression():
     assert len(surfaces) == 1
     assert surfaces[0].level == 1.
     assert any(row['kind'] == 'select' for row in rows)
-    assert all(row['object_id'] == 'pf_test' for row in rows)
+    assert all(row['object_id'] == 'ref_test' for row in rows)
 
 
 def test_curved_guard_lands_on_surface():
@@ -161,7 +161,7 @@ def test_degenerate_algebraic_limit_has_no_internal_event():
 def test_shared_ir_instances_keep_independent_modes():
     import copy
     first, second = Device(), Device()
-    second.object_id = 'pf_second'
+    second.object_id = 'ref_second'
     second.block = copy.copy(first.block)
     from power_machine.dynamics.dsl_expr import DSLMemory
     second.block.memory = DSLMemory()
@@ -175,7 +175,7 @@ def test_shared_ir_instances_keep_independent_modes():
 
 def test_simultaneous_crossings_use_one_time():
     first, second = Device(), Device()
-    second.object_id = 'pf_second'
+    second.object_id = 'ref_second'
     solver = DAESolver(Network(), [first, second], restart_euler=False)
     start = DAEState(0., np.array([.95, .95]), np.empty(0), np.array([2+0j]))
     result, _ = solver.step(start, .001)

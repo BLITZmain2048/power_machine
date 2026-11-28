@@ -15,16 +15,16 @@ from .settings import settings
 COLUMNS = {
     'buses': [('name', tr('results.busbar')), ('substation', tr('results.substation')), ('un_kv', tr('results.un_kv')),
               ('u_pu', tr('results.u_p_u')), ('u_kv', tr('results.u_kv')), ('angle_deg', tr('results.angle')),
-              ('energized', tr('results.energized')), ('object_id', tr('results.id_pf'))],
+              ('energized', tr('results.energized')), ('object_id', tr('results.id_ref'))],
     'branches': [('name', tr('results.branch')), ('substation', tr('results.substation')), ('un_kv', tr('results.un_kv')), ('class', tr('results.class')),
                  ('bus_from', tr('results.from')), ('bus_to', tr('results.to')), ('p_from_mw', tr('results.p_from_mw')),
                  ('q_from_mvar', tr('results.q_from_mvar')), ('p_to_mw', tr('results.p_to_mw')),
                  ('q_to_mvar', tr('results.q_to_mvar')), ('i_from_ka', tr('results.i_from_ka')),
-                 ('loading_pct', tr('results.loading')), ('object_id', tr('results.id_pf'))],
+                 ('loading_pct', tr('results.loading')), ('object_id', tr('results.id_ref'))],
     'gens': [('name', tr('results.generator')), ('substation', tr('results.substation')), ('un_kv', tr('results.un_kv')),
-             ('p_mw', tr('results.p_mw')), ('q_mvar', tr('results.q_mvar')), ('at_q_limit', tr('results.at_q_limit')), ('object_id', tr('results.id_pf'))],
+             ('p_mw', tr('results.p_mw')), ('q_mvar', tr('results.q_mvar')), ('at_q_limit', tr('results.at_q_limit')), ('object_id', tr('results.id_ref'))],
     'loads': [('name', tr('results.load')), ('substation', tr('results.substation')), ('un_kv', tr('results.un_kv')),
-              ('p_mw', tr('results.p_mw')), ('q_mvar', tr('results.q_mvar')), ('object_id', tr('results.id_pf'))],
+              ('p_mw', tr('results.p_mw')), ('q_mvar', tr('results.q_mvar')), ('object_id', tr('results.id_ref'))],
 }
 
 DEFAULT_LIMITS = {'u_pu': (.95, 1.05), 'loading_pct': (None, 100.0)}
@@ -366,7 +366,7 @@ def export_rows(path, columns, rows):
         visible.append(('violation_detail', tr('results.violation_detail')))
     with open(path, 'w', encoding='utf-8-sig', newline='') as stream:
         writer = csv.writer(stream)
-        writer.writerow([tr('results.id_pf')] + [label for _, label in visible])
+        writer.writerow([tr('results.id_ref')] + [label for _, label in visible])
         writer.writerows([[row.get('object_id', row.get('id', ''))] + [row.get(key, '') for key, _ in visible]
                           for row in rows])
 

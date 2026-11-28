@@ -8,7 +8,7 @@
     "reactive_power_mvar": 0.05,
     "loss_active_power_mw": 0.01
   },
-  "short_circuit_iec_pf2016_c1": {
+  "short_circuit_iec_ref2016_c1": {
     "ikss_relative": 0.005,
     "ip_relative": 0.01,
     "ib_relative": 0.01,

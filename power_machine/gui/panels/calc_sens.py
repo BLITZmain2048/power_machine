@@ -86,7 +86,7 @@ def create_panel(parent, context) -> ttk.Frame:
         "step_p": tk.StringVar(outer, value="1.0"),
         "step_q": tk.StringVar(outer, value="1.0"),
         "q_limits": tk.BooleanVar(outer, value=True),
-        "summary": tk.StringVar(outer, value=tr("panel.common.not_validated_pf")),
+        "summary": tk.StringVar(outer, value=tr("panel.common.not_validated_ref")),
         "stale": tk.StringVar(outer, value=""),
     }
     fields = (("injection_bus", "bus", tuple(bus_labels)),

@@ -39,10 +39,10 @@ def _validate(fault, options, data, *, validate_data=True):
     for t in (options.min_break_time_s, options.fault_duration_s):
         if t is not None and (not math.isfinite(t) or t <= 0):
             raise SCError("invalid_sc_time", "Short-circuit times in seconds must be finite and positive")
-    if options.method == "iec60909" and options.profile not in ("iec_radial_v1", "iec_pf2016_c1_v1"):
+    if options.method == "iec60909" and options.profile not in ("iec_radial_v1", "iec_ref2016_c1_v1"):
         raise SCError("unsupported_iec_profile", "IEC profile is not implemented", status="unsupported")
-    if options.profile == "iec_pf2016_c1_v1" and (fault.kind != "3ph" or options.case != "maximum"):
-        raise SCError("unsupported_iec_profile", "PF2016 C(1) is restricted to maximum three-phase faults", status="unsupported")
+    if options.profile == "iec_ref2016_c1_v1" and (fault.kind != "3ph" or options.case != "maximum"):
+        raise SCError("unsupported_iec_profile", "2016 reference profile C(1) is restricted to maximum three-phase faults", status="unsupported")
     if options.method == "ansi_ieee":
         if options.profile not in ("analytical_rl_v1", "ansi_duty"):
             raise SCError("unsupported_ansi_profile", "ANSI profile is not implemented", status="unsupported")
@@ -165,7 +165,7 @@ def _run_shortcircuit(model, fault, options, data, *, cancel=None, progress=None
         radial = len(source_list) == 1 and len(island_branches) == len(nodes)-1
         radial = radial and not network.get("shunts") and all(b["item"]["class"] in ("ElmLne", "ElmTr2", "ElmSind") for b in island_branches)
         if options.method == "iec60909":
-            if options.profile == "iec_pf2016_c1_v1":
+            if options.profile == "iec_ref2016_c1_v1":
                 from .meshed import meshed_quantities
                 meshed_quantities(quantities, diagnostics, contributions, network, nodes, options, fault)
             else:

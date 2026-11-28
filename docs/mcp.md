@@ -43,4 +43,4 @@ Call `study_capabilities` before an unfamiliar study. It reports missing data ra
 The server keeps open networks in its session and never treats a comparison as engineering acceptance. Close a network when it is no longer needed.
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

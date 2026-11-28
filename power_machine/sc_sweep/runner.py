@@ -12,7 +12,7 @@ from power_machine.resources import output_root
 from power_machine.shortcircuit import execute_request as execute_shortcircuit
 from power_machine.shortcircuit.data import from_dict
 from power_machine.shortcircuit.results import confined_path, file_sha256, fingerprint
-from .partial import (compare_pf_rows, contract_ideal_for_solver, load_pf_sc_export,
+from .partial import (compare_ref_rows, contract_ideal_for_solver, load_ref_sc_export,
                            prepare_partial, transformer_phase_loops)
 
 
@@ -138,10 +138,10 @@ def _status(rows):
 
 def _reference_ieee39(root, rows):
     """Indicative CC-01 comparison without claiming case validation."""
-    from power_machine.resources import pf_data_available, pf_data_root
-    if not pf_data_available():
-        return {"status": "not included", "code": "pf_reference_data_not_included"}
-    path = pf_data_root() / "E39-CC-01/fault_summary.csv"
+    from power_machine.resources import ref_data_available, ref_data_root
+    if not ref_data_available():
+        return {"status": "not included", "code": "reference_data_not_included"}
+    path = ref_data_root() / "E39-CC-01/fault_summary.csv"
     if not path.is_file():
         return {"status": "unavailable"}
     reference = {}
@@ -149,19 +149,19 @@ def _reference_ieee39(root, rows):
         for item in csv.DictReader(stream):
             raw = item.get("fault_bus", "")
             try:
-                reference[f"B{int(raw):02d}"] = float(item.get("pf_Ikss_kA", item.get("Ikss_kA")))
+                reference[f"B{int(raw):02d}"] = float(item.get("ref_Ikss_kA", item.get("Ikss_kA")))
             except (TypeError, ValueError):
                 continue
     differences = []
     for row in rows:
         actual, expected = row.get("ik_initial_sym_ka"), reference.get(row["bus_id"])
         if actual is not None and expected not in (None, 0.0):
-            differences.append({"bus_id": row["bus_id"], "pf_ikss_ka": expected,
+            differences.append({"bus_id": row["bus_id"], "ref_ikss_ka": expected,
                                 "sweep_ik_initial_ka": actual,
                                 "relative_error": abs(actual - expected) / abs(expected)})
     return {"status": "comparison_available" if differences else "no_comparable_rows",
             "source_path": str(path.relative_to(root)), "rows": differences,
-            "note": "Local regression comparison, not PowerFactory validation of the case"}
+            "note": "Local regression comparison, not reference simulator validation of the case"}
 
 
 def run_sweep(model, study, options, supplemental, *, selected_bus_ids=None,
@@ -263,9 +263,9 @@ def execute_request(request, *, cancel=None, progress=None):
                 model, mode=input_data["boundary_mode"], case=options.get("case", "maximum"),
                 thevenin=input_data.get("thevenin"), bus_ids=input_data.get("bus_ids"),
                 host_bus_id=input_data.get("host_bus_id"))
-            export_folder = input_data.get("pf_export_folder")
+            export_folder = input_data.get("ref_export_folder")
             if export_folder:
-                supplemental = load_pf_sc_export(confined_path(root, export_folder), supplemental)
+                supplemental = load_ref_sc_export(confined_path(root, export_folder), supplemental)
             inventory_model, inventory_supplemental = calculation_model, supplemental
             calculation_model, solver_supplemental, aliases, nodes = contract_ideal_for_solver(calculation_model, supplemental)
             boundary_coverage["contracted_nodes"] = [{"node_bus_id": node_id, "member_bus_ids": bus_ids}
@@ -295,9 +295,9 @@ def execute_request(request, *, cancel=None, progress=None):
                            fault_bus_aliases=aliases, display_buses=inventory_model.get("buses") if aliases is not None else None)
         rows = result["rows"]
         comparison = _reference_ieee39(root, rows) if model.get("meta", {}).get("benchmark") == "ieee39" else {
-            "status": "no aplicable", "note": "power_machine not validated against PowerFactory"}
-        if input_data.get("pf_reference_csv"):
-            comparison = compare_pf_rows(rows, confined_path(root, input_data["pf_reference_csv"]))
+            "status": "no aplicable", "note": "power_machine not validated against the external reference"}
+        if input_data.get("ref_reference_csv"):
+            comparison = compare_ref_rows(rows, confined_path(root, input_data["ref_reference_csv"]))
         return {"schema": RESULT_SCHEMA, "module": MODULE_ID,
                 "run_id": "scs_" + hashlib.sha256(fingerprint(request).encode()).hexdigest()[:16],
                 "model_sha256": fingerprint(model), "study_sha256": fingerprint(study),
@@ -308,7 +308,7 @@ def execute_request(request, *, cancel=None, progress=None):
                 "provenance": {"inputs": [{"path": source_path, "sha256": source_sha, "role": "supplemental_sc"}],
                                "formulas": [{"standard": "IEC 60909-0", "edition": "2016",
                                              "engine": "power_machine.shortcircuit"}],
-                               "pf_comparison": "not validated against PowerFactory", "comparison": comparison},
+                               "ref_comparison": "not validated against the external reference", "comparison": comparison},
                 "diagnostics": [], "payload": {"rows": rows, "inventory": _inventory(inventory_model, inventory_supplemental, rows),
                                                    "boundary_coverage": boundary_coverage, "total": len(rows),
                                                    "completed": sum(r["status"] == "completed" for r in rows),
@@ -316,6 +316,6 @@ def execute_request(request, *, cancel=None, progress=None):
     except (ValueError, KeyError, TypeError, OSError, json.JSONDecodeError) as exc:
         return {"schema": RESULT_SCHEMA, "module": MODULE_ID, "run_id": "scs_error",
                 "model_sha256": fingerprint(model), "study_sha256": fingerprint(study), "status": "invalid_input",
-                "options": options, "units": {}, "provenance": {"pf_comparison": "not validated against PowerFactory"},
+                "options": options, "units": {}, "provenance": {"ref_comparison": "not validated against the external reference"},
                 "diagnostics": [{"code": "invalid_request", "level": "error", "message": str(exc)}],
                 "payload": {"rows": [], "total": 0, "completed": 0, "partial": 0}}

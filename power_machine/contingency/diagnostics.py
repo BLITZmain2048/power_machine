@@ -254,7 +254,7 @@ def _classification(homotopy, reductions):
             return "probable_numerical_problem", (
                 'The path fails below 5 %% admittance without marked voltage drop or Q saturation, and load relief does not restore the outage. Evidence points to conditioning or the equivalent model.')
         return "indeterminado", (
-            'The path converges up to %.0f %% admittance, but the outage and requested load reductions do not converge. PF comparison or robust continuation is needed.' % (lowest * 100))
+            'The path converges up to %.0f %% admittance, but the outage and requested load reductions do not converge. external comparison or robust continuation is needed.' % (lowest * 100))
     return "probable_numerical_problem", (
         'Neither reduced admittance nor the outage with requested load reductions converges. Evidence points to conditioning or equivalent-model limits and does not prove physical collapse.')
 
@@ -305,7 +305,7 @@ def diagnose_outage(model, branch_id, *, fractions=FRACTIONS, load_reductions=LO
             previous, previous_reduction = result, reduction
     load_steps.sort(key=lambda row: row["load_reduction_fraction"])
     classification, evidence = _classification(homotopy, load_steps)
-    return {"schema": "power_machine-n1-diagnostic-v1", "validation_status": "not validated against PowerFactory",
+    return {"schema": "power_machine-n1-diagnostic-v1", "validation_status": "not validated against the external reference",
             "outage": _identity(source), "parallel_branch_ids": parallel_ids,
             "model_sha256": model_sha256(model), "provenance": copy.deepcopy(provenance or {}),
             "options": effective_options,

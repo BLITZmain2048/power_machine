@@ -134,11 +134,11 @@ def test_time_calendar_and_interpreter_agree_for_strict_guards():
     assert compiled["payload"]["states"]["x"][-1] == pytest.approx(.01, abs=1e-10)
 
 
-@pytest.mark.pfdata
-def test_pf_bench_accepts_both_steps_without_changing_gate(tmp_path):
-    from power_machine.pfcompare.dsl import DEFAULT_PF_DIR, compare_bench
-    if not (DEFAULT_PF_DIR / "E39-DSL-01/trajectories_full_precision.csv").is_file():
-        pytest.skip("Referencia PF offline ausente")
+@pytest.mark.refdata
+def test_ref_bench_accepts_both_steps_without_changing_gate(tmp_path):
+    from power_machine.refcompare.dsl import DEFAULT_REF_DIR, compare_bench
+    if not (DEFAULT_REF_DIR / "E39-DSL-01/trajectories_full_precision.csv").is_file():
+        pytest.skip("Referencia externa offline ausente")
     result = compare_bench(output_dir=tmp_path)
     assert result["options"]["normalized_limit"] == .001
     assert result["options"]["step_s"] == .001

@@ -117,26 +117,26 @@ def test_options_and_unit_parameter_names_are_discoverable():
         api.ContingencyOptions(island_reference="unknown")
 
 
-@pytest.mark.pfdata
-def test_compare_powerfactory_loadflow_reference(ieee39):
-    reference = __import__("power_machine.resources", fromlist=["pf_data_root"]).pf_data_root()
-    result = _api().compare_powerfactory(ieee39, reference, "loadflow")
+@pytest.mark.refdata
+def test_compare_reference_loadflow_reference(ieee39):
+    reference = __import__("power_machine.resources", fromlist=["ref_data_root"]).ref_data_root()
+    result = _api().compare_reference(ieee39, reference, "loadflow")
     assert result.status == "completed"
     _strict(result)
 
 
-@pytest.mark.pfdata
-def test_compare_powerfactory_network_reference(ieee39):
-    reference = __import__("power_machine.resources", fromlist=["pf_data_root"]).pf_data_root()
-    result = _api().compare_powerfactory(ieee39, reference, "network")
+@pytest.mark.refdata
+def test_compare_reference_network_reference(ieee39):
+    reference = __import__("power_machine.resources", fromlist=["ref_data_root"]).ref_data_root()
+    result = _api().compare_reference(ieee39, reference, "network")
     assert result.status == "completed"
     _strict(result)
 
 
-@pytest.mark.pfdata
-def test_compare_powerfactory_shortcircuit_reference(ieee39):
-    reference = __import__("power_machine.resources", fromlist=["pf_data_root"]).pf_data_root()
-    result = _api().compare_powerfactory(ieee39, reference, "shortcircuit")
+@pytest.mark.refdata
+def test_compare_reference_shortcircuit_reference(ieee39):
+    reference = __import__("power_machine.resources", fromlist=["ref_data_root"]).ref_data_root()
+    result = _api().compare_reference(ieee39, reference, "shortcircuit")
     assert result.status == "completed"
     assert len(result.tables["comparison"].to_records()) == 39
 

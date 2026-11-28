@@ -1,4 +1,4 @@
-"""CLI: python -m power_machine.qss.cli, resultados sin validar contra PF."""
+"""CLI: python -m power_machine.qss.cli, resultados sin validar contra la referencia externa."""
 from __future__ import annotations
 
 import argparse

@@ -82,7 +82,7 @@ def test_passive_unsupplied_ideal_group_has_zero_flow():
     assert rows[0]["p_from_mw"] == 0
 
 
-def test_tr3_missing_losses_is_provisional_and_phase_matches_pf_sign():
+def test_tr3_missing_losses_is_provisional_and_phase_matches_ref_sign():
     buses = [{"id": x, "name": x, "un_kv": 100, "outserv": 0} for x in "abc"]
     typ = {**{f"strn3_{k}": 100 for k in "hml"},
            **{f"utrn3_{k}": 100 for k in "hml"},

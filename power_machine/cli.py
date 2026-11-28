@@ -11,7 +11,7 @@ from typing import Any
 
 from . import __version__
 from .api import (CctOptions, ContingencyOptions, PowerMachineError, QuasiDynamicOptions, cct,
-                  compare_powerfactory, contingency, default_output_dir, import_powerfactory,
+                  compare_reference, contingency, default_output_dir, import_csv_export,
                   list_cases, load_case, loadflow, quasi_dynamic, rms, shortcircuit)
 
 EXIT_SUCCESS, EXIT_INVALID, EXIT_FAILED, EXIT_PARTIAL = 0, 2, 3, 4
@@ -132,10 +132,10 @@ def _parser() -> argparse.ArgumentParser:
     qds.add_argument("case")
     qds.add_argument("--series", required=True, help="QSS Series JSON with name, steps, and provenance.")
     qds.add_argument("--output", help="New result folder under POWER_MACHINE_OUTPUT_DIR by default.")
-    imp = sub.add_parser("import-pf", parents=[common], help="Import PowerFactory CSV. Example: power-machine import-pf export -o network.json")
+    imp = sub.add_parser("import-csv", parents=[common], help="Import element-table CSV. Example: power-machine import-csv export -o network.json")
     imp.add_argument("directory")
     imp.add_argument("-o", "--output", required=True)
-    comparison = sub.add_parser("compare-pf", parents=[common], help="Compare PF export. Example: power-machine compare-pf ieee39 cases/ieee39_pf")
+    comparison = sub.add_parser("compare-reference", parents=[common], help="Compare REF export. Example: power-machine compare-reference ieee39 cases/ieee39_ref")
     comparison.add_argument("case")
     comparison.add_argument("directory")
     comparison.add_argument("--study", choices=("loadflow", "shortcircuit", "network"), default="loadflow")
@@ -236,11 +236,11 @@ def main(argv: list[str] | None = None) -> int:
             source = json.loads(Path(args.series).read_text(encoding="utf-8-sig"))
             series = Series(source["name"], tuple(SeriesStep(**row) for row in source["steps"]), source.get("provenance", {}))
             value = quasi_dynamic(load_case(args.case), series, options=QuasiDynamicOptions(output=args.output))
-        elif args.command == "import-pf":
-            network = import_powerfactory(args.directory)
+        elif args.command == "import-csv":
+            network = import_csv_export(args.directory)
             value = {"status": "completed", "saved": str(network.save(args.output)), "network": network.summary()}
-        elif args.command == "compare-pf":
-            value = compare_powerfactory(load_case(args.case), args.directory, args.study)
+        elif args.command == "compare-reference":
+            value = compare_reference(load_case(args.case), args.directory, args.study)
         elif args.command == "doctor":
             value = _doctor()
         elif args.command == "batch":

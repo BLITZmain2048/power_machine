@@ -1,1 +1,1 @@
-"""Casos publicados independientes del inventario PowerFactory de power_machine."""
+"""Casos publicados independientes del inventario del simulador comercial de referencia."""

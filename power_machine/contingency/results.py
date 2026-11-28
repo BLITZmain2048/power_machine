@@ -72,7 +72,7 @@ def envelope(model, scenario, options, *, study=None, variant_sha256=None, ldf_o
                 {"edition": "static_ac_screening_v1", "profile": "static_ac_screening_v1",
                  "formula": "N1=n, N2=n(n-1)/2, I/S and component severity"}],
                 "analytical_checks": [], "normative_evidence": [],
-                "pf_comparison": "not validated against PowerFactory",
+                "ref_comparison": "not validated against the external reference",
                 "ldf_options": json_data(ldf_options or {}),
                 "bases": {"s_base_mva": model.get("meta", {}).get("s_base_mva"),
                           "f_nom_hz": model.get("meta", {}).get("f_nom_hz"),

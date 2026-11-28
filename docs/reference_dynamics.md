@@ -1,7 +1,7 @@
-﻿# PowerFactory composite dynamics
+﻿# Composite dynamics from an external reference
 
 `DynamicCatalog.compile_frame(composite_path, adapters=...)` executes a frame
-instance from a `pf-dynamic-v1` catalog. It returns a `Frame` with the same
+instance from a `ref-dynamic-v1` catalog. It returns a `Frame` with the same
 `evaluate(t_s, x, inputs) -> (outputs, dx)` convention as compiled DSL.
 `n_states` gives the length of the concatenated state vector.
 
@@ -69,7 +69,7 @@ FRT/protection memory. A trial evaluate must never commit such memory.
 Built-in factories wrap PSS2B (`Vs1`, `Vs2` to `Vst`) and IEC Measurement
 (`u,i,p,q,f`). Other IEC modules use the same explicit adapter protocol to
 retain their mode choices, port bases, reference inputs and acceptance hooks.
-No selection is inferred from a PF type name or a PF input enumeration.
+No selection is inferred from a REF type name or a REF input enumeration.
 
 `NativeBlock.synchronous(machine, voltage, power_mva)` integrates an existing
 SynchronousMachine against an imposed bus phasor. It initializes from LF,
@@ -84,7 +84,7 @@ initial observations and commands. The solver retains responsibility for
 updating network observations for each trial state. `Frame.commands()`
 returns the most recently evaluated commands without applying them:
 
-| PF class | Command inputs | Observation outputs |
+| REF class | Command inputs | Observation outputs |
 | --- | --- | --- |
 | ElmSym | ve, pt, fref | ut, speed, P, Q, f, id, iq |
 | ElmGenstat / ElmPvsys | ip, iq, Pext, Qext | ut, P, Q, f |
@@ -123,4 +123,4 @@ python -m pytest -q --ignore=tests/gui
 ```
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

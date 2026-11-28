@@ -187,13 +187,13 @@ def xy_figure(first_buffer, x_key, y_key):
 def reference_availability(reference, keys):
     """Indica si la referencia contiene al menos una curva seleccionada."""
     if reference is None:
-        return False, 'No se cargó una curva de referencia PF'
+        return False, 'No se cargó una curva de referencia externa'
     available = set(getattr(reference, 'keys', ()))
     missing = [key for key in keys if key not in available]
     if len(missing) == len(keys):
-        return False, 'La referencia PF no contiene las señales de esta página'
+        return False, 'La referencia externa no contiene las señales de esta página'
     if missing:
-        return True, 'La referencia PF no contiene todas las señales de esta página'
+        return True, 'La referencia externa no contiene todas las señales de esta página'
     return True, ''
 
 
@@ -285,8 +285,8 @@ class RefreshGate:
         return True
 
 
-def export_visible(path, buffer, keys, reference=None, source_label='Modelo', reference_label='PF', overlays=()):
-    """CSV largo, sin interpolar ni alinear artificialmente los tiempos de PF."""
+def export_visible(path, buffer, keys, reference=None, source_label='Modelo', reference_label='REF', overlays=()):
+    """CSV largo, sin interpolar ni alinear artificialmente los tiempos de REF."""
     keys = list(dict.fromkeys(keys))
     with open(path, 'w', encoding='utf-8-sig', newline='') as stream:
         writer = csv.writer(stream)
@@ -304,7 +304,7 @@ class PlotPage(ttk.Frame):
     """Página RMS con comparación, lectura y exportación sin alterar el motor."""
     _LINE_STYLES = ('-', '--', '-.', ':')
 
-    def __init__(self, master, spec, buffer, reference=None, on_reference_toggle=None, source_label='Modelo', reference_label='PF'):
+    def __init__(self, master, spec, buffer, reference=None, on_reference_toggle=None, source_label='Modelo', reference_label='REF'):
         super().__init__(master, padding=6)
         from matplotlib.figure import Figure
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -395,9 +395,9 @@ class PlotPage(ttk.Frame):
             ('absolute', 'deviation')[self.frequency_combo.current()]))
         self.frequency_label = ttk.Label(bar, text=tr('plots.frequency'))
         self.frequency_label.pack(side='right')
-        self.show_pf = tk.BooleanVar(value=spec.get('show_pf', True))
-        self.reference_toggle = ttk.Checkbutton(bar, text=tr('plots.pf_reference') if reference_label in ('PF','PowerFactory') else tr('plots.compare_run'),
-                                                variable=self.show_pf, command=self.toggle_reference)
+        self.show_ref = tk.BooleanVar(value=spec.get('show_ref', True))
+        self.reference_toggle = ttk.Checkbutton(bar, text=tr('plots.ref_reference') if reference_label == 'REF' else tr('plots.compare_run'),
+                                                variable=self.show_ref, command=self.toggle_reference)
         self.reference_toggle.pack(side='right', padx=3)
         self.reference_note = tk.StringVar()
         self.reference_note_label = ttk.Label(bar, textvariable=self.reference_note, style='Muted.TLabel',width=16)
@@ -619,7 +619,7 @@ class PlotPage(ttk.Frame):
         from copy import deepcopy
         data = deepcopy(self.spec)
         data.update(schema='power_machine-plot-page-v1', version=1,
-                    frequency_mode=self.frequency_mode.get(), show_pf=self.show_pf.get())
+                    frequency_mode=self.frequency_mode.get(), show_ref=self.show_ref.get())
         return data
 
     def apply_presentation(self, data, catalog=None, index=None):
@@ -647,14 +647,14 @@ class PlotPage(ttk.Frame):
         self.figure.clear()
         self.axes = self.figure.subplots(data.get('axes', 1), 1, sharex=True, squeeze=False).ravel().tolist()
         self.frequency_mode.set(data.get('frequency_mode', 'absolute'))
-        self.show_pf.set(data.get('show_pf', True))
+        self.show_ref.set(data.get('show_ref', True))
         self._cursor_points = []
         self.redraw(force=True)
         return deepcopy(missing)
 
     def toggle_reference(self):
         if self._on_reference_toggle:
-            self._on_reference_toggle(self.show_pf.get())
+            self._on_reference_toggle(self.show_ref.get())
         self.redraw(force=True)
 
     def set_axis_scale(self, axis, xlim_s=None, ylim=None):
@@ -692,7 +692,7 @@ class PlotPage(ttk.Frame):
     def _reference_state(self):
         available, reason = reference_availability(self.reference, [curve['key'] for curve in self.spec.get('curves', [])])
         self.reference_toggle.configure(state='normal' if available else 'disabled')
-        self.reference_note.set({'No se cargó una curva de referencia PF': tr('plots.no_reference'),'La referencia PF no contiene las señales de esta página': tr('plots.reference_missing'),'La referencia PF no contiene todas las señales de esta página': tr('plots.reference_partial')}.get(reason, reason))
+        self.reference_note.set({'No se cargó una curva de referencia externa': tr('plots.no_reference'),'La referencia externa no contiene las señales de esta página': tr('plots.reference_missing'),'La referencia externa no contiene todas las señales de esta página': tr('plots.reference_partial')}.get(reason, reason))
         return available
 
     def redraw(self, force=False):
@@ -740,7 +740,7 @@ class PlotPage(ttk.Frame):
                                        linewidth=1.1, label=label + ' · ' + run_label)
                     legends[axis].append((overlay, label + ' · ' + run_label))
                     sources[id(overlay)] = (key, samples)
-            if self.show_pf.get() and reference_available:
+            if self.show_ref.get() and reference_available:
                 rx, ry, _ = self._series(self.reference, key)
                 rx, ry = decimate(*break_at_events(rx, ry, self.spec.get('events', [])))
                 if len(rx):
@@ -794,7 +794,7 @@ class PlotPage(ttk.Frame):
             if ylim:
                 ax.set_ylim(ylim)
             if entries:
-                title = (tr('plots.pf_legend') if self.source_label == 'Modelo' else tr('plots.runs_legend')) if self.reference is not None and self.show_pf.get() else tr('plots.single_run')
+                title = (tr('plots.ref_legend') if self.source_label == 'Modelo' else tr('plots.runs_legend')) if self.reference is not None and self.show_ref.get() else tr('plots.single_run')
                 if self.spec.get('source_legend'):title=tr('plots.source_legend')
                 layout = dict(loc='lower right', bbox_to_anchor=(1,1.04), borderaxespad=0, ncol=max(1,len(entries))) if self._time_enabled else dict(loc='upper left', bbox_to_anchor=(1.01, 1), borderaxespad=0)
                 labels = [(line, label+'  0,0000 '+sources[id(line)][0].rsplit('|',1)[-1]) for line,label in entries] if self._time_enabled else entries
@@ -862,7 +862,7 @@ class PlotPage(ttk.Frame):
             if sample is not None:
                 parts = curve['key'].rsplit('|', 2)
                 values.append(f'{parts[1]} = {sample[1]:.6g} {self._series(self.buffer, curve["key"])[2]}')
-            if self.show_pf.get() and self.reference is not None:
+            if self.show_ref.get() and self.reference is not None:
                 sample = nearest_sample(*self._series(self.reference, curve['key'])[:2], event.xdata)
                 if sample is not None:
                     values.append(f'{self.reference_label}: {sample[1]:.6g} {self._series(self.reference, curve["key"])[2]}')
@@ -891,7 +891,7 @@ class PlotPage(ttk.Frame):
         path = filedialog.asksaveasfilename(parent=self, defaultextension='.csv', filetypes=[('CSV', '*.csv')])
         if path:
             export_visible(path, self.buffer, [c['key'] for c in self.spec.get('curves', [])],
-                           self.reference if self.show_pf.get() else None, self.source_label, self.reference_label,
+                           self.reference if self.show_ref.get() else None, self.source_label, self.reference_label,
                            self.overlays.values())
 
     def export_png(self):

@@ -17,9 +17,9 @@ def short_path(value, root=None):
 def public_text(value):
     """Abrevia rutas absolutas dentro de mensajes, incluidos los de excepciones."""
     text = str(value)
-    if "pf_reference_data_not_included" in text:
+    if "reference_data_not_included" in text:
         from .i18n import tr
-        return tr("pf_reference_data_not_included")
+        return tr("reference_data_not_included")
     pattern = r'[A-Za-z]:[\\/][^\n\r\t\"\'<>]*'
     text = re.sub(pattern, lambda m: short_path(m.group().rstrip()), text)
     text = re.sub(r'/(?:home|Users)/[^\s\"\'<>]+', lambda m: short_path(m.group()), text)

@@ -1,9 +1,9 @@
 # IEEE 39 classical dynamic-data provenance review
 
-`cases/ieee39/dynamic_data.json` labels every inertia constant `H` and transient reactance `X'd` as `pai_athay_recollection`. It also points at the package-relative case locator `cases/ieee39/case39.py#GEN[n]`.
+`cases/ieee39/dynamic_data.json` labels every inertia constant `H` and transient reactance `X'd` as `new_england_39_classical_parameters`. It also points at the package-relative case locator `cases/ieee39/case39.py#GEN[n]`.
 
-No digitised primary table from Athay, Podmore and Virmani (1979) or Pai
-(1989) is available in this repository. The exact table number, page, edition,
+The repository contains neither of the digitised primary tables from the
+candidate references. The exact table number, page, edition,
 machine ordering, and a verbatim primary-source transcription are therefore
 not verified. Every value in the table below remains provisional.
 
@@ -20,9 +20,9 @@ not verified. Every value in the table below remains provisional.
 | G38 | 34.5 | 0.0570 | Provisional value. Primary-table source and machine ordering have not been verified. |
 | G39 | 500.0 | 0.0060 | Provisional value. Primary-table source and machine ordering have not been verified. |
 
-Primary sources named by the current file are: Athay, Podmore and Virmani, *A Practical Method for the Direct Analysis of Transient Stability*, IEEE PAS, 1979, and M. A. Pai, *Energy Function Analysis for Power System Stability*, 1989. This document intentionally makes no page or table-number claim without the primary material.
+The candidate primary sources are *A Practical Method for the Direct Analysis of Transient Stability* (IEEE PAS, 1979) and *Energy Function Analysis for Power System Stability* (1989). Full citations appear in [NOTICE](../NOTICE).
 
 The source record remains provisional until the exact edition, table or page and machine ordering have been checked against primary material. The neutral locator is a mapping aid and is not a primary source for inertia or transient reactance. Numerical values remain unchanged.
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

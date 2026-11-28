@@ -43,7 +43,7 @@ def result_text(result):
     if "progress" in result:
         return tr('integration.protection')+str(result["progress"])
     payload = result.get("payload", {})
-    lines = [tr('integration.state')+result.get("status", "sin resultado"), tr('integration.no_pf_validation_f85232'),
+    lines = [tr('integration.state')+result.get("status", "sin resultado"), tr('integration.no_ref_validation_f85232'),
              tr('integration.currents')+str(payload.get("current_scope", tr('integration.no_network')))]
     for pair in payload.get("coordination", {}).get("pairs", []):
         margin, current = pair.get("minimum_margin_s"), pair.get("minimum_current_a")
@@ -72,7 +72,7 @@ def draw_tcc(canvas, series, fault_markers=()):
     canvas.create_line(left, top, left, bottom, right, bottom, fill=theme.color("text"))
     unit = "secundaria" if series and series[0].get("current_unit") == "A_secondary" else "primaria"
     canvas.create_text((left+right)/2, height-12, text=tr('integration.current_a_log10', value0=unit))
-    canvas.create_text(8, 8, anchor="nw", text=tr('integration.time_s_log10_no_pf_validation'))
+    canvas.create_text(8, 8, anchor="nw", text=tr('integration.time_s_log10_no_ref_validation'))
     previous = -1000
     for x, label in geometry["ticks_x"]:
         if sx(x) - previous >= 65:
@@ -231,7 +231,7 @@ class PanelController:
             self.fault_markers = tcc_fault_markers(bridge_rows)
             self.pair_rows = payload.get("pair_results", payload.get("fault_pairs", []))
             self.context.publish_result(result)
-            self.context.log("INFO", tr('integration.protection')+result["status"]+tr('integration.no_pf_validation_cfb5ca'))
+            self.context.log("INFO", tr('integration.protection')+result["status"]+tr('integration.no_ref_validation_cfb5ca'))
             if self.display:
                 self.display(result)
         elif message[0] == "progress" and self.display:
@@ -433,7 +433,7 @@ def create_panel(parent, context) -> ttk.Frame:
         button = (action_button(frame, 'run' if index == 2 else 'export', text=label, command=guarded(action))
                   if index in (2,6) else ttk.Button(frame, text=label, command=guarded(action)))
         button.grid(row=len(labels)+1+index//2, column=index%2, sticky="ew")
-    ttk.Label(frame, text=tr('integration.static_overcurrent_templates_without_mapping_no_pf')).grid(row=len(labels)+6, column=0, columnspan=3, sticky="w")
+    ttk.Label(frame, text=tr('integration.static_overcurrent_templates_without_mapping_no_ref')).grid(row=len(labels)+6, column=0, columnspan=3, sticky="w")
     frame.columnconfigure(1, weight=1)
     frame.columnconfigure(3, weight=3)
     frame.rowconfigure(len(labels)+6, weight=1)

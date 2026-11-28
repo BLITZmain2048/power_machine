@@ -110,20 +110,20 @@ class CompactToolbar(ttk.Frame):
 
 class SegmentedStatus(ttk.Frame):
     """No hard truncation. Full changing messages also appear as tooltips."""
-    def __init__(self,parent,*,mode,selection,case,pf=None,evidence=None):
+    def __init__(self,parent,*,mode,selection,case,validity=None,evidence=None):
         super().__init__(parent,style='Status.TFrame')
         from .app_shell import Tooltip
         self.labels=[]
-        variables=(mode,selection,pf,case) if pf is not None else (mode,selection,case)
+        variables=(mode,selection,validity,case) if validity is not None else (mode,selection,case)
         for n,var in enumerate(variables):
-            if pf is not None and n==3:
+            if validity is not None and n==3:
                 self.progress=ttk.Progressbar(self,length=65,maximum=100)
                 self.progress.pack(side='left',padx=5)
                 self.evidence_button=ttk.Button(self,text=tr('int2.evidence'),command=evidence,style='Toolbar.TButton')
                 self.evidence_button.pack(side='left',padx=3)
             if n:ttk.Separator(self,orient='vertical').pack(side='left',fill='y',pady=5)
             label=ttk.Label(self,textvariable=var,style='Status.Mode.TLabel' if n==0 else 'Status.TLabel')
-            if pf is not None:label.configure(width=(30,18,30,28)[n])
+            if validity is not None:label.configure(width=(30,18,30,28)[n])
             label.pack(side='left',fill='x',expand=n==0)
             Tooltip(label,var.get)
             self.labels.append(label)

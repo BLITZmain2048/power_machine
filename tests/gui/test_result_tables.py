@@ -37,19 +37,19 @@ def test_summary_and_limits_do_not_invent_values():
 
 def test_csv_keeps_full_precision_and_legacy_identifier_header(tmp_path):
     path = tmp_path / 'results.csv'
-    rows = [{'id': 'pf_1', 'name': 'A', 'p_mw': 1.234567890123456}]
+    rows = [{'id': 'ref_1', 'name': 'A', 'p_mw': 1.234567890123456}]
     export_rows(path, COLUMNS['gens'], rows)
     with path.open(encoding='utf-8-sig', newline='') as stream:
         data = list(csv.reader(stream))
     from power_machine.gui.i18n import tr
-    assert data[0][0] == tr('results.id_pf')
+    assert data[0][0] == tr('results.id_ref')
     assert 'P [MW]' in data[0]
-    assert data[1][0] == 'pf_1'
+    assert data[1][0] == 'ref_1'
     assert '1.234567890123456' in data[1]
 
 
 def test_flexible_table_prepares_500_rows_without_expensive_processing():
-    rows = [{'id': f'pf_{number}', 'name': f'Barra {number}', 'p_mw': float(number),
+    rows = [{'id': f'ref_{number}', 'name': f'Barra {number}', 'p_mw': float(number),
              'loading_pct': number / 5} for number in range(500)]
     started = time.perf_counter()
     visible = filtered_rows(rows, text='barra', numeric_ranges={'p_mw': (10.0, 490.0)})

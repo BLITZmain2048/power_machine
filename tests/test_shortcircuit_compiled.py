@@ -27,7 +27,7 @@ def test_fault_columns_share_one_factorization(monkeypatch):
 def test_internal_station_faults_have_distinct_correction_keys():
     model,data=fixture(two_buses=True)
     data.elements['L1']['station_source_id']='S1'
-    options=ShortCircuitOptions('iec60909','maximum',profile='iec_pf2016_c1_v1')
+    options=ShortCircuitOptions('iec60909','maximum',profile='iec_ref2016_c1_v1')
     work=ShortCircuitWorkspace(model,data,options,'3ph')
     assert work.correction_key('B1')=='B1'
     assert work.correction_key('B2') is None
@@ -55,7 +55,7 @@ def test_fault_dependent_corrections_never_share_factors(monkeypatch):
     module=importlib.import_module('power_machine.shortcircuit.compiled')
     model,data=fixture(two_buses=True)
     data.elements['L1']['station_source_id']='S1'
-    options=ShortCircuitOptions('iec60909','maximum',profile='iec_pf2016_c1_v1')
+    options=ShortCircuitOptions('iec60909','maximum',profile='iec_ref2016_c1_v1')
     monkeypatch.setattr(module,'prepare_network',lambda model,data,options,kind,bus:{'fault':bus})
     monkeypatch.setattr(module,'stamp_island',lambda net,nodes,seq,backend:(np.eye(2)*(2 if net['fault']=='B1' else 3),[]))
     work=ShortCircuitWorkspace(model,data,options,'3ph')

@@ -60,7 +60,7 @@ class MultiportPlant:
                         self.ignored_wires.append(row['relative_path'])
                         continue
                     self.connections[dst, dn] = src, sn
-        # Alias de marcos sin salida real: PF deja inc0 en el receptor.
+        # Alias de marcos sin salida real: REF deja inc0 en el receptor.
         def resolve(key, seen=()):
             if key in seen:
                 raise _coded_error(DSLCompileError, 'invalid_plant_data', f'ElmComp alias cycle: {key}')

@@ -320,7 +320,7 @@ class WorkspaceActions:
 
     def show_validation(self):
         win=tk.Toplevel(self)
-        win.title(tr('shell.powerfactory_validation_retained_records'))
+        win.title(tr('shell.reference_simulator_validation_retained_records'))
         text=tk.Text(win,width=100,height=24,wrap='word')
         text.pack(fill='both',expand=True)
         text.insert('end',tr('shell.historical_scope_of_the_records_a_modified'))

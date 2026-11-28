@@ -15,6 +15,7 @@ import numpy as np
 
 from power_machine import elements
 from power_machine.loadflow import _stamp
+from power_machine.resources import reference_tables_root
 from power_machine.overrides import apply_overrides, read_overrides
 from .controllers import ControlledSynchronousMachine
 from .converters import StaticGeneratorRMS, WECCPVAdapter, converter_bindings
@@ -38,18 +39,18 @@ def _csv(path: Path) -> list[dict[str, str]]:
 
 
 def load_case(root: Path, case: str) -> tuple[list[dict], dict]:
-    folder = root / "pf_reference/rms" / case
+    folder = reference_tables_root(root) / "rms" / case
     events = json.loads((folder / "events.json").read_text(encoding="utf-8"))
     report = json.loads((folder / "run_report.json").read_text(encoding="utf-8"))
     if not (report.get("sim_valid") and report.get("sim_return_code") == 0
             and report.get("inc_return_code") == 0):
-        raise _coded_error(ValueError, 'invalid_runner_data', f'PF reference is unsuitable: {case}')
+        raise _coded_error(ValueError, 'invalid_runner_data', f'External reference is unsuitable: {case}')
     return events, report
 
 
 def translate_events(events: list[dict], model: dict, *,
                      reference_case: str | None = None) -> list[Event]:
-    'Map exact PF target paths to events. Convert fault R/X in ohms to local p.u. reference_case selects explicit case-supplied composite switching data.'
+    'Map exact REF target paths to events. Convert fault R/X in ohms to local p.u. reference_case selects explicit case-supplied composite switching data.'
     items = {item["path"]: item for group in ("buses", "branches", "loads", "switches", "gens")
              for item in model[group]}
     switches = {item["id"]: item for item in model["switches"]}
@@ -97,7 +98,7 @@ def translate_events(events: list[dict], model: dict, *,
             else:
                 raise _coded_error(ValueError, 'invalid_runner_data', f"Unsupported i_shc: {attrs['i_shc']}")
         else:
-            raise _coded_error(ValueError, 'invalid_runner_data', f"Unsupported PF event: {raw['class']}")
+            raise _coded_error(ValueError, 'invalid_runner_data', f"Unsupported REF event: {raw['class']}")
     return sorted(mapped, key=lambda event: event.time_s)
 
 
@@ -134,7 +135,7 @@ class RMSRunner:
             raise _coded_error(ValueError, 'missing_dynamic_data', f'Missing dynamic data. No manifest.json in {self.dynamic_dir}')
         if case is not None:
             self.raw_events, self.reference_report = load_case(self.root, case)
-            with (self.root / "pf_reference/rms" / case / "signals.csv").open(
+            with (reference_tables_root(self.root) / "rms" / case / "signals.csv").open(
                     encoding="utf-8-sig", newline="") as handle:
                 self.monitored = set(next(csv.reader(handle)))
         else:
@@ -147,18 +148,18 @@ class RMSRunner:
                        else sorted(events, key=lambda e: e.time_s))
         if operating_point is not None:
             self.lf_v = dict(operating_point["bus_voltages"])
-            self.pf_lf_v = {}
+            self.ref_lf_v = {}
         else:
-            bus_rows = {r["object_id"]: r for r in _csv(self.root / "pf_reference/ldf_buses.csv")}
-            self.pf_lf_v = {bid: float(r["m:u"]) * cmath.exp(1j * math.radians(float(r["m:phiu"])))
+            bus_rows = {r["object_id"]: r for r in _csv(reference_tables_root(self.root) / "ldf_buses.csv")}
+            self.ref_lf_v = {bid: float(r["m:u"]) * cmath.exp(1j * math.radians(float(r["m:phiu"])))
                             for bid, r in bus_rows.items() if r["energizado"] == "1" and r["m:u"]}
             solved = _csv(self.root / "results/ldf_w2e_base/buses.csv")
             self.lf_v = {row["id"]: float(row["u_pu"]) *
                          cmath.exp(1j * math.radians(float(row["angle_deg"])))
                          for row in solved if row["status"] == "resuelto"}
-            if set(self.lf_v) != set(self.pf_lf_v):
-                raise _coded_error(ValueError, 'invalid_runner_data', 'Accepted load flow and PF reference differ in energized buses')
-        # La red LF incluye islas pasivas a V=0; el DAE solo contiene la isla PF energizada.
+            if set(self.lf_v) != set(self.ref_lf_v):
+                raise _coded_error(ValueError, 'invalid_runner_data', 'Accepted load flow and external reference differ in energized buses')
+        # La red LF incluye islas pasivas a V=0; el DAE solo contiene la isla REF energizada.
         for bus in self.model["buses"]:
             if bus["id"] not in self.lf_v:
                 bus["outserv"] = 1
@@ -185,7 +186,7 @@ class RMSRunner:
                    "m:P:bus1_unit": "MW", "m:Q:bus1_unit": "Mvar"}
                    for g in self.model["gens"] if g["id"] in solved_gen}
         else:
-            inj = {r["object_id"]: r for r in _csv(self.root / "pf_reference/ldf_injections.csv")}
+            inj = {r["object_id"]: r for r in _csv(reference_tables_root(self.root) / "ldf_injections.csv")}
             solved_gen = {r["id"]: r for r in _csv(self.root / "results/ldf_w2e_base/gens.csv")
                           if r["status"] == "resuelto"}
         self.devices = []
@@ -266,7 +267,7 @@ class RMSRunner:
                                       if refs else 0)
         self.reference_angle_index = self.reference_speed_index+1
         self.solver.reference_speed_index = self.reference_speed_index if refs else None
-        self.pf_post_event_steps = True
+        self.ref_post_event_steps = True
         states = []
         for dev in self.devices:
             if isinstance(dev, MultiportPlant):
@@ -303,7 +304,7 @@ class RMSRunner:
         self._accept_controls(self.state, initializing=True)
 
     def _build_dsl_coverage(self, bindings: dict) -> list[dict]:
-        """Inventario por ID PF: solo se marca acoplado si el DAE lo ejecuta."""
+        """Inventario por ID REF: solo se marca acoplado si el DAE lo ejecuta."""
         coupled = set()
         for device in self.devices:
             if isinstance(device, ControlledSynchronousMachine):
@@ -333,7 +334,7 @@ class RMSRunner:
             if identifier in coupled:
                 status, cause = 'coupled', 'Executed in DynamicDevice'
             elif identifier in without_generator:
-                status, cause = 'No PF generator', "ElmComp.pelm[0]=null"
+                status, cause = 'No REF generator', "ElmComp.pelm[0]=null"
             else:
                 status, cause = 'pending', 'Frame still lacks a complete DAE port'
             result.append({"object_id": identifier, "relative_path": row["relative_path"],
@@ -719,7 +720,7 @@ class RMSRunner:
                                 state, _ = self.solver.solve_algebraic(state)
                             self.solver.restart_discrete()
                             self._accept_frequency(state, restart=True)
-                            if self.pf_post_event_steps:
+                            if self.ref_post_event_steps:
                                 post_event_steps.restart()
                             discontinuities.append({"time_s": at, "before_index": sample_count-1,
                                                     "after_index": sample_count,
@@ -773,8 +774,8 @@ class RMSRunner:
                   "last_time_s": state.t, "steps": steps, "samples": sample_count,
                   "integration_method": integration_method,
                   "step_method_counts": method_counts,
-                  "frequency_discontinuity_rule": 'PF-04: 50/50 filter, g[n-1], pre-event memory and reference rotor frame',
-                  "post_event_steps": "h/2,2h/3,h" if self.pf_post_event_steps else "h",
+                  "frequency_discontinuity_rule": 'REF-04: 50/50 filter, g[n-1], pre-event memory and reference rotor frame',
+                  "post_event_steps": "h/2,2h/3,h" if self.ref_post_event_steps else "h",
                   "norton_frame": 'Reference rotor-frame lag transformed to nominal coordinates',
                   "pre_event_equilibrium_shortcut": pre_event_shortcut,
                   "compute_time_s": elapsed, "failure": failure, "failure_code": failure_code,

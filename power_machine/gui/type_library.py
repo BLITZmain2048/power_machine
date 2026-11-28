@@ -13,7 +13,7 @@ def source_types(model):
         if identity:
             candidate = dict(type_id=identity, type_class=item.get('type_class'),
                 instance_class=item['class'], params=deepcopy(item.get('type_params', {})),
-                units=deepcopy(item.get('type_units', {})), origin='powerfactory')
+                units=deepcopy(item.get('type_units', {})), origin='external_reference')
             if identity in result and candidate != result[identity]:
                 raise ValueError(tr('types.error.conflicting_source', ident=identity))
             result[identity] = candidate

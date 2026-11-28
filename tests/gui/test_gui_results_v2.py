@@ -38,11 +38,11 @@ def test_filter_violation_and_selection_bus(tk_root):
 
 def test_live_theme_overlay_cursor_and_vector_export(tk_root, tmp_path):
     own, ref, other = samples([[0, 1], [1, .9]]), samples([[0, 1.01], [.7, .91]]), samples([[0, 1.02], [2, .92]])
-    page = PlotPage(tk_root, dict(axes=1, curves=[dict(key=KEY)], show_pf=True), own, ref)
+    page = PlotPage(tk_root, dict(axes=1, curves=[dict(key=KEY)], show_ref=True), own, ref)
     page.add_run('second', other, 'Second run')
     assert len(page.axes[0].lines) == 3
     page.motion(SimpleNamespace(inaxes=page.axes[0], xdata=.8))
-    assert 'PF' in page.cursor.get() and '0.91' in page.cursor.get()
+    assert 'REF' in page.cursor.get() and '0.91' in page.cursor.get()
     old = theme.name
     try:
         theme.set('dark')

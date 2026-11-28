@@ -96,7 +96,7 @@ class Node:
 
 
 class DynamicCatalog:
-    'Read-only index of a pf-dynamic-v1 export.'
+    'Read-only index of a ref-dynamic-v1 export.'
 
     def __init__(self, directory: Path):
         data = read_dynamic_export(Path(directory))
@@ -118,7 +118,7 @@ class DynamicCatalog:
         try:
             return self.objects[path]
         except KeyError as exc:
-            raise _coded_error(DSLCompileError, 'missing_dsl_compile_data', f'Missing PF reference: {path}') from exc
+            raise _coded_error(DSLCompileError, 'missing_dsl_compile_data', f'Missing external reference: {path}') from exc
 
     def parameter_map(self, dsl: Mapping[str, str]) -> dict[str, float]:
         'Map positional parnam/params values. Never convert null into zero.'
@@ -133,7 +133,7 @@ class DynamicCatalog:
         return result
 
     def curve_map(self, dsl: Mapping[str, str], typ: Mapping[str, str]) -> dict[str, tuple[tuple[float, float], ...]]:
-        'Read paired PF curve columns in alphabetical curve-name order. This is distinct from sParams order. Require complete, finite, strictly ordered curve data.'
+        'Read paired REF curve columns in alphabetical curve-name order. This is distinct from sParams order. Require complete, finite, strictly ordered curve data.'
         declared = _names(self.attrs(typ).get("sParams"))
         unsupported = [n for n in declared if n.startswith(('matrix_', 'omatrix_'))]
         if unsupported:
@@ -256,7 +256,7 @@ class DynamicCatalog:
             limit_bindings = []
             for key in ("sLowLimPar", "sUpLimPar"):
                 formal, actual = _names(ra.get(key)), _names(ca.get(key))
-                # PF puede ubicar un lÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­mite posicional en BlkRef.sParams.
+                # REF puede ubicar un lÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­mite posicional en BlkRef.sParams.
                 if not actual and formal and len(extra_params) >= len(formal):
                     actual = extra_params[:len(formal)]
                     extra_params = extra_params[len(formal):]
@@ -280,7 +280,7 @@ class DynamicCatalog:
             ca = self.attrs(child)
             source, target = _path(ca.get("pnodfrom")), _path(ca.get("pnodto"))
             if source is None or target is None:
-                # En PF los segmentos grÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ficos independientes tienen ambos ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­ndices -1.
+                # En REF los segmentos grÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ficos independientes tienen ambos ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­ndices -1.
                 if (source is None and target is None and
                         ca.get("inodfrom") == -1 and ca.get("inodto") == -1 and
                         ca.get("indep") == 1):

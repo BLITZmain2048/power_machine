@@ -48,7 +48,7 @@ class PhasorFrequencyHistory:
 
 @dataclass
 class PublishedFrequencyHistory:
-    'Published PF frequency observable. It never feeds physical controls. Preserve the configured pre-event history and reference-frame convention.'
+    'Published REF frequency observable. It never feeds physical controls. Preserve the configured pre-event history and reference-frame convention.'
 
     f_nom_hz: float = 50.0
     time_s: float | None = None
@@ -245,7 +245,7 @@ class PeriodicClock:
     duty: float = 0.5
 
     @classmethod
-    def from_pf_params(cls, params: dict, *, phase_s: float = 0.0) -> "PeriodicClock":
+    def from_ref_params(cls, params: dict, *, phase_s: float = 0.0) -> "PeriodicClock":
         'Convert explicit ElmClock.Tp from milliseconds to seconds.'
         if params.get("Tp") is None or params.get("tonTp") is None:
             raise _coded_error(ValueError, 'missing_measurements_data', 'Missing clock Tp/tonTp')

@@ -15,7 +15,7 @@ from .switching import resolve_element_switches
 
 
 class DynamicNetwork:
-    'System-base Ybus with load-flow node fusion. lf_voltages maps PF bus IDs to p.u. phasors. Stamp static load admittances from explicit load-flow consumption.'
+    'System-base Ybus with load-flow node fusion. lf_voltages maps REF bus IDs to p.u. phasors. Stamp static load admittances from explicit load-flow consumption.'
 
     def __init__(self, model: dict, lf_voltages: dict[str, complex] | None = None):
         self.model = copy.deepcopy(model)
@@ -115,7 +115,7 @@ class DynamicNetwork:
             raise _coded_error(ValueError, 'missing_network_data', f'Bus is missing or out of service: {bus_id}') from exc
 
     def voltage_vector(self, bus_voltages: dict[str, complex]) -> np.ndarray:
-        'Map PF bus voltages to fused nodes, averaging phasors when closing a coupler.'
+        'Map REF bus voltages to fused nodes, averaging phasors when closing a coupler.'
         groups: dict[str, list[complex]] = {node: [] for node in self.node_ids}
         for bus_id, node in self.bus_to_node.items():
             if bus_id in bus_voltages:
@@ -150,7 +150,7 @@ class DynamicNetwork:
         self.rebuild()
 
     def set_switch_open(self, switch_id: str, open_: bool = True) -> None:
-        'Operate a StaSwitch or ElmCoup by PF ID without changing outserv.'
+        'Operate a StaSwitch or ElmCoup by REF ID without changing outserv.'
         switches = {item["id"]: item for item in self.model.get("switches", [])}
         item = switches.get(switch_id)
         if item is None or item.get("class") not in ("StaSwitch", "ElmCoup"):
@@ -160,7 +160,7 @@ class DynamicNetwork:
         self.rebuild()
 
     def set_element_switching(self, element_id: str, open_: bool = True) -> list[str]:
-        'Resolve an element EvtSwitch into its explicit PF switching devices.'
+        'Resolve an element EvtSwitch into its explicit REF switching devices.'
         ids = resolve_element_switches(self.model, element_id)
         switches = {item["id"]: item for item in self.model.get("switches", [])}
         for switch_id in ids:

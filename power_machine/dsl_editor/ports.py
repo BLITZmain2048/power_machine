@@ -45,7 +45,7 @@ def propose_binding(draft, element_id, slot_id):
     return {"status": "proposed", "draft_id": draft.draft_id, "object_id": draft.object_id,
         "relative_path": draft.relative_path, "element_id": element_id, "slot_id": slot_id,
         "artifact_sha256": fingerprint(asdict(draft)), "connections": [], "checks": {},
-        "runtime_applied": False, "pf_comparison": "sin validar contra PF"}
+        "runtime_applied": False, "ref_comparison": "sin validar contra la referencia externa"}
 
 
 def prepare_binding(draft, element_id, slot_id, target_ports, connections, preview_result):
@@ -120,5 +120,5 @@ def instantiate_controller(model, draft, binding):
         "params": {k: deepcopy(v["value"]) for k, v in draft.parameters.items()},
         "units": {k: v["unit"] for k, v in draft.parameters.items()},
         "dsl_editor": {"draft": asdict(draft), "binding": deepcopy(binding), "runtime_applied": False,
-            "pf_comparison": "sin validar contra PF"}})
+            "ref_comparison": "sin validar contra la referencia externa"}})
     return result

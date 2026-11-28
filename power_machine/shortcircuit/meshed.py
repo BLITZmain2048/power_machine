@@ -53,7 +53,7 @@ def meshed_quantities(qty, diagnostics, contributions, network, nodes, options, 
                 ir = scalar(s["record"], "ir_ka", s["item"], unit="kA", positive=True)
                 mu = iec60909.synchronous_decay(abs(current)/ir, options.min_break_time_s)
             uk_source = network["buses"][s["bus_id"]]["un_kv"]
-            # TechRef_CommonResultVariables_ShortCircuit PF2024, sec. 2.1.1.1
+            # TechRef_CommonResultVariables_ShortCircuit 2024 reference simulator, sec. 2.1.1.1
             # p. 4, red mallada. Z_G incluye la corrección de impedancia,
             # no la impedancia serie del transformador de unidad.
             # Z_G*I_G/E_G es adimensional, Un_G/Un_f refiere kA a la falla.
@@ -63,6 +63,6 @@ def meshed_quantities(qty, diagnostics, contributions, network, nodes, options, 
             c["mu"] = mu
             c["breaking_transfer_complex"] = transfer
         qty["Ib_sym_ka"] = abs(qty["phase_currents_ka"]["a"]-decrement)
-        qty["breaking_method"] = "Meshed network: |Ik - sum(n*(1-mu)*Z_G*I_G^2/E_G*Un_G/Un_f)|, PF2024 TechRef SC p4"
+        qty["breaking_method"] = "Meshed network: |Ik - sum(n*(1-mu)*Z_G*I_G^2/E_G*Un_G/Un_f)|, 2024 reference simulator TechRef SC p4"
         diagnostics.append(diagnostic("meshed_breaking_documented", "Complex Ib reduction per SC TechRef section 2.1.1.1 p4, with mu and Ir per machine", level="info"))
     diagnostics.append(diagnostic("unsupported_thermal_profile", "Decaying-AC Ith is not evaluated by the C(1) profile"))

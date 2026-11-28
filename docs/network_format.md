@@ -9,4 +9,4 @@ Important normalized fields include bus nominal voltage, branch endpoints and ra
 Prefer `Network.set`, `Network.switch`, and `Network.save` over manual edits. When editing JSON directly, preserve unique IDs, valid bus references, list-valued groups, and coherent base quantities.
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

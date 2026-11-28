@@ -52,7 +52,7 @@ def test_reference_reports_unavailable_or_partial_signal_coverage():
     reference = SignalBuffer()
     reference.reset([TIME_KEY, FREQUENCY_KEY])
     reference.append([[0, 50]])
-    assert reference_availability(None, [FREQUENCY_KEY]) == (False, 'No se cargó una curva de referencia PF')
+    assert reference_availability(None, [FREQUENCY_KEY]) == (False, 'No se cargó una curva de referencia externa')
     assert reference_availability(reference, [VOLTAGE_KEY])[0] is False
     available, notice = reference_availability(reference, [FREQUENCY_KEY, VOLTAGE_KEY])
     assert available and 'no contiene todas' in notice
@@ -102,9 +102,9 @@ def test_events_and_full_csv_export_keep_all_rows_and_empty_cells(tmp_path):
     class Event:
         time_s = .15
         kind = 'fault'
-        target_id = 'pf_interface'
+        target_id = 'ref_interface'
     assert plot_events([Event(), {'time_s': .2, 'kind': 'open'}]) == [
-        {'time_s': .15, 'label': 'fault · pf_interface'}, {'time_s': .2, 'label': 'open'}]
+        {'time_s': .15, 'label': 'fault · ref_interface'}, {'time_s': .2, 'label': 'open'}]
     rows = [[index / 1000, 50 + index / 1e6, None if index == 1500 else 1.0] for index in range(3001)]
     buffer = make_buffer(rows)
     path = tmp_path / 'rms.csv'

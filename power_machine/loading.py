@@ -1,7 +1,7 @@
 """Cargabilidad de ramas a partir de resultados LF y ratings trazables del modelo.
 
 Los valores se calculan para presentación y no alteran el resultado del motor LF.
-No constituyen validación contra PowerFactory.
+No constituyen validación contra la referencia externa.
 """
 
 from __future__ import annotations

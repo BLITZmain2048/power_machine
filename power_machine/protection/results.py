@@ -51,7 +51,7 @@ def envelope(status, model, study, options, payload, diagnostics=(), *, variant_
         "study_sha256": fingerprint(study), "options": options, "status": status,
         "units": {"current_primary_a": "A", "time_s": "s", "margin_s": "s", "ct_ratio": "1"},
         "provenance": {"inputs": list(inputs), "formulas": formulas, "analytical_checks": [],
-            "normative_evidence": [], "pf_comparison": "sin validar contra PF"},
+            "normative_evidence": [], "ref_comparison": "sin validar contra la referencia externa"},
         "diagnostics": diagnostics, "payload": payload})
 
 
@@ -172,7 +172,7 @@ def export_svg(series, path):
     label = "Corriente primaria [A]" if units == {"A_primary"} else "Corriente secundaria [A], plantilla"
     content.extend([f'<text x="330" y="585">{label}, log10</text>',
         '<text x="20" y="35">Tiempo [s], log10</text>',
-        f'<text x="80" y="25">Sin validar contra PF. Puntos sin posición logarítmica: {geometry["omitted"]}</text>', '</svg>'])
+        f'<text x="80" y="25">Sin validar contra la referencia externa. Puntos sin posición logarítmica: {geometry["omitted"]}</text>', '</svg>'])
     with confined_path(WORKSPACE_ROOT, path).open("x", encoding="utf-8") as stream:
         stream.write("\n".join(content)+"\n")
 

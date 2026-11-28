@@ -1,6 +1,6 @@
-"""Cotejo offline IEEE39 IEC 2016, kA y grados, entradas PF de solo lectura.
+"""Cotejo offline IEEE39 IEC 2016, kA y grados, entradas REF de solo lectura.
 
-Usa el modelo LF nativo ya entregado. Proyecta atributos SC de tipos PF,
+Usa el modelo LF nativo ya entregado. Proyecta atributos SC de tipos REF,
 no usa resultados de falla para parametrizar la red.
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ from pathlib import Path
 from ..resources import confined_output, output_root
 from ..resources import readonly_path
 
-from ..benchmarks.ieee39_pf import DEFAULT_PF_DIR
+from ..benchmarks.ieee39_ref import DEFAULT_REF_DIR
 from .lf import WORKSPACE, number, read_csv
 from ..shortcircuit import FaultSpec, ShortCircuitData, ShortCircuitOptions, run_shortcircuit
 
@@ -42,13 +42,13 @@ def project_objects(path, fields):
             for o in read_json(path)}
 
 
-def build_supplement(model, pf_dir):
+def build_supplement(model, ref_dir):
     """Datos por unidad propia, Ω, MVA y kV. IEC usa xd'' saturada.
 
-El piso rstr=0,01 pu es comportamiento PF registrado en fault_B01.log.
-Se registra como supuesto PF, separado de la resistencia ficticia de pico.
+El piso rstr=0,01 pu es comportamiento REF registrado en fault_B01.log.
+Se registra como supuesto REF, separado de la resistencia ficticia de pico.
 """
-    root = Path(pf_dir)
+    root = Path(ref_dir)
     types = project_objects(root / "modelo/types.json", {"sgn", "ugn", "cosn", "xdss", "xdsss", "rstr", "oltc"})
     gens = project_objects(root / "modelo/generators.json", {"pG"})
     elements, sources = {}, {}
@@ -99,14 +99,14 @@ Se registra como supuesto PF, separado de la resistencia ficticia de pico.
             "x_d_subtransient_pu": datum(xd, "pu", g, "xdsss (IEC, no xdss RMS)"),
             "sn_mva": datum(sn, "MVA", g, "sgn por máquina"),
             "ur_kv": datum(ur, "kV", g, "ugn"),
-            "r_generator": datum(r_pu*zbase_ohm, "ohm", g, "rstr, piso PF 0.01 pu según log B01"),
+            "r_generator": datum(r_pu*zbase_ohm, "ohm", g, "rstr, piso REF 0.01 pu según log B01"),
             "r_kappa_ohm": datum(0.05*xd*zbase_ohm, "ohm", g, "IEC R ficticia 0.05 X, Ur>1kV y Sn>=100MVA"),
             "cos_phi_rated": datum(tp["cosn"], "1", g, "cosn"),
             "sin_phi_sign": datum(1, "1", g, "IEC nominal sobreexcitado"),
             "ir_ka": datum(sn/(math.sqrt(3)*ur), "kA", g, "sgn/(sqrt(3)*ugn) por máquina"),
         }}
     return ShortCircuitData("power_machine-sc-data-v1", elements, sources,
-        ({"code": "pf_stator_floor", "r_pu": 0.01, "evidence": "E39-CC-01/fault_B01.json: log"},))
+        ({"code": "ref_stator_floor", "r_pu": 0.01, "evidence": "E39-CC-01/fault_B01.json: log"},))
 
 
 def incident_currents(result, fault_bus):
@@ -145,30 +145,30 @@ def kcl_check(result, fault_bus):
             "pass": max(error/abs(total), nodal[worst_bus]) <= TOLERANCES["kcl_relative"]}
 
 
-def calculate_faults(model, data, profile="iec_pf2016_c1_v1"):
+def calculate_faults(model, data, profile="iec_ref2016_c1_v1"):
     options = ShortCircuitOptions("iec60909", "maximum", frequency_hz=60, min_break_time_s=0.1, profile=profile)
     return {int(b["name"].removeprefix("Bus ")): run_shortcircuit(model, FaultSpec(b["id"], "3ph"), options, data)
             for b in model["buses"]}
 
 
-def compare_bus(pf, result, bus):
+def compare_bus(ref_entry, result, bus):
     """Errores relativos de magnitud, ángulo circular. R/X y kappa sin umbral inventado."""
     q = result.quantities
     current = (q.get("phase_currents_ka") or {}).get("a")
     values = {"Ikss_kA": q["Ik_initial_sym_ka"], "ip_kA": q["ip_peak_ka"], "Ib_kA": q["Ib_sym_ka"],
               "angle_deg": math.degrees(math.atan2(current.imag, current.real)) if current is not None else None,
               "RtoX": q.get("RtoX"), "kappa_effective_derived": q.get("kappa")}
-    fault_bus = pf.get("fault_bus", bus["id"])
+    fault_bus = ref_entry.get("fault_bus", bus["id"])
     if str(fault_bus).isdigit():
         fault_bus = int(fault_bus)
     row = {"fault_bus": fault_bus, "object_id": bus.get("object_id", bus["id"]), "relative_path": bus.get("relative_path", bus.get("path")),
            "power_machine_status": result.status}
     for field, value in values.items():
-        reference = number(pf.get(field))
+        reference = number(ref_entry.get(field))
         delta = value-reference if value is not None and reference is not None else None
         if delta is not None and field == "angle_deg":
             delta = (delta+180) % 360-180
-        row.update({"pf_"+field: reference, "power_machine_"+field: value, "delta_"+field: delta})
+        row.update({"ref_"+field: reference, "power_machine_"+field: value, "delta_"+field: delta})
         if field != "angle_deg":
             row["relative_error_"+field] = abs(delta/reference) if delta is not None and reference != 0 else None
     for field, tolerance in (("Ikss_kA", TOLERANCES["Ikss_relative"]), ("ip_kA", TOLERANCES["ip_relative"]),
@@ -194,47 +194,47 @@ def compare_contributions(model, runs, references, bus_rows):
     """Todos los incidentes, norma de fasor y módulos acotados por 1 % Ik de barra.
 
 ip usa el kappa global de la falla. Ib por extremo es la envolvente global
-Ib/Ik aplicada a la contribución, semántica observada en la exportación PF.
+Ib/Ik aplicada a la contribución, semántica observada en la exportación REF.
 No se atribuye Ib por fuente como trayectoria física independiente.
 """
     paths = {i["path"]: i for group in ("branches", "gens") for i in model[group]}
     by_bus = {r["fault_bus"]: r for r in bus_rows}
     rows, seen = [], set()
-    for pf in references:
-        fault_bus = int(pf["fault_bus"])
-        if int(pf["terminal_bus"]) != fault_bus:
+    for ref_entry in references:
+        fault_bus = int(ref_entry["fault_bus"])
+        if int(ref_entry["terminal_bus"]) != fault_bus:
             raise ValueError("Extremo incidente distinto de la falla")
-        item = paths[pf["path"]]
+        item = paths[ref_entry["path"]]
         if (fault_bus, item["id"]) in seen:
-            raise ValueError("Contribución PF duplicada")
+            raise ValueError("Contribución REF duplicada")
         seen.add((fault_bus, item["id"]))
         bus_id = runs[fault_bus].fault["bus_id"]
         current = incident_currents(runs[fault_bus], bus_id)[item["id"]]
-        re, im = number(pf["into_fault_re_kA"]), number(pf["into_fault_im_kA"])
+        re, im = number(ref_entry["into_fault_re_kA"]), number(ref_entry["into_fault_im_kA"])
         reference = complex(re, im) if re is not None and im is not None else None
         q = runs[fault_bus].quantities
         native_angle = math.degrees(math.atan2(current.imag, current.real)) + (180 if item["class"] != "ElmSym" else 0)
-        angle_ref = number(pf["angle_deg"])
-        row = {"fault_bus": fault_bus, "name": pf["name"], "terminal_bus": int(pf["terminal_bus"]),
+        angle_ref = number(ref_entry["angle_deg"])
+        row = {"fault_bus": fault_bus, "name": ref_entry["name"], "terminal_bus": int(ref_entry["terminal_bus"]),
                "object_id": item["object_id"], "relative_path": item["relative_path"],
-               "pf_into_fault_re_kA": re, "pf_into_fault_im_kA": im,
+               "ref_into_fault_re_kA": re, "ref_into_fault_im_kA": im,
                "power_machine_into_fault_re_kA": current.real, "power_machine_into_fault_im_kA": current.imag,
                "phasor_error_kA": abs(current-reference) if reference is not None else None,
                "delta_angle_deg": (native_angle-angle_ref+180) % 360-180 if angle_ref is not None else None,
-               "limit_kA": TOLERANCES["contribution_fraction_bus_Ikss"]*by_bus[fault_bus]["pf_Ikss_kA"]}
+               "limit_kA": TOLERANCES["contribution_fraction_bus_Ikss"]*by_bus[fault_bus]["ref_Ikss_kA"]}
         for field, value in (("Ikss_kA", abs(current)),
                              ("ip_kA", math.sqrt(2)*q["kappa"]*abs(current)),
                              ("Ib_kA", abs(current)*q["Ib_sym_ka"]/q["Ik_initial_sym_ka"] if q["Ib_sym_ka"] is not None else None)):
-            ref = number(pf[field])
+            ref = number(ref_entry[field])
             delta = value-ref if value is not None and ref is not None else None
-            row.update({"pf_"+field: ref, "power_machine_"+field: value, "delta_"+field: delta,
+            row.update({"ref_"+field: ref, "power_machine_"+field: value, "delta_"+field: delta,
                         "pass_"+field: delta is not None and abs(delta) <= row["limit_kA"]})
         row["pass_phasor"] = row["phasor_error_kA"] is not None and row["phasor_error_kA"] <= row["limit_kA"]
         row["pass"] = all(row[k] for k in ("pass_phasor", "pass_Ikss_kA", "pass_ip_kA", "pass_Ib_kA"))
         rows.append(row)
     expected = {(b, i) for b, r in runs.items() for i in incident_currents(r, r.fault["bus_id"])}
     if seen != expected:
-        raise ValueError("Cobertura incompleta de contribuciones incidentes PF/power_machine")
+        raise ValueError("Cobertura incompleta de contribuciones incidentes REF/power_machine")
     return rows
 
 
@@ -275,16 +275,16 @@ def summarize(bus_rows, contribution_rows, kcl_rows):
     return rows
 
 
-def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None, *, model=None):
+def run_comparisons(ref_dir=DEFAULT_REF_DIR, output_dir=None, *, model=None):
     """Compare 39 three-phase faults, KCL and B20 with correction enabled.
 
     An explicit output_dir selects the allowed output root. Otherwise use
     POWER_MACHINE_OUTPUT_DIR or the resources default. Every table remains
     confined to that root. The unavailable correction-off result stays null.
     """
-    root = Path(pf_dir)
+    root = Path(ref_dir)
     allowed_root = Path(output_dir).expanduser().resolve() if output_dir is not None else output_root()
-    target = confined_output(Path(output_dir).expanduser() if output_dir is not None else allowed_root / "comparacion_pf" / "cortocircuito", allowed_root)
+    target = confined_output(Path(output_dir).expanduser() if output_dir is not None else allowed_root / "comparacion_ref" / "cortocircuito", allowed_root)
 
     def write(path, rows):
         write_table(path, rows, output_dir=allowed_root)
@@ -295,9 +295,9 @@ def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None, *, model=None):
     settings = read_json(root / "E39-CC-01/settings.json")
     required = {"iopt_mde": 1, "iec_pub": 2016, "iopt_cur": 0, "iopt_shc": "3psc", "iopt_peak": "C(1)"}
     if any(settings["actual"][k]["value"] != v for k, v in required.items()):
-        raise ValueError("Configuración PF fuera del perfil soportado")
+        raise ValueError("Configuración REF fuera del perfil soportado")
     if settings["requested"]["Ta"] != 0.1 or settings["requested"]["cfac"] != 1.1:
-        raise ValueError("Tiempo/factor PF distinto del ensayo")
+        raise ValueError("Tiempo/factor REF distinto del ensayo")
     data = build_supplement(model, root)
     runs = calculate_faults(model, data)
     bus_map = {int(b["name"].removeprefix("Bus ")): b for b in model["buses"]}
@@ -317,14 +317,14 @@ def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None, *, model=None):
     summary = summarize(buses, contributions, kcl)
     on = read_json(root / "E39-CC-03/correction_test.json")
     cc03 = compare_bus(on["correction_on"], runs[20], bus_map[20])
-    cc03.update(pf_correction_off=None, ratio_on_off=None, coverage="Solo B20 ON, OFF pendiente")
+    cc03.update(ref_correction_off=None, ratio_on_off=None, coverage="Solo B20 ON, OFF pendiente")
     for name, rows in (("buses", buses), ("contributions", contributions), ("worst10", worst), ("summary", summary)):
         write(target / "E39-CC-01" / (name+".csv"), rows)
     write(target / "CC-02/kcl.csv", kcl)
     write(target / "CC-03/B20_on.csv", [cc03])
     write(target / "E39-CC-01/tolerances.csv", [{"metric": k, "tolerance": v} for k, v in TOLERANCES.items()])
     write(target / "E39-CC-01/options.csv", option_rows(settings))
-    inputs = [readonly_path("cases", "ieee39_pf", "model.json")] + [root / r for r in (
+    inputs = [readonly_path("cases", "ieee39_ref", "model.json")] + [root / r for r in (
         "modelo/types.json", "modelo/generators.json", "E39-CC-01/settings.json", "E39-CC-01/LEEME.txt",
         "E39-CC-01/fault_summary.csv", "E39-CC-01/all_element_end_currents.csv",
         "E39-CC-02/validation.json", "E39-CC-03/correction_audit.json", "E39-CC-03/correction_test.json")]
@@ -342,18 +342,18 @@ def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None, *, model=None):
                 ik_g = abs(c["phase_currents_ka"]["a"])/c["unit_count"]
                 decay.append({"fault_bus": b, "object_id": g["id"], "relative_path": g["relative_path"],
                               "name": g["name"], "Ik_G_per_machine_kA": ik_g, "Ir_per_machine_kA": ir,
-                              "ratio_Ik_G_Ir": ik_g/ir, "power_machine_mu": c["mu"], "pf_mu": None,
-                              "pf_mu_status": "No exportado"})
+                              "ratio_Ik_G_Ir": ik_g/ir, "power_machine_mu": c["mu"], "ref_mu": None,
+                              "ref_mu_status": "No exportado"})
     write(target / "E39-CC-01/decay_sources.csv", decay)
     return {"model": model, "data": data, "runs": runs, "buses": buses, "contributions": contributions,
             "kcl": kcl, "worst": worst, "summary": summary, "cc03": cc03}
 
 
 def option_rows(settings):
-    """Correspondencia de opciones PF, incluidos controles inactivos en IEC."""
+    """Correspondencia de opciones REF, incluidos controles inactivos en IEC."""
     choices = {
         "iopt_mde": "iec60909, fuente equivalente de tensión en falla",
-        "iec_pub": "IEC 60909-0:2016, perfil iec_pf2016_c1_v1",
+        "iec_pub": "IEC 60909-0:2016, perfil iec_ref2016_c1_v1",
         "iopt_cur": "maximum",
         "iopt_shc": "3ph, secuencia positiva",
         "iopt_peak": "C(1), red a 0.4*f_n con correcciones IEC",
@@ -372,18 +372,18 @@ def option_rows(settings):
         "Rf": "r_fault_ohm=0",
         "iEnhancedZf": "x_fault_ohm=0, falla sólida",
     }
-    rows = [{"pf_option": k, "pf_value": settings["actual"][k]["value"], "power_machine_equivalent": v,
+    rows = [{"ref_option": k, "ref_value": settings["actual"][k]["value"], "power_machine_equivalent": v,
              "evidence": "E39-CC-01/settings.json actual y LEEME"} for k, v in choices.items()]
-    rows += [{"pf_option": k, "pf_value": v, "power_machine_equivalent": text, "evidence": evidence}
+    rows += [{"ref_option": k, "ref_value": v, "power_machine_equivalent": text, "evidence": evidence}
              for k, v, text, evidence in (
                  ("Ta", 0.1, "Tiempo global de apertura 0.1s, no tiempo de despeje térmico", "settings.requested y LEEME, Ta no figura en actual"),
                  ("i_autopsu", 1, "Pares gen-LV/trafo detectados por topología, K_SO sin OLTC", "CC-03 correction_audit, metadata ComShc"),
                  ("K_T", "Calculado", "0.95*cmax/(1+0.6*x_T), x_T en base propia", "IEC 2016 ec.(12a), TechRef trafo p39"),
                  ("K_G", "Calculado", "Un/Ur*cmax/(1+xdsss*sin_phi_rated)", "IEC 2016 ec.(15), TechRef máquina p15"),
-                 ("K_SO", "Calculado", "K_G/abs(t_nom_pu)^2*(1-p_T)/(1+p_G), falla LV usa K_G y K_T=1", "IEC 2016 ec.(24),(21), factores PF corroborados"),
+                 ("K_SO", "Calculado", "K_G/abs(t_nom_pu)^2*(1-p_T)/(1+p_G), falla LV usa K_G y K_T=1", "IEC 2016 ec.(24),(21), factores REF corroborados"),
                  ("xdsss", "0.20000000298 pu", "Reactancia saturada en base propia por máquina", "modelo/types.json, TechRef máquina sec3.2"),
-                 ("rstr", "0 pu -> 0.01 pu", "Piso PF explícito, no se escribe al tipo original", "fault_B01.json log, comportamiento PF"),
-                 ("Ib", "Nativo", "Red mallada, decremento complejo n*(1-mu)*Z_G*I_G^2/E_G referido a la falla", "TechRef_CommonResultVariables_ShortCircuit PF2024 sec2.1.1.1 p4, coeficientes mu de shortcircuit"),
+                 ("rstr", "0 pu -> 0.01 pu", "Piso REF explícito, no se escribe al tipo original", "fault_B01.json log, comportamiento REF"),
+                 ("Ib", "Nativo", "Red mallada, decremento complejo n*(1-mu)*Z_G*I_G^2/E_G referido a la falla", "TechRef_CommonResultVariables_ShortCircuit simulador de referencia (2024) sec2.1.1.1 p4, coeficientes mu de shortcircuit"),
              )]
     return rows
 
@@ -391,17 +391,17 @@ def option_rows(settings):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
     parser.add_argument("--output-dir", type=Path, default=None)
     args = parser.parse_args()
-    comparison = run_comparisons(args.pf_dir, args.output_dir)
+    comparison = run_comparisons(args.ref_dir, args.output_dir)
     for row in comparison["summary"]:
         print(row)
 
 
-def compare_shortcircuit(model, results, pf_results_dir):
+def compare_shortcircuit(model, results, ref_results_dir):
     """Compara resultados SC por ID o ruta exacta con fault_summary.csv."""
-    folder = Path(pf_results_dir)
+    folder = Path(ref_results_dir)
     references = read_csv(folder / "fault_summary.csv")
     runs = list(results.values()) if isinstance(results, dict) else list(results)
     by_bus = {result.fault["bus_id"]: result for result in runs}

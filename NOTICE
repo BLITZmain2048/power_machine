@@ -59,11 +59,9 @@ The following files contain or transform data derived from MATPOWER `case39`:
 * `power_machine/cases/ieee39/LEEME.txt` documents those transformations and
   the local source hash.
 
-PowerFactory exports
---------------------
+External reference data
+-----------------------
 
-Includes importers and comparators for user-supplied PowerFactory exports;
-no PowerFactory data or results are distributed.
-
-PowerFactory and DIgSILENT are trademarks of their respective owner. This
-project is not affiliated with, endorsed by, or sponsored by that owner.
+The importers accept user-supplied CSV element-table exports. Comparisons use
+external references supplied by the user. External reference data and results
+are not distributed with this project.

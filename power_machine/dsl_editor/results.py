@@ -21,9 +21,9 @@ def envelope(status, payload, *, model=None, study=None, options=None, diagnosti
                   "outputs": payload.get("output_units", {}), "states": payload.get("state_units", {})},
         "provenance": {"inputs": [*inputs, {"path": "runtime://dsl_compiler_solver", "sha256": runtime_hash}],
             "formulas": [{"edition": runtime_hash,
-            "profile": "pf_blkdef_fields_v1/compiler_existing_v1", "method": "DAESolver trapezoidal y conmutación existente"}],
+            "profile": "ref_blkdef_fields_v1/compiler_existing_v1", "method": "DAESolver trapezoidal y conmutación existente"}],
             "analytical_checks": payload.get("analytical_checks", []), "normative_evidence": [],
-            "pf_comparison": "sin validar contra PF"},
+            "ref_comparison": "sin validar contra la referencia externa"},
         "diagnostics": [asdict(d) if hasattr(d, "__dataclass_fields__") else d for d in diagnostics], "payload": payload}
     # Copia serializable, no ejecutables ni arrays numpy en frontera.
     return json.loads(encode(result))

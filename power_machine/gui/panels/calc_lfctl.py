@@ -113,7 +113,7 @@ def create_panel(parent, context):
         payload = result.get('payload', {})
         for key, table in tables.items():
             table.set_rows(payload.get(key, []))
-        frame.set_status(result['status'], freshness=tr('panel.common.current'), validation_label=tr('panel.common.not_validated_pf'))
+        frame.set_status(result['status'], freshness=tr('panel.common.current'), validation_label=tr('panel.common.not_validated_ref'))
         summary.set(tr('panel.loadflow.loop', value=human_status(payload.get('stop_reason', result['status']))))
         diagnostics.delete('1.0', 'end')
         diagnostics.insert('end', '\n'.join(diagnostic_lines(result)))

@@ -1,4 +1,4 @@
-"""RMS clásico IEEE39, sin catálogo PF ni reguladores.
+"""RMS clásico IEEE39, sin catálogo REF ni reguladores.
 
 Reutiliza DynamicNetwork para las estampas y cargas Z del motor existente.
 El integrador propio RK4 resuelve 20 estados sobre una reducción de Kron.
@@ -6,7 +6,7 @@ Base 100 MVA y 60 Hz. Pm y Pe positivas inyectadas, carga positiva consumida.
 H_system_s = energía cinética nominal [MW s] / S_base [MVA]. Xd prima
 está en p.u. de sistema. d(delta)/dt = 2*pi*f_nom*(omega_pu-1),
 d(omega_pu)/dt = (Pm_pu-Pe_pu)/(2*H_system_s), sin amortiguamiento.
-No hay tensión de excitación, AVR, governor ni datos aceptados contra PF.
+No hay tensión de excitación, AVR, governor ni datos aceptados contra REF.
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ from ..dynamics.network import DynamicNetwork
 
 DEFAULT_DATA = required_readonly_path("cases", "ieee39", "dynamic_data.json")
 EVENTS = ("BASE", "E39-DIN-01", "E39-DIN-02", "E39-DIN-03")
-STATUS = "no_verificados_contra_PF"
+STATUS = "no_verificados_contra_REF"
 
 
 def _inside(path: str | Path) -> Path:
@@ -84,7 +84,7 @@ class ClassicalSystem:
         if self.data.get("schema") != "ieee39-classical-dynamics-v1":
             raise ValueError("Esquema de datos dinámicos no soportado")
         if self.data.get("datos_dinamicos") != STATUS:
-            raise ValueError("Falta etiqueta de datos no verificados contra PF")
+            raise ValueError("Falta etiqueta de datos no verificados contra REF")
         self.s_base_mva = float(model["meta"]["s_base_mva"])
         self.f_nom_hz = float(model["meta"]["f_nom_hz"])
         if (self.s_base_mva != 100 or self.f_nom_hz != 60
@@ -298,7 +298,7 @@ def simulate(system: ClassicalSystem, event="BASE", *, end_s=10.0, step_s=0.001,
     initial_v = samples[0].voltage_pu
     base_voltage_error = float(max(np.max(np.abs(s.voltage_pu-initial_v)) for s in samples))
     report = {"schema": "ieee39-classical-rms-run-v1", "event": event,
-              "datos_dinamicos": STATUS, "pf_comparison": "sin_comparacion_contra_PowerFactory",
+              "datos_dinamicos": STATUS, "ref_comparison": "sin_comparacion_con_referencia_externa",
               "method": "RK4_propio_Kron_estampas_DynamicNetwork", "states": 20,
               "s_base_mva": system.s_base_mva, "f_nom_hz": system.f_nom_hz,
               "step_s": step_s, "requested_end_s": end_s, "completed_end_s": t,
@@ -318,7 +318,7 @@ def simulate(system: ClassicalSystem, event="BASE", *, end_s=10.0, step_s=0.001,
               "numpy_version": np.__version__,
               "signal_notes": ["Excitación no representada, campo CSV vacío. FEM interna adicional en p.u. de barra.",
                                "G32 desconectado tiene P=Q=0 y estados congelados solo como memoria, velocidad y ángulo exportados vacíos.",
-                               "Frecuencia de barra por derivada analítica de fase, vacía en saltos y tensión nula, no es m:fehz nativa PF.",
+                               "Frecuencia de barra por derivada analítica de fase, vacía en saltos y tensión nula, no es m:fehz nativa REF.",
                                "Q nominal de LD04 se conserva, Q efectiva varía con el cuadrado de la tensión."]}
     return Run(samples, report)
 
@@ -358,7 +358,7 @@ def critical_clearing_time(model: dict, dynamic_data: dict, *, lower_s=0.05,
     return {"status": "informativo", "stable_lower_s": lower_s, "unstable_upper_s": upper_s,
             "estimate_s": (lower_s+upper_s)/2, "tolerance_s": tolerance_s,
             "end_s": end_s, "step_s": step_s, "trials": trials,
-            "note": "Umbral de separación de 360 grados, horizonte finito y monotonía supuesta, datos no verificados contra PF"}
+            "note": "Umbral de separación de 360 grados, horizonte finito y monotonía supuesta, datos no verificados contra REF"}
 
 
 def export_run(run: Run, system: ClassicalSystem, output: str | Path, *,
@@ -394,7 +394,7 @@ def export_run(run: Run, system: ClassicalSystem, output: str | Path, *,
         add(buses[bid], "u_pu", "p.u.")
         add(buses[bid], "angle_deg", "deg", "Ángulo de fasor en marco síncrono de 60 Hz")
     for bid in ("B04", "B16"):
-        add(buses[bid], "frequency_hz", "Hz", "Derivada analítica de fase, no estimador nativo PF")
+        add(buses[bid], "frequency_hz", "Hz", "Derivada analítica de fase, no estimador nativo REF")
     for gid in ("G30", "G32", "G39"):
         for variable, unit in (("in_service", "1"), ("speed_pu", "p.u."), ("rotor_angle_deg", "deg"),
                                ("p_mw", "MW"), ("q_mvar", "Mvar"), ("excitation_voltage_pu", "p.u."), ("internal_emf_pu", "p.u.")):

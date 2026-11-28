@@ -15,7 +15,7 @@ class MissingParameter(ValueError):
     def __init__(self, attribute: str):
         self.attribute = attribute
         self.code = "missing_parameter"
-        super().__init__(f"[missing_parameter] Missing PF attribute: {attribute}")
+        super().__init__(f"[missing_parameter] Missing REF attribute: {attribute}")
 
 
 def _value(entity, name, *, type_only=False):
@@ -202,7 +202,7 @@ def y_tr3(branch3, un_hv_kv, un_mv_kv, un_lv_kv, s_base_mva=100,
         pair_s = min(rated[i], rated[j])
         uk = float(_value(branch3, "uktr3_" + key, type_only=True)) / 100
         tp = branch3.get("type_params", {})
-        # PF 2024 denomina pcut3_* al ensayo [kW]; uktrr3_* [%]
+        # REF 2024 denomina pcut3_* al ensayo [kW]; uktrr3_* [%]
         # expresa la misma resistencia sobre la menor potencia del par.
         loss_name = ("pcut3_" + key if tp.get("pcut3_" + key) is not None
                      else "pcutr3_" + key if tp.get("pcutr3_" + key) is not None
@@ -330,7 +330,7 @@ def series_bypassed(branch):
 
 
 def series_impedance(branch):
-    """Physical positive-sequence impedance in ohms, PF 2024 native inputs."""
+    """Physical positive-sequence impedance in ohms, REF 2024 native inputs."""
     if branch["class"] == "ElmScap":
         x = _optional(branch, "xcap", None)
         if x is None:
@@ -378,7 +378,7 @@ def y_series(branch, un_i_kv, un_j_kv, s_base_mva=100):
 
 
 def y_shunt(shunt, un_kv, s_base_mva=100, *, f_nom_hz=None):
-    """Balanced fundamental-frequency PF shunt/filter, all five shtype circuits."""
+    """Balanced fundamental-frequency REF shunt/filter, all five shtype circuits."""
     raw_kind = float(_value(shunt, "shtype"))
     if not raw_kind.is_integer() or raw_kind not in range(5):
         raise ValueError("[invalid_input] shtype must be one of 0,1,2,3,4")

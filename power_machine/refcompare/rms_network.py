@@ -12,16 +12,16 @@ import uuid
 
 import numpy as np
 
-from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR, WORKSPACE, build_rms_case
+from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR, WORKSPACE, build_rms_case
 from power_machine.dynamics.measurements import PublishedFrequencyHistory
-from power_machine.dynamics.avr_ieeet1 import AVR_PROFILES, PF_IDENTIFIED_STATUS
+from power_machine.dynamics.avr_ieeet1 import AVR_PROFILES, REF_IDENTIFIED_STATUS
 from power_machine.loadflow import _stamp
-from power_machine.pfcompare.rms_replay import CASES, MAX_ERROR_LIMIT, ANGLE_PEAK_LIMIT, INITIAL_LIMITS, inside_workspace, load_reference, signal_metrics, values, write_csv, write_json
+from power_machine.refcompare.rms_replay import CASES, MAX_ERROR_LIMIT, ANGLE_PEAK_LIMIT, INITIAL_LIMITS, inside_workspace, load_reference, signal_metrics, values, write_csv, write_json
 
-OUTPUT_DIR = output_root() / "comparison_results/ieee39_pf"
+OUTPUT_DIR = output_root() / "comparison_results/ieee39_ref"
 TOLERANCES = {"max_normalized": MAX_ERROR_LIMIT, "first_peak_delay_relative": ANGLE_PEAK_LIMIT,
               "equilibrium": 1e-8}
-STATUS = "not validated against PF, standard IEEE regulators without exported BlkDef"
+STATUS = "not validated against the external reference, standard IEEE regulators without exported BlkDef"
 
 
 def fresh_output(output_dir, trial):
@@ -49,7 +49,7 @@ def profile_output(output_dir, trial, avr_profile):
     target.mkdir(parents=True, exist_ok=False)
     write_json(target/"tolerances_before_measurement.json", TOLERANCES)
     write_json(target/"model_profile.json", {
-        "avr_profile": avr_profile, "status": PF_IDENTIFIED_STATUS,
+        "avr_profile": avr_profile, "status": REF_IDENTIFIED_STATUS,
         "saturation": "exponential", "freeze_vm_when_tr_zero": True,
         "selection_evidence": "EN-MUESTRA, pendientes locales de Amat",
         "din_evidence": "FUERA DE MUESTRA, trayectorias no usadas para seleccionar",
@@ -59,12 +59,12 @@ def profile_output(output_dir, trial, avr_profile):
 
 def provenance(rms, trial):
     """Hashes de fuentes físicas y código usado, sin incorporar objetivos al DAE."""
-    root = rms.case.pf_dir
+    root = rms.case.ref_dir
     files = [root/"modelo"/(name+".json") for name in
              ("types", "controllers", "composites", "generators", "loads")]
-    files += [required_readonly_path("cases", "ieee39_pf", "model.json")]
+    files += [required_readonly_path("cases", "ieee39_ref", "model.json")]
     files += [WORKSPACE/name for name in (
-        "pfcompare/rms_network.py", "pfcompare/modal_network.py", "dynamics/native_registry.py",
+        "refcompare/rms_network.py", "refcompare/modal_network.py", "dynamics/native_registry.py",
         "dynamics/ieee39_native.py", "dynamics/avr_ieeet1.py",
         "dynamics/governors_ieeeg.py", "dynamics/load_general.py",
         "dynamics/synchronous.py", "dynamics/solver.py", "dynamics/network.py",
@@ -73,9 +73,9 @@ def provenance(rms, trial):
         files += [root/trial/name for name in ("configuration.json", "signals_native.csv", "channel_units.json")]
     else:
         files += [root/trial/name for name in ("Amat.csv", "Amat.mtl", "EVals.csv", "states.csv")]
-    if rms.avr_profile == "pf_identificado":
+    if rms.avr_profile == "ref_identificado":
         files += [WORKSPACE/name for name in (
-            "benchmarks/ieee39_pf.py", "pfcompare/identified_profile.py", "dynamics/machine_coordinates.py")]
+            "benchmarks/ieee39_ref.py", "refcompare/identified_profile.py", "dynamics/machine_coordinates.py")]
     return {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
 
 
@@ -96,7 +96,7 @@ def sample_channels(rms, state, channels, frequency):
             value = {"m:u": abs(v), "m:phiu": np.rad2deg(np.angle(v)),
                      "m:fehz": frequency[key]}[var]
             if key in rms.solver.bolted_bus_ids and var in ("m:phiu", "m:fehz"):
-                # Arg(0) y su derivada no están definidos. PF conserva una
+                # Arg(0) y su derivada no están definidos. REF conserva una
                 # tensión residual numérica, no hay fase física cotejable.
                 value = np.nan
         elif e["class"] == "ElmSym":
@@ -129,7 +129,7 @@ def frequency_voltages(rms, state):
 def simulate(rms, trial, channels, *, stop_s=10., progress=None):
     """Paso nominal 1 ms, muestra 10 ms, límite izquierdo en eventos exactos.
 
-    No consume trayectorias PF. El calendario de salida se genera aquí.
+    No consume trayectorias REF. El calendario de salida se genera aquí.
     Euler implícito en el primer paso después de salto, luego trapezoidal.
     Las proyecciones de límites solo se aplican a pasos aceptados.
     """
@@ -193,8 +193,8 @@ def compare_channel(time_s, reference, predicted, channel):
            "object_id": channel["object_id"], "relative_path": channel["relative_path"],
            **signal_metrics(time_s, reference, predicted)}
     peak = row.get("first_peak_difference_s")
-    pf_peak = row.get("pf_first_peak_s")
-    row["first_peak_delay_relative"] = abs(peak)/(pf_peak-1.) if peak is not None and pf_peak > 1. else None
+    ref_peak = row.get("ref_first_peak_s")
+    row["first_peak_delay_relative"] = abs(peak)/(ref_peak-1.) if peak is not None and ref_peak > 1. else None
     maximum = row.get("max_normalized")
     row["max_pass"] = bool(maximum <= MAX_ERROR_LIMIT) if maximum is not None else None
     relative = row["first_peak_delay_relative"]
@@ -211,11 +211,11 @@ def compare_channel(time_s, reference, predicted, channel):
     return row
 
 
-def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_profile="dyn_a"):
+def run_trial(ref_dir, output_dir, trial, *, stop_s=10., progress=print, avr_profile="dyn_a"):
     target = (fresh_output(output_dir, trial) if avr_profile == "dyn_a" else
               profile_output(output_dir, trial, avr_profile))
-    rms = (build_rms_case(pf_dir) if avr_profile == "dyn_a" else
-           build_rms_case(pf_dir, avr_profile=avr_profile))
+    rms = (build_rms_case(ref_dir) if avr_profile == "dyn_a" else
+           build_rms_case(ref_dir, avr_profile=avr_profile))
     write_json(target/"equilibrium.json", rms.equilibrium)
     write_csv(target/"state_manifest.csv", rms.manifest)
     write_csv(target/"controller_coverage.csv", rms.catalog.coverage)
@@ -224,15 +224,15 @@ def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_prof
              "ve_initial_pu": d.machine.ve, "pt_initial_pu": d.machine.pt}
             for d in rms.devices if hasattr(d, "machine")]
     write_csv(target/"references_from_lf.csv", refs)
-    time_pf, reference, channels = load_reference(Path(pf_dir)/trial)
+    time_ref, reference, channels = load_reference(Path(ref_dir)/trial)
     time_s, predicted, diagnostics = simulate(rms, trial, channels, stop_s=stop_s, progress=progress)
-    if not np.allclose(time_s, time_pf[:len(time_s)], rtol=0., atol=1e-12):
-        raise ValueError("Fechas pm/PF diferentes")
+    if not np.allclose(time_s, time_ref[:len(time_s)], rtol=0., atol=1e-12):
+        raise ValueError("Fechas pm/REF diferentes")
     metrics = [compare_channel(time_s, reference[ch["signal"]][:len(time_s)],
                                predicted[ch["signal"]], ch) for ch in channels]
-    if avr_profile == "pf_identificado":
+    if avr_profile == "ref_identificado":
         for row in metrics:
-            row.update(status=PF_IDENTIFIED_STATUS, avr_profile=avr_profile)
+            row.update(status=REF_IDENTIFIED_STATUS, avr_profile=avr_profile)
     write_csv(target/"metrics.csv", metrics)
     windows = []
     for label, lower, upper in (("pre", 0., 1.), ("transient", 1., 3.), ("post", 3., 10.00001)):
@@ -261,15 +261,15 @@ def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_prof
                "peak_pass_count": sum(r["peak_pass"] is True for r in metrics),
                "accepted": bool(stop_s == 10. and all(r["complete_samples"] and r["initial_pass"]
                                  and r["max_pass"] is True and r["peak_pass"] is not False for r in metrics)),
-               "validated_against_pf": False, "parameters_fitted": False,
-               "frequency_method": "PublishedFrequencyHistory PF-04, paso aceptado en marco G02",
+               "validated_against_ref": False, "parameters_fitted": False,
+               "frequency_method": "PublishedFrequencyHistory REF-04, paso aceptado en marco G02",
                "event_output_side": "left", "step_s": .001, "output_s": .01,
                "undefined_channels": [r["signal"] for r in metrics if not r["complete_samples"]],
         "zero_voltage_phase_policy": "angle and frequency unavailable at solid V=0, never accepted from partial samples",
         "integrator": "implicit trapezoidal, first post-event Euler step, limits projected after acceptance",
                "input_sha256": provenance(rms, trial)}
-    if avr_profile == "pf_identificado":
-        summary.update(status=PF_IDENTIFIED_STATUS, avr_profile=avr_profile,
+    if avr_profile == "ref_identificado":
+        summary.update(status=REF_IDENTIFIED_STATUS, avr_profile=avr_profile,
                        validated_against_blkdef=False, evidence_scope="FUERA DE MUESTRA")
     write_json(target/"summary.json", summary)
     return summary
@@ -277,7 +277,7 @@ def run_trial(pf_dir, output_dir, trial, *, stop_s=10., progress=print, avr_prof
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--trial", choices=CASES, action="append")
     parser.add_argument("--stop-s", type=float, default=10.)
@@ -285,7 +285,7 @@ def main():
     args = parser.parse_args()
     inside_workspace(args.output_dir)
     for trial in args.trial or CASES:
-        summary = run_trial(args.pf_dir, args.output_dir, trial, stop_s=args.stop_s,
+        summary = run_trial(args.ref_dir, args.output_dir, trial, stop_s=args.stop_s,
                             progress=lambda s: print(s, flush=True), avr_profile=args.avr_profile)
         print(trial, "max conformes", summary["max_pass_count"], "/29", flush=True)
 

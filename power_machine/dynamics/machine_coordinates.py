@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 
 
-def read_pf_states(root):
+def read_ref_states(root):
     'Match states.csv labels against VariableToIdx_Amat.txt. Amat.mtl contains sparse numeric coordinates, not state labels.'
     root = Path(root)
     with (root/"states.csv").open(encoding="utf-8-sig", newline="") as handle:
@@ -22,12 +22,12 @@ def read_pf_states(root):
                 native.append((int(match[1]), match[2], match[3]))
     exported = [(int(r["index"]), r["model"], r["state"]) for r in states]
     if exported != native or [r[0] for r in native] != list(range(1, len(states)+1)):
-        raise _coded_error(ValueError, 'invalid_machine_coordinates_data', 'PF labels are inconsistent or not consecutive')
+        raise _coded_error(ValueError, 'invalid_machine_coordinates_data', 'REF labels are inconsistent or not consecutive')
     return states
 
 
 def coordinate_projection(path, row_indices, column_indices, *, mtl=False):
-    'Read selected matrix triplets with one-based PF indices. Omitted sparse entries are structural zeros. Empty present fields are invalid.'
+    'Read selected matrix triplets with one-based REF indices. Omitted sparse entries are structural zeros. Empty present fields are invalid.'
     rows, cols = tuple(row_indices), tuple(column_indices)
     if (len(set(rows)) != len(rows) or len(set(cols)) != len(cols)
             or any(i < 1 for i in rows+cols)):
@@ -55,8 +55,8 @@ def coordinate_projection(path, row_indices, column_indices, *, mtl=False):
     return result
 
 
-def machine_state_map(manifest, pf_states, *, swap_q=False):
-    'Map 59 machine states with scale PF/pm=+1. PF indices are one-based and engine indices zero-based. Fluxes use machine-base p.u., speed uses p.u. and angles use radians.'
+def machine_state_map(manifest, ref_states, *, swap_q=False):
+    'Map 59 machine states with scale REF/pm=+1. REF indices are one-based and engine indices zero-based. Fluxes use machine-base p.u., speed uses p.u. and angles use radians.'
     index = {}
     for r in manifest:
         if r["kind"] != "machine":
@@ -67,16 +67,16 @@ def machine_state_map(manifest, pf_states, *, swap_q=False):
             raise _coded_error(ValueError, 'invalid_machine_coordinates_data', 'Duplicate machine state')
         index[key] = r
     mapped = []
-    for p in pf_states:
+    for p in ref_states:
         if not p["model"].endswith(".ElmSym"):
             continue
         name = p["state"]
         if swap_q and (p["model"], "psi2q") in index:
             name = {"psi1q":"psi2q", "psi2q":"psi1q"}.get(name, name)
         r = index[(p["model"], name)]
-        mapped.append({"pf_index":int(p["index"]), "pf_model":p["model"],
-                       "pf_state":p["state"], "pm_index":int(r["index"]),
-                       "pm_state":name, "scale_pf_per_pm":1.,
+        mapped.append({"ref_index":int(p["index"]), "ref_model":p["model"],
+                       "ref_state":p["state"], "pm_index":int(r["index"]),
+                       "pm_state":name, "scale_ref_per_pm":1.,
                        "object_id":r["object_id"], "relative_path":r["relative_path"],
                        "unit":r["unit"],
                        "designation":'q axes exchanged' if name != p["state"] else "idéntica"})
@@ -85,12 +85,12 @@ def machine_state_map(manifest, pf_states, *, swap_q=False):
     return mapped
 
 
-def machine_transform(transform, mapping, manifest, pf_states, *, swap_q=False):
-    'Replace only machine rows in T and preserve other coordinates. Use y_PF=T*x and A_PF=T*A*T^-1. The optional q-loop permutation changes designation, not physical parameters.'
+def machine_transform(transform, mapping, manifest, ref_states, *, swap_q=False):
+    'Replace only machine rows in T and preserve other coordinates. Use y_REF=T*x and A_REF=T*A*T^-1. The optional q-loop permutation changes designation, not physical parameters.'
     corrected = np.array(transform, copy=True)
     details = [dict(r) for r in mapping]
-    for r in machine_state_map(manifest, pf_states, swap_q=swap_q):
-        i = r["pf_index"]-1
+    for r in machine_state_map(manifest, ref_states, swap_q=swap_q):
+        i = r["ref_index"]-1
         corrected[i] = 0.
         corrected[i, r["pm_index"]] = 1.
         details[i].update(r)

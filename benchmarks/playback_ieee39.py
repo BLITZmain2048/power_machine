@@ -1,8 +1,8 @@
-﻿"""Native IEEE 39 cut replay, with no PowerFactory runtime."""
+﻿"""Native IEEE 39 cut replay, with no reference simulator runtime."""
 import copy
 from types import SimpleNamespace
 import numpy as np
-from power_machine.benchmarks.ieee39_pf import build_rms_case
+from power_machine.benchmarks.ieee39_ref import build_rms_case
 from power_machine.dynamics.events import Event, EventTimeline
 from power_machine.dynamics.network import DynamicNetwork
 from power_machine.dynamics.ieee39_native import NativeIEEESolver

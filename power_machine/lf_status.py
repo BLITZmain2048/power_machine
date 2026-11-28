@@ -2,7 +2,7 @@
 
 No altera el motor ``power_machine.loadflow``. El campo global ``converged`` del
 resultado es falso cuando existe alguna isla sin referencia, aunque la isla
-energizada haya convergido. Igual que PowerFactory, una isla sin fuente se
+energizada haya convergido. Igual que en el simulador comercial de referencia, una isla sin fuente se
 trata como desenergizada y se informa, sin invalidar el resultado de las islas
 energizadas. Los cálculos que parten del flujo base deben usar
 ``energized_status`` en lugar de leer ``converged`` directamente.

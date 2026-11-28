@@ -25,4 +25,4 @@ Only independent `loadflow` and `contingency` scenarios are supported. A sequent
 One recorded IEEE 39 experiment produced identical result fingerprints at 1, 2, 4, and 8 processes. Its shared-machine throughput varied, so it is evidence of deterministic execution rather than a general scaling claim.
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

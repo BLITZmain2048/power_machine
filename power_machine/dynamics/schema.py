@@ -7,7 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 
-SCHEMA = "pf-dynamic-v1"
+SCHEMA = "ref-dynamic-v1"
 FILES = ("objects.csv", "attributes.csv", "references.csv")
 STATUSES = {"PRESENT", "NULL", "UNAVAILABLE", "ERROR"}
 BLKSIG_FIELDS = ("pnodfrom", "pnodto", "inodfrom", "inodto", "iconfrom",
@@ -31,8 +31,9 @@ def read_dynamic_export(directory: Path) -> dict:
     'Read UTF-8 CSV and verify identity, integrity and connection coverage.'
     directory = Path(directory)
     manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
-    if manifest.get("schema") != SCHEMA:
+    if manifest.get("schema") not in (SCHEMA, "pf-dynamic-v1"):
         raise _coded_error(ValueError, 'invalid_schema_data', 'Unknown dynamic contract version')
+    manifest["schema"] = SCHEMA
     hashes = manifest.get("sha256", {})
     for name in FILES:
         if name not in hashes:

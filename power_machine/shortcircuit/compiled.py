@@ -35,7 +35,7 @@ class ShortCircuitWorkspace:
         self.networks={};self.matrices=OrderedDict();self.factorizations={};self.weights={}
         generators={g['id']:g.get('bus') for g in model.get('gens',())}
         self.station_buses=set()
-        if options.profile=='iec_pf2016_c1_v1':
+        if options.profile=='iec_ref2016_c1_v1':
             for record in data.elements.values():
                 sid=record.get('station_source_id')
                 if sid is not None:

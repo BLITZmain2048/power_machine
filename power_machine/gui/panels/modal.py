@@ -6,6 +6,7 @@ import copy
 import tkinter as tk
 from tkinter import ttk
 from power_machine.modal.results import fingerprint
+from power_machine.resources import dynamic_catalog_root
 
 from ..i18n import tr
 from ..theme import theme
@@ -254,12 +255,12 @@ def create_panel(parent, context) -> ttk.Frame:
     def open_compatible():
         from power_machine.resources import readonly_path
         app = shell.winfo_toplevel()
-        app.open_ieee39(readonly_path('cases', 'ieee39_pf', 'model.json'))
+        app.open_ieee39(readonly_path('cases', 'ieee39_ref', 'model.json'))
         app.open_parity_panel('modal')
         app.parity_panels['modal'][1].panel.modal_profile.set('ieee39_classical')
     compatible_button = ttk.Button(toolbar, text=tr('int2.open_modal_case'), command=open_compatible)
-    from power_machine.resources import pf_data_available
-    if not pf_data_available(): compatible_button.configure(state="disabled")
+    from power_machine.resources import ref_data_available
+    if not ref_data_available(): compatible_button.configure(state="disabled")
     compatible_button.grid(row=4, column=0, columnspan=2, sticky='ew', pady=6)
     shell.compatible_case_button = compatible_button
     panel = finish_panel(shell, context, controller, tr("panel.modal.scope"))
@@ -274,7 +275,7 @@ def modal_compatibility(model, root):
     base_ok = modal_base_supported(meta)
     base = tr("panel.modal.compatible_bases") if base_ok else tr("panel.modal.blocked_bases")
     missing = [name for name in ("manifest.json", "objects.csv", "attributes.csv", "references.csv")
-               if not (Path(root) / "pf_dynamic" / name).is_file()]
+               if not (dynamic_catalog_root(root) / name).is_file()]
     machines = sum(g.get("class") == "ElmSym" and not g.get("outserv") for g in model.get("gens", []))
     return ("full_rms: " + base + (tr("panel.modal.missing_files", files=", ".join(missing)) if missing else
             tr("panel.modal.continuous_coverage")) + "\n"
@@ -301,14 +302,14 @@ def execute_request(request, *, cancel=None, progress=None):
         return execute_modal(request, cancel=cancel, progress=progress)
     from pathlib import Path
     from power_machine.resources import readonly_path
-    from power_machine.pfcompare.modal import native_inputs, LDF_OPTIONS
+    from power_machine.refcompare.modal import native_inputs, LDF_OPTIONS
     from power_machine.modal import build_classical_model
     from power_machine.loadflow import run_loadflow
     from .panel_widgets import error_result
     import json
     try:
         model = request['snapshot']['model']
-        directory = readonly_path('cases', 'ieee39_pf')
+        directory = readonly_path('cases', 'ieee39_ref')
         reference = json.loads((directory / 'model.json').read_text(encoding='utf-8-sig'))
         if fingerprint(model) != fingerprint(reference) or any(request['snapshot']['study'].get('scenario', {}).values()):
             raise ValueError(tr('int2.modal_reference_only'))
@@ -328,7 +329,7 @@ def execute_request(request, *, cancel=None, progress=None):
         import hashlib
         for relative in ('model.json', 'modelo/types.json', 'E39-MOD-01/configuration_final.json'):
             path = Path(directory) / relative
-            result['provenance']['inputs'].append(dict(path='cases/ieee39_pf/' + relative,
+            result['provenance']['inputs'].append(dict(path='cases/ieee39_ref/' + relative,
                                                       sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
         return result
     except (ValueError, KeyError, OSError) as exc:

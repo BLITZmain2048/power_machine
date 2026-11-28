@@ -1,12 +1,12 @@
 import pytest
-"""Optional PF campaigns do not require folders or create partial NET outputs."""
+"""Optional REF campaigns do not require folders or create partial NET outputs."""
 from pathlib import Path
-from power_machine.pfcompare import lf, net
+from power_machine.refcompare import lf, net
 
 
-@pytest.mark.pfdata
+@pytest.mark.refdata
 def test_lf_runs_base_and_reports_missing_contingency_campaigns(monkeypatch,tmp_path):
-    import power_machine.benchmarks.ieee39_pf as benchmark
+    import power_machine.benchmarks.ieee39_ref as benchmark
     import importlib
     loadflow=importlib.import_module('power_machine.loadflow')
     monkeypatch.setattr(benchmark,'build_model',lambda folder:{})

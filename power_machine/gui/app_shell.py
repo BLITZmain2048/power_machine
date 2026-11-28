@@ -210,13 +210,13 @@ def build_workspace(app):
     app.validity_text=tk.StringVar(value=tr('shell.domain_awaiting_evaluation'))
     app.selection_text=tk.StringVar(value=tr('v3.no_selection'))
     app.status_segments=SegmentedStatus(app.status,mode=app.state_text,selection=app.selection_text,
-        pf=app.validity_text,case=app.case_label,evidence=app.show_validity)
+        validity=app.validity_text,case=app.case_label,evidence=app.show_validity)
     app.status_segments.pack(fill='x')
     app.status_fields=app.status_segments.labels
     app.progress=app.status_segments.progress
     app.validity_label=app.status_segments.labels[2]
     app.evidence_button=app.status_segments.evidence_button
-    Tooltip(app.validity_label,lambda:getattr(app,'pf_evidence_text',''))
+    Tooltip(app.validity_label,lambda:getattr(app,'ref_evidence_text',''))
     app.validity_label.bind('<Button-1>',lambda event:app.show_validity())
 
 

@@ -108,7 +108,7 @@ def _event_times(metadata, time_s, sample_sides):
 
 
 def signal_identity(signal_id: str) -> dict:
-    """Clasifica solo por nombre publicado, sin inventar identificación PF."""
+    """Clasifica solo por nombre publicado, sin inventar identificación REF."""
     lower = signal_id.casefold()
     if "|" in signal_id:
         parts = signal_id.rsplit("|", 2)
@@ -138,7 +138,7 @@ def signal_identity(signal_id: str) -> dict:
 
 
 def link_signals(signals, model, metadata):
-    """Vincula rutas PF exactas y nombres de barra IEEE sin adivinar ambigüedades."""
+    """Vincula rutas REF exactas y nombres de barra IEEE sin adivinar ambigüedades."""
     elements = []
     for group in ("buses", "branches", "branches3", "gens", "loads", "switches", "shunts"):
         elements.extend(model.get(group, []) if isinstance(model, dict) else [])

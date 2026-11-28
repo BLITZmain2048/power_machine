@@ -16,12 +16,12 @@ from .schema import (ModelDraft, PROFILE, ROOT, EditorError, confined_path,
 def new_draft(fields, parameters, ports, *, name="Controlador DSL"):
     draft_id = uuid.uuid4().hex
     return ModelDraft("pm-dsl-draft-v1", draft_id, "pm_dsl_" + uuid.uuid4().hex,
-        "pm://dsl/" + draft_id, "pf_blkdef_fields_v1", encode(fields), deepcopy(parameters),
-        tuple(deepcopy(ports)), None, {"origin": "pm_created", "pf_object_id": None,
-            "pf_relative_path": None, "name": name, "pf_comparison": "sin validar contra PF"})
+        "pm://dsl/" + draft_id, "ref_blkdef_fields_v1", encode(fields), deepcopy(parameters),
+        tuple(deepcopy(ports)), None, {"origin": "pm_created", "ref_object_id": None,
+            "ref_relative_path": None, "name": name, "ref_comparison": "sin validar contra la referencia externa"})
 
 
-def parameter(value, unit, low=None, high=None, *, provenance="plantilla analítica local, sin validar contra PF"):
+def parameter(value, unit, low=None, high=None, *, provenance="plantilla analítica local, sin validar contra la referencia externa"):
     return {"value": value, "unit": unit, "range": [low, high], "provenance": provenance}
 
 
@@ -31,9 +31,9 @@ def port(name, direction, unit, *, signal_kind="continuous_real", port_id=None):
 
 
 def controller_templates():
-    """Cinco fixtures, no tipos de AVR/governor homologados en PowerFactory."""
-    return [{"id": name, "title": title, "source_format": "pf_blkdef_fields_v1",
-             "pf_comparison": "sin validar contra PF"} for name, title in (
+    """Cinco fixtures, no tipos de AVR/governor homologados en el simulador comercial de referencia."""
+    return [{"id": name, "title": title, "source_format": "ref_blkdef_fields_v1",
+             "ref_comparison": "sin validar contra la referencia externa"} for name, title in (
         ("gain", "Ganancia algebraica"), ("first_order", "Retardo de primer orden"),
         ("integrator", "Integrador"), ("limited_integrator", "Integrador limitado non-windup"),
         ("pi", "PI con límites de salida"))]
@@ -165,7 +165,7 @@ def import_draft(directory, dsl_path, *, port_specs=None, parameter_specs=None):
     from power_machine.dynamics.dsl_compile import _names
     for key in FIELDS - {"sAddEquat"}:
         fields[key] = list(_names(fields.get(key)))
-    specs = {k: parameter(deepcopy(v), None, provenance="export PF sin unidad declarada, sin validar contra PF")
+    specs = {k: parameter(deepcopy(v), None, provenance="export REF sin unidad declarada, sin validar contra la referencia externa")
              for k, v in compiled.parameters.items()}
     specs.update(deepcopy(parameter_specs or {}))
     ports = port_specs or [port(n, direction, None) for direction, group in
@@ -175,10 +175,10 @@ def import_draft(directory, dsl_path, *, port_specs=None, parameter_specs=None):
     source_inputs = [{"path": p.name, "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
                      for p in sorted(directory.iterdir()) if p.is_file()]
     draft = ModelDraft("pm-dsl-draft-v1", uuid.uuid4().hex, compiled.object_id, compiled.relative_path,
-        "pf_blkdef_fields_v1", encode(fields), specs, tuple(deepcopy(ports)), origin_hash,
-        {"origin": "powerfactory", "pf_object_id": compiled.object_id, "pf_relative_path": compiled.relative_path,
+        "ref_blkdef_fields_v1", encode(fields), specs, tuple(deepcopy(ports)), origin_hash,
+        {"origin": "external_reference", "ref_object_id": compiled.object_id, "ref_relative_path": compiled.relative_path,
          "catalog_snapshot": snapshot, "catalog_sha256": fingerprint(snapshot), "type_path": typ["relative_path"],
-         "source_inputs": source_inputs, "pf_comparison": "sin validar contra PF"})
+         "source_inputs": source_inputs, "ref_comparison": "sin validar contra la referencia externa"})
     validate_draft(draft)
     return draft
 

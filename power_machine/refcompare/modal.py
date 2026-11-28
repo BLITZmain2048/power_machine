@@ -9,10 +9,10 @@ import json
 from pathlib import Path
 import numpy as np
 
-from ..benchmarks.ieee39_pf import DEFAULT_PF_DIR, LDF_OPTIONS
+from ..benchmarks.ieee39_ref import DEFAULT_REF_DIR, LDF_OPTIONS
 from ..loadflow import run_loadflow
-from ..modal.classical_pf import build_classical_model
-from power_machine.pfcompare.lf import number, read_csv
+from ..modal.classical_ref import build_classical_model
+from power_machine.refcompare.lf import number, read_csv
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 REAL_TOL_PER_S = 1e-3
@@ -25,9 +25,9 @@ def read_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8-sig"))
 
 
-def native_inputs(pf_dir):
+def native_inputs(ref_dir):
     """Proyecta TypSym y ElmDsl. Los vectores DSL no se truncan ni reinterpretan."""
-    root = Path(pf_dir)
+    root = Path(ref_dir)
     types = {r["path"]: {k: v for k, v in r["attributes"].items() if k in TYPE_KEYS}
              for r in read_json(root / "modelo/types.json") if r["cls"] == "TypSym"}
     config = {r["path"]: r["fields"] for r in read_json(root / "E39-MOD-01/configuration_final.json")["generators"]}
@@ -94,20 +94,20 @@ def compare_spectra(reference, calculated, *, exclude_structural_zero=False):
     """
     rows = []
     for i, j in minimum_distance_pairs(reference, calculated):
-        pf, pm = complex(reference[i]), complex(calculated[j])
-        real_error = abs(pm.real - pf.real)
-        imag_error = abs(pm.imag - pf.imag)
-        relative = imag_error / abs(pf.imag) if abs(pf.imag) > ZERO_TOL_PER_S else None
-        zpf, zr = damping(pf), damping(pm)
-        excluded = exclude_structural_zero and abs(pf) <= ZERO_TOL_PER_S and abs(pm) <= ZERO_TOL_PER_S
+        ref_entry, pm = complex(reference[i]), complex(calculated[j])
+        real_error = abs(pm.real - ref_entry.real)
+        imag_error = abs(pm.imag - ref_entry.imag)
+        relative = imag_error / abs(ref_entry.imag) if abs(ref_entry.imag) > ZERO_TOL_PER_S else None
+        zpf, zr = damping(ref_entry), damping(pm)
+        excluded = exclude_structural_zero and abs(ref_entry) <= ZERO_TOL_PER_S and abs(pm) <= ZERO_TOL_PER_S
         rows.append({"reference_index": i+1, "pm_index": j+1,
-                     "reference_real_per_s": pf.real, "reference_imag_per_s": pf.imag,
+                     "reference_real_per_s": ref_entry.real, "reference_imag_per_s": ref_entry.imag,
                      "pm_real_per_s": pm.real, "pm_imag_per_s": pm.imag,
                      "real_abs_error_per_s": real_error, "imag_abs_error_per_s": imag_error,
-                     "imag_relative_error": relative, "distance_per_s": abs(pm-pf),
-                     "reference_frequency_hz": abs(pf.imag)/(2*np.pi),
+                     "imag_relative_error": relative, "distance_per_s": abs(pm-ref_entry),
+                     "reference_frequency_hz": abs(ref_entry.imag)/(2*np.pi),
                      "pm_frequency_hz": abs(pm.imag)/(2*np.pi),
-                     "frequency_delta_hz": (abs(pm.imag)-abs(pf.imag))/(2*np.pi),
+                     "frequency_delta_hz": (abs(pm.imag)-abs(ref_entry.imag))/(2*np.pi),
                      "reference_damping_ratio": zpf, "pm_damping_ratio": zr,
                      "damping_abs_error": abs(zr-zpf) if zr is not None and zpf is not None else None,
                      "real_tolerance_per_s": REAL_TOL_PER_S, "imag_relative_tolerance": IMAG_REL_TOL,
@@ -121,7 +121,7 @@ def compare_spectra(reference, calculated, *, exclude_structural_zero=False):
 def read_eigenvalues(path):
     rows = read_csv(path)
     if [int(r["row"]) for r in rows] != list(range(1, len(rows)+1)):
-        raise ValueError("Índices modales PF no consecutivos")
+        raise ValueError("Índices modales REF no consecutivos")
     values = []
     for r in rows:
         real, imag = number(r["real"]), number(r["imag"])
@@ -187,7 +187,7 @@ def regulated_coverage(root, model, controllers):
         if cls == "ElmSym":
             reason = "Máquina RMS 5/6 estados disponible, sin importador e inicialización del conjunto IEEE39 ni marco completo auditado"
         elif cls == "ElmLod":
-            reason = "Estado xu de medición de tensión PF ausente en RMSLoad, que tiene cero estados"
+            reason = "Estado xu de medición de tensión REF ausente en RMSLoad, que tiene cero estados"
         elif "AVR" in r["model"]:
             reason = "Sin acoplamiento IEEE39 avr_IEEET1, saturación de excitador y limitadores no reproducidos en este perfil"
         else:
@@ -212,7 +212,7 @@ def regulated_coverage(root, model, controllers):
 
 
 def write_csv(path, rows):
-    from power_machine.pfcompare.rms_replay import inside_workspace
+    from power_machine.refcompare.rms_replay import inside_workspace
     target = inside_workspace(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     if not rows:
@@ -223,37 +223,37 @@ def write_csv(path, rows):
         writer.writerows(rows)
 
 
-def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None):
-    """Construye MOD-01 y audita MOD-02, sin ejecutar ni importar PowerFactory."""
-    root = Path(pf_dir)
+def run_comparisons(ref_dir=DEFAULT_REF_DIR, output_dir=None):
+    """Construye MOD-01 y audita MOD-02, sin ejecutar ni importar el simulador comercial de referencia."""
+    root = Path(ref_dir)
     from power_machine.resources import output_root
-    from power_machine.pfcompare.rms_replay import inside_workspace
-    target = inside_workspace(output_dir if output_dir is not None else output_root() / "comparison_results/ieee39_pf")
-    model_path = Path(pf_dir) / "model.json"
+    from power_machine.refcompare.rms_replay import inside_workspace
+    target = inside_workspace(output_dir if output_dir is not None else output_root() / "comparison_results/ieee39_ref")
+    model_path = Path(ref_dir) / "model.json"
     model = read_json(model_path)
     types, config, controllers = native_inputs(root)
     lf = run_loadflow(model, options=LDF_OPTIONS)
     classical = build_classical_model(model, lf, types, config)
     eigenvalues, vectors = np.linalg.eig(classical.a)
-    pf = read_eigenvalues(root / "E39-MOD-01/EVals.csv")
-    if len(pf) != 20 or len(eigenvalues) != 20:
+    ref_entry = read_eigenvalues(root / "E39-MOD-01/EVals.csv")
+    if len(ref_entry) != 20 or len(eigenvalues) != 20:
         raise ValueError("MOD-01 exige exactamente 20 estados")
     # Prueba explícita de simetría angular antes de excluir un solo modo.
     common = np.tile([0.0, 1.0], 10)
     if np.linalg.norm(classical.a @ common) > 1e-10 or sum(abs(eigenvalues) <= ZERO_TOL_PER_S) != 1:
         raise ValueError("Cero estructural clásico no identificado")
-    pairs = compare_spectra(pf, eigenvalues, exclude_structural_zero=True)
+    pairs = compare_spectra(ref_entry, eigenvalues, exclude_structural_zero=True)
     independent = read_csv(root / "E39-MOD-01/independent_classical/eigenvalue_comparison.csv")
     independent_values = [complex(number(r["numpy_real_1_s"]), number(r["numpy_imag_1_s"])) for r in independent]
     independent_pairs = compare_spectra(independent_values, eigenvalues, exclude_structural_zero=True)
     for row in independent_pairs:
         row["independent_index"] = int(independent[row["reference_index"]-1]["index"])
-    a_independent = np.loadtxt(root / "E39-MOD-01/independent_classical/A_independent_PF_state_order.csv", delimiter=",")
+    a_independent = np.loadtxt(root / "E39-MOD-01/independent_classical/A_independent_REF_state_order.csv", delimiter=",")
     ideal = build_classical_model(model, lf, types, config, mechanical_convention="ideal_power")
-    ideal_pairs = compare_spectra(pf, np.linalg.eigvals(ideal.a))
+    ideal_pairs = compare_spectra(ref_entry, np.linalg.eigvals(ideal.a))
     residuals = [float(np.linalg.norm(classical.a @ vectors[:, i] - eigenvalues[i]*vectors[:, i]) /
                        (np.linalg.norm(classical.a)*np.linalg.norm(vectors[:, i]))) for i in range(20)]
-    summary1 = {"status": "comparado contra PF", "pass": all(r["pass"] for r in pairs if not r["excluded"]),
+    summary1 = {"status": "comparado contra REF", "pass": all(r["pass"] for r in pairs if not r["excluded"]),
                 "states": 20, "compared_modes": 19, "excluded_structural_modes": 1,
                 "real_tolerance_per_s": REAL_TOL_PER_S, "imag_relative_tolerance": IMAG_REL_TOL,
                 "max_real_abs_error_per_s": max(r["real_abs_error_per_s"] for r in pairs),
@@ -325,7 +325,7 @@ def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None):
     write_csv(mod2 / "native_controller_parameters.csv", control_audit)
     inputs = [model_path] + [root / f for f in ("modelo/types.json", "modelo/generators.json", "modelo/controllers.json",
         "E39-MOD-01/configuration_final.json", "E39-MOD-01/EVals.csv", "E39-MOD-01/independent_classical/eigenvalue_comparison.csv",
-        "E39-MOD-01/independent_classical/A_independent_PF_state_order.csv", "E39-MOD-02/EVals.csv",
+        "E39-MOD-01/independent_classical/A_independent_REF_state_order.csv", "E39-MOD-02/EVals.csv",
         "E39-MOD-02/states.csv", "E39-MOD-02/Amat.csv", "E39-MOD-02/Amat.mtl", "E39-MOD-02/modes_0_2_to_2_5_Hz.csv")]
     write_csv(mod2 / "input_provenance.csv", [{"path": str(p), "sha256": hashlib.sha256(p.read_bytes()).hexdigest()} for p in inputs])
     return {"E39-MOD-01": summary1, "E39-MOD-02": summary2}
@@ -333,10 +333,10 @@ def run_comparisons(pf_dir=DEFAULT_PF_DIR, output_dir=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
-    parser.add_argument("--output-dir", type=Path, default=output_root() / "comparison_results/ieee39_pf")
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
+    parser.add_argument("--output-dir", type=Path, default=output_root() / "comparison_results/ieee39_ref")
     args = parser.parse_args()
-    print(json.dumps(run_comparisons(args.pf_dir, args.output_dir), ensure_ascii=False, indent=2))
+    print(json.dumps(run_comparisons(args.ref_dir, args.output_dir), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

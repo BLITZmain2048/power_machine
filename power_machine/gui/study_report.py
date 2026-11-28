@@ -148,7 +148,7 @@ def _result_meta(item: dict[str, Any], index: int) -> dict[str, str]:
     return {"module": str(item.get("module", item.get("kind", "resultado"))),
             "run_id": str(item.get("run_id", "run-%d" % (index + 1))), "status": status,
             "freshness": str(item.get("freshness", item.get("vigencia", tr('integration.current')))),
-            "validation_label": str(item.get("validation_label", tr('integration.no_pf_validation_08f858')))}
+            "validation_label": str(item.get("validation_label", tr('integration.no_ref_validation_08f858')))}
 
 
 def _result_heading(meta: dict[str, str]) -> str:
@@ -173,8 +173,8 @@ def _option_label(key: str, value: Any) -> tuple[str, str]:
 
 
 def _short_warning(value: Any, model=None) -> str:
-    """Reduce rutas PF a elemento y subestacion antes de componer una tabla."""
-    text = re.sub(r"pf_[a-f0-9]+", lambda match: _visible_name(match.group(), model), str(value)).replace("\\", " / ")
+    """Reduce rutas REF a elemento y subestacion antes de componer una tabla."""
+    text = re.sub(r"ref_[a-f0-9]+", lambda match: _visible_name(match.group(), model), str(value)).replace("\\", " / ")
     parts = [part.strip() for part in text.split(" / ") if part.strip()]
     net_index = next((index for index, part in enumerate(parts)
                       if part.endswith(".ElmNet")), None)
@@ -263,7 +263,7 @@ def _generic_rows(result: dict[str, Any], meta: dict[str, str]) -> list[dict[str
     if not isinstance(rows, list) or not rows:
         rows = [{key: value for key, value in result.items() if not isinstance(value, (dict, list))}]
     common = {"run_id": meta["run_id"], "estado": meta["status"], "vigencia": meta["freshness"],
-              "rotulo_pf": meta["validation_label"]}
+              "rotulo_ref": meta["validation_label"]}
     return [{**common, **dict(row)} for row in rows if isinstance(row, dict)]
 
 
@@ -467,7 +467,7 @@ def _visible_name(item_id: Any, model: dict | None) -> str:
 def _restriction_rows(item: dict[str, Any], snapshot: dict[str, Any], module: str) -> list[dict[str, str]]:
     capability = ((snapshot.get("capabilities") or {}).get("calculations") or {}).get(module, {})
     values = list(item.get("restrictions") or []) + list(capability.get("restrictions") or [])
-    values.append(tr('integration.no_pf_validation_f85232'))
+    values.append(tr('integration.no_ref_validation_f85232'))
     return [{"restriccion": value} for value in dict.fromkeys(str(value) for value in values if value)]
 
 
@@ -617,13 +617,13 @@ def generate_study_report(output_dir: str | Path, snapshot: dict[str, Any],
             raise TypeError("result debe ser un diccionario")
         coverage_rows.append({"modulo": meta["module"], "corrida": meta["run_id"],
                               "cobertura": item.get("coverage", payload.get("coverage", "no informada"))})
-        legend = (tr('integration.run_s_freshness_s_pf_label_s')
+        legend = (tr('integration.run_s_freshness_s_ref_label_s')
                   % (meta["run_id"], meta["freshness"], meta["validation_label"]))
         network_model = item.get("model") or snapshot.get("network_model")
         if network_model is not None and not isinstance(network_model, dict):
             raise TypeError("model de resultado debe ser diccionario")
         coverage_rows[-1].update({"estado": meta["status"], "vigencia": meta["freshness"],
-                                  "rotulo_pf": meta["validation_label"],
+                                  "rotulo_ref": meta["validation_label"],
                               "cobertura": item.get("coverage", payload.get("coverage", "no informada"))})
 
         target = historical if meta["freshness"].lower() in (tr('integration.stale_a4e976'), "stale", "historical") else tex
@@ -726,8 +726,8 @@ def generate_study_report(output_dir: str | Path, snapshot: dict[str, Any],
                 r"\end{itemize}", tr('report.section.conclusions'),
                 *[latex_escape(value) for value in (snapshot.get("conclusions") or ["Las conclusiones quedan limitadas a la evidencia de este informe."])]))
     tex.extend((tr('report.section.limitations'),
-                *[latex_escape(value) for value in (snapshot.get("limitations") or [tr('integration.calculations_have_no_powerfactory_validation'), tr('integration.synthetic_data_are_used_only_for_numerical')])]))
-    tex.extend((tr('report.section.pf_pending'),
+                *[latex_escape(value) for value in (snapshot.get("limitations") or [tr('integration.calculations_have_no_reference_simulator_validation'), tr('integration.synthetic_data_are_used_only_for_numerical')])]))
+    tex.extend((tr('report.section.ref_pending'),
                 tr('integration.references_with_matching_cases_and_options_are'),
                 r"\appendix", tr('report.section.provenance'), provenance_table,
                 _table([("campo", tr('integration.field'), .40, "left"), ("valor", tr('integration.value'), .54, "left")], provenance_extra, "Procedencia de las corridas", "tab:procedencia")))

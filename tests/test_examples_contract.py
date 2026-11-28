@@ -18,7 +18,7 @@ def _run(name: str, tmp_path: Path) -> subprocess.CompletedProcess[str]:
 
 
 def test_static_examples_run(tmp_path):
-    for name in ("01_flujo_ieee39.py", "02_cortocircuito.py", "03_n1.py", "05_importar_powerfactory.py", "06_batch.py", "07_cct.py"):
+    for name in ("01_flujo_ieee39.py", "02_cortocircuito.py", "03_n1.py", "05_importar_csv.py", "06_batch.py", "07_cct.py"):
         result = _run(name, tmp_path)
         assert result.returncode == 0, result.stderr
 

@@ -383,7 +383,7 @@ class StudyActions:
                   created_at_utc=datetime.now(timezone.utc).isoformat(),result_path=str(path),result_file_sha256=file_sha256(path),
                   schema=result.get('schema','power_machine-loadflow-v1'),status=result.get('status','completed'),raw_status=result.get('status','completed'),
                   cancelled=bool(result.get('cancelled',False)),dependencies=dependencies,calculation_sha256=calculation_sha256(dependencies),
-                  validation=result.get('gui_validation_label','sin validar contra PF'),coverage=result.get('coverage',{}))
+                  validation=result.get('gui_validation_label','sin validar contra la referencia externa'),coverage=result.get('coverage',{}))
         doc.attach_result(link)
         if hasattr(self, 'bus'):
             self.bus.publish('results.updated', study=doc.active_case_id, result_id=link['run_id'])
@@ -404,7 +404,7 @@ class StudyActions:
             rows.append(dict(module=link['module'],run_id=link['run_id'],status=link['status'],freshness=freshness,
                              validation_label=link['validation'],coverage=link['coverage'],result=result))
         snapshot=dict(study_id=data['document_id'],title=self.study_identity(),model=data['base'],network_model=active_model,
-                      scenario=doc.snapshot()['scenario'],objective=tr('integration.active_study_report'),missing_data=[tr('integration.no_new_comparison_against_powerfactory')])
+                      scenario=doc.snapshot()['scenario'],objective=tr('integration.active_study_report'),missing_data=[tr('integration.no_new_comparison_against_reference_simulator')])
         return generate_study_report(output_dir,snapshot,rows,compile_pdf=False)
 
     def generate_report_dialog(self):

@@ -35,10 +35,10 @@ def source_inventory_rows(result):
     return rows
 
 
-def build_request(context, options, *, selected_bus_ids=None, include_contributions=False, power_machine_mode=None, thevenin=None, pf_export_folder=None, pf_reference_csv=None, supplemental=None, supplemental_sha256=None, supplemental_path=None):
+def build_request(context, options, *, selected_bus_ids=None, include_contributions=False, power_machine_mode=None, thevenin=None, ref_export_folder=None, ref_reference_csv=None, supplemental=None, supplemental_sha256=None, supplemental_path=None):
     """Construye la petición sin leer ni calcular datos eléctricos en Tk."""
     inputs = {"selected_bus_ids": list(selected_bus_ids or ()), "include_contributions": bool(include_contributions)}
-    for key, value in (("supplemental", supplemental), ("supplemental_sha256", supplemental_sha256), ("supplemental_path", supplemental_path), ("power_machine_mode", power_machine_mode), ("thevenin", thevenin), ("pf_export_folder", pf_export_folder), ("pf_reference_csv", pf_reference_csv)):
+    for key, value in (("supplemental", supplemental), ("supplemental_sha256", supplemental_sha256), ("supplemental_path", supplemental_path), ("power_machine_mode", power_machine_mode), ("thevenin", thevenin), ("ref_export_folder", ref_export_folder), ("ref_reference_csv", ref_reference_csv)):
         if value is not None:
             inputs[key] = copy.deepcopy(value)
     return {"schema": "power_machine-sc-sweep-request-v1", "module": "sc_sweep", "root": str(context.root),
@@ -71,7 +71,7 @@ class PanelController:
         request = build_request(self.context, options, selected_bus_ids=selected_bus_ids,
                                 include_contributions=include_contributions, **study_inputs)
         self.job = self.context.submit_job("sc_sweep", request, self.on_message)
-        self.context.log("info", tr('integration.short_circuit_sweep_no_pf_validation'))
+        self.context.log("info", tr('integration.short_circuit_sweep_no_ref_validation'))
         return request
 
     def on_message(self, message):
@@ -110,8 +110,8 @@ def create_panel(parent, context):
     vars_ = {"bus": tk.StringVar(form, value=""), "kv": tk.StringVar(form, value=tr('integration.all')),
              "kind": tk.StringVar(form, value="3ph"), "case": tk.StringVar(form, value="maximum"),
              "branches": tk.BooleanVar(form, value=False), "status": tk.StringVar(form,
-             value=tr('integration.no_pf_validation_f85232'))}
-    ttk.Label(form, text=tr('integration.iec_60909_sweep_no_pf_validation')).grid(row=0, column=0, columnspan=3, sticky="w")
+             value=tr('integration.no_ref_validation_f85232'))}
+    ttk.Label(form, text=tr('integration.iec_60909_sweep_no_ref_validation')).grid(row=0, column=0, columnspan=3, sticky="w")
     ttk.Label(form, text=tr('integration.optional_busbar')).grid(row=1, column=0, sticky="w")
     ttk.Combobox(form, textvariable=vars_["bus"], values=tuple(display), state="readonly").grid(row=1, column=1, sticky="ew")
     ttk.Label(form, text=tr('integration.level_kv')).grid(row=2, column=0, sticky="w")
@@ -173,7 +173,7 @@ def create_panel(parent, context):
         coverage_text.delete("1.0", "end")
         coverage_text.insert("end", json.dumps({"coverage": result.get("payload", {}).get("power_machine_coverage"), "by_bus": result.get("payload", {}).get("inventory", {}).get("buses"), "comparison": result.get("provenance", {}).get("comparison")}, ensure_ascii=False, indent=2))
         coverage_text.configure(state="disabled")
-        vars_["status"].set(tr('integration.no_pf_validation', value0=human_status(result.get('status', 'sin resultado'))))
+        vars_["status"].set(tr('integration.no_ref_validation', value0=human_status(result.get('status', 'sin resultado'))))
         if axis is not None:
             axis.clear()
             usable = [row for row in rows if row.get("ik_initial_sym_ka") is not None]
@@ -199,7 +199,7 @@ def create_panel(parent, context):
         return inputs
     def requested_options():
         return {"method": "iec60909", "case": vars_["case"].get(), "fault_kind": vars_["kind"].get(),
-                "frequency_hz": float(snapshot["model"].get("meta", {}).get("f_nom_hz", 50.0)), "profile": "iec_pf2016_c1_v1" if snapshot["model"].get("meta", {}).get("benchmark") == "ieee39_pf" else "iec_radial_v1"}
+                "frequency_hz": float(snapshot["model"].get("meta", {}).get("f_nom_hz", 50.0)), "profile": "iec_ref2016_c1_v1" if snapshot["model"].get("meta", {}).get("benchmark") == "ieee39_ref" else "iec_radial_v1"}
     def submit():
         try:
             controller.submit(requested_options(), **requested_inputs())

@@ -1,7 +1,7 @@
-"""Regression coverage for caller-selected PF short-circuit output roots."""
+"""Regression coverage for caller-selected REF short-circuit output roots."""
 from pathlib import Path
 import pytest
-from power_machine.pfcompare import cc
+from power_machine.refcompare import cc
 
 
 def test_writer_accepts_explicit_root_and_rejects_parent(tmp_path, monkeypatch):
@@ -14,7 +14,7 @@ def test_writer_accepts_explicit_root_and_rejects_parent(tmp_path, monkeypatch):
     assert not (tmp_path / "escape.csv").exists()
 
 
-@pytest.mark.pfdata
+@pytest.mark.refdata
 def test_environment_is_default_and_caller_can_choose_root(tmp_path, monkeypatch):
     root = tmp_path / "configured"
     monkeypatch.setenv("POWER_MACHINE_OUTPUT_DIR", str(root))
@@ -31,7 +31,7 @@ def test_environment_is_default_and_caller_can_choose_root(tmp_path, monkeypatch
     assert len(result["buses"]) == 39
 
 
-@pytest.mark.pfdata
+@pytest.mark.refdata
 def test_run_accepts_caller_root_without_environment(tmp_path, monkeypatch):
     monkeypatch.delenv("POWER_MACHINE_OUTPUT_DIR", raising=False)
     root = tmp_path / "caller"

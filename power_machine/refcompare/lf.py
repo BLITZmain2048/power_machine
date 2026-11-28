@@ -1,4 +1,4 @@
-"Offline PF load-flow comparisons with explicit data and coverage."
+"Offline REF load-flow comparisons with explicit data and coverage."
 from __future__ import annotations
 
 import csv
@@ -59,81 +59,81 @@ def canonical_reference_model(model, reference):
             if not matches and group == "loads":
                 continue
             if len(matches) != 1:
-                raise ValueError("[ambiguous_reference_mapping] PF mapping is missing or ambiguous: " + row["id"])
+                raise ValueError("[ambiguous_reference_mapping] REF mapping is missing or ambiguous: " + row["id"])
             row["path"] = matches[0]["path"]
     return view
 
 
 def compare_loadflow(model, result, reference):
-    "Compare outgoing MW/Mvar, voltage pu and aligned angles by exact PF path. Preserve missing data and report unreferenced islands separately."
+    "Compare outgoing MW/Mvar, voltage pu and aligned angles by exact REF path. Preserve missing data and report unreferenced islands separately."
     if isinstance(reference, (str, Path)):
         reference = read_reference(reference)
     model = canonical_reference_model(model, reference)
     index = {row["id"]: row for g in ("buses", "branches", "loads", "gens") for row in model[g]}
     buses_by_path = {index[r["id"]]["path"]: r for r in result["buses"]}
-    pf_buses = {r["path"]: r for r in reference["buses"]}
-    bus_numbers = {r["id"]: int(pf_buses[r["path"]]["bus"]) if r["path"] in pf_buses
+    ref_buses = {r["path"]: r for r in reference["buses"]}
+    bus_numbers = {r["id"]: int(ref_buses[r["path"]]["bus"]) if r["path"] in ref_buses
                    else -(i + 1) for i, r in enumerate(model["buses"])}
     refs = [g for g in model["gens"] if g["ref"]]
     ref_bus = index[refs[0]["bus"]]["path"] if refs else None
-    pf_ref = pf_buses.get(ref_bus)
+    ref_ref = ref_buses.get(ref_bus)
     power_machine_ref = buses_by_path.get(ref_bus)
     offset = 0.0
-    if pf_ref and power_machine_ref and number(pf_ref["angle_deg"]) is not None and power_machine_ref["angle_deg"] is not None:
-        offset = number(pf_ref["angle_deg"]) - power_machine_ref["angle_deg"]
+    if ref_ref and power_machine_ref and number(ref_ref["angle_deg"]) is not None and power_machine_ref["angle_deg"] is not None:
+        offset = number(ref_ref["angle_deg"]) - power_machine_ref["angle_deg"]
     rows = []
 
-    def metric(group, item, field, pf_value, power_machine_value, tolerance, cause):
-        pf_value, power_machine_value = number(pf_value), number(power_machine_value)
-        delta = power_machine_value - pf_value if pf_value is not None and power_machine_value is not None else None
+    def metric(group, item, field, ref_value, power_machine_value, tolerance, cause):
+        ref_value, power_machine_value = number(ref_value), number(power_machine_value)
+        delta = power_machine_value - ref_value if ref_value is not None and power_machine_value is not None else None
         if delta is not None and field == "angle_deg":
             delta = (delta + 180) % 360 - 180
         rows.append({"group": group, "element": item, "field": field,
-                     "pf": pf_value, "power_machine": power_machine_value, "delta": delta,
+                     "ref": ref_value, "power_machine": power_machine_value, "delta": delta,
                      "abs_delta": abs(delta) if delta is not None else None,
                      "tolerance": tolerance, "pass": delta is not None and abs(delta) <= tolerance,
                      "probable_cause": cause})
 
     unresolved = {b for i in result["islands"] if i["status"] == "sin_referencia" for b in i["buses"]}
-    for path, pf in pf_buses.items():
+    for path, ref_entry in ref_buses.items():
         power_machine = buses_by_path[path]
         if power_machine["id"] in unresolved:
             continue
-        metric("buses", pf["bus"], "u_pu", pf["u_pu"], power_machine["u_pu"], TOLERANCES["u_pu"], "Numerical precision or network parameters")
-        metric("buses", pf["bus"], "angle_deg", pf["angle_deg"], power_machine["angle_deg"] + offset if power_machine["angle_deg"] is not None else None, TOLERANCES["angle_deg"], "Numerical precision, tap or phase shift")
+        metric("buses", ref_entry["bus"], "u_pu", ref_entry["u_pu"], power_machine["u_pu"], TOLERANCES["u_pu"], "Numerical precision or network parameters")
+        metric("buses", ref_entry["bus"], "angle_deg", ref_entry["angle_deg"], power_machine["angle_deg"] + offset if power_machine["angle_deg"] is not None else None, TOLERANCES["angle_deg"], "Numerical precision, tap or phase shift")
     branches_by_path = {index[r["id"]]["path"]: r for r in result["branches"]}
-    for pf in reference["branches"]:
-        if int(pf["outserv"]):
+    for ref_entry in reference["branches"]:
+        if int(ref_entry["outserv"]):
             continue
-        power_machine = branches_by_path.get(pf["path"])
+        power_machine = branches_by_path.get(ref_entry["path"])
         if power_machine and power_machine["bus_from"] in unresolved:
             continue
-        reverse = power_machine and bus_numbers[power_machine["bus_from"]] != int(pf["from_bus"])
+        reverse = power_machine and bus_numbers[power_machine["bus_from"]] != int(ref_entry["from_bus"])
         for end in ("from", "to"):
             power_machine_end = ("to" if end == "from" else "from") if reverse else end
             for kind, unit in (("P", "MW"), ("Q", "Mvar")):
                 field = f"{kind.lower()}_{end}_{unit.lower()}"
                 value = power_machine.get(f"{kind.lower()}_{power_machine_end}_{unit.lower()}") if power_machine else None
-                metric("branches", pf["branch"], field, pf[f"{kind}_{end}_{unit}"], value,
+                metric("branches", ref_entry["branch"], field, ref_entry[f"{kind}_{end}_{unit}"], value,
                        TOLERANCES["p_mw" if kind == "P" else "q_mvar"],
-                       "PF constant precision, tap, B or terminal sign")
+                       "REF constant precision, tap, B or terminal sign")
     gens_by_path = {index[r["id"]]["path"]: r for r in result["gens"]}
-    for pf in reference["generators"]:
-        power_machine = gens_by_path.get(pf["path"])
+    for ref_entry in reference["generators"]:
+        power_machine = gens_by_path.get(ref_entry["path"])
         if power_machine and power_machine["bus"] in unresolved:
             continue
         for kind, unit in (("P", "MW"), ("Q", "Mvar")):
             field = f"{kind.lower()}_{unit.lower()}"
-            metric("reference" if int(pf["reference"]) else "generators", index[power_machine["id"]]["name"] if power_machine else pf["path"], field,
-                   pf[f"{kind}_{unit}"], power_machine[field] if power_machine else None, 0.05, "Network balance and input precision")
+            metric("reference" if int(ref_entry["reference"]) else "generators", index[power_machine["id"]]["name"] if power_machine else ref_entry["path"], field,
+                   ref_entry[f"{kind}_{unit}"], power_machine[field] if power_machine else None, 0.05, "Network balance and input precision")
     report = reference["report"]
     summary = report.get("summary") or {}
-    loss_pf = summary.get("loss_MW")
-    if loss_pf is None and reference["branches"] and not unresolved:
+    loss_ref = summary.get("loss_MW")
+    if loss_ref is None and reference["branches"] and not unresolved:
         losses = [number(r["loss_MW"]) for r in reference["branches"] if not int(r["outserv"])]
-        loss_pf = sum(losses) if all(v is not None for v in losses) else None
-    if loss_pf is not None:
-        metric("totals", "network", "loss_p_mw", loss_pf, result["totals"]["branch_loss_p_mw"], 0.01, "Resistance and numerical balance")
+        loss_ref = sum(losses) if all(v is not None for v in losses) else None
+    if loss_ref is not None:
+        metric("totals", "network", "loss_p_mw", loss_ref, result["totals"]["branch_loss_p_mw"], 0.01, "Resistance and numerical balance")
     components = sorted(sorted(bus_numbers[b] for b in i["buses"]) for i in result["islands"]) if bus_numbers else []
     without_ref = sorted(sorted(bus_numbers[b] for b in i["buses"]) for i in result["islands"] if i["status"] == "sin_referencia") if bus_numbers else []
     demand_mw = sum(r["p_mw"] for r in model["loads"] if r["bus"] in unresolved)
@@ -163,7 +163,7 @@ def write_comparison(comparison, output_dir):
     target.mkdir(parents=True, exist_ok=True)
     for name, rows in (("differences", comparison["rows"]), ("worst10", comparison["worst"])):
         with (target / (name + ".csv")).open("w", encoding="utf-8-sig", newline="") as handle:
-            fields = list(rows[0]) if rows else ["group", "element", "field", "pf", "power_machine", "delta", "pass"]
+            fields = list(rows[0]) if rows else ["group", "element", "field", "ref", "power_machine", "delta", "pass"]
             writer = csv.DictWriter(handle, fieldnames=fields)
             writer.writeheader()
             writer.writerows(rows)
@@ -175,13 +175,13 @@ def write_comparison(comparison, output_dir):
         writer.writerows(summary_rows)
 
 
-def run_comparisons(pf_dir, output_dir=None):
+def run_comparisons(ref_dir, output_dir=None):
     "Compare LF and included historical contingency campaigns. Return explicit not_included records for absent campaigns. Historical contingency comparisons use island_reference=none."
-    from ..benchmarks.ieee39_pf import build_model, LDF_OPTIONS
+    from ..benchmarks.ieee39_ref import build_model, LDF_OPTIONS
     from ..loadflow import run_loadflow
     from ..contingency import run_contingencies, ContingencyOptions
-    model = build_model(pf_dir)
-    source, target = Path(pf_dir), Path(output_dir).resolve() if output_dir is not None else writable_root() / "comparacion_pf" / "flujo"
+    model = build_model(ref_dir)
+    source, target = Path(ref_dir), Path(output_dir).resolve() if output_dir is not None else writable_root() / "comparacion_ref" / "flujo"
     comparisons = {}
     base = compare_loadflow(model, run_loadflow(model, options=LDF_OPTIONS), read_reference(source / "E39-LF-01"))
     comparisons["E39-LF-01"] = base
@@ -205,17 +205,17 @@ def run_comparisons(pf_dir, output_dir=None):
         batch = None
         if order == 1:
             batch = run_contingencies(model, {}, ContingencyOptions(orders=(1,), q_limits=False, island_reference="none"),
-                selected_ids=[r["id"] for r in model["branches"]], filter_reason="46 ramas del protocolo PF",
+                selected_ids=[r["id"] for r in model["branches"]], filter_reason="46 ramas del protocolo REF",
                 ldf_options=LDF_OPTIONS)
         for case in cases:
             reference = read_reference(case)
             paths = {o["path"] for o in reference["report"]["objects"]}
             ids = {r["id"] for r in model["branches"] if r["path"] in paths}
             if len(ids) != order:
-                raise ValueError("[unmapped_reference_outage] PF outages could not be mapped: " + case.name)
+                raise ValueError("[unmapped_reference_outage] REF outages could not be mapped: " + case.name)
             if order == 2:
                 batch = run_contingencies(model, {}, ContingencyOptions(orders=(2,), q_limits=False, island_reference="none"),
-                    selected_ids=ids, filter_reason="Par N-2 del protocolo PF", ldf_options=LDF_OPTIONS)
+                    selected_ids=ids, filter_reason="Par N-2 del protocolo REF", ldf_options=LDF_OPTIONS)
             raw = next(c for c in batch["payload"]["cases"] if {o["object_id"] for o in c["outages"]} == ids)
             if raw["loadflow"] is None:
                 raise RuntimeError(str(batch["diagnostics"]))
@@ -241,15 +241,15 @@ def run_comparisons(pf_dir, output_dir=None):
 
 if __name__ == "__main__":
     import argparse
-    from ..benchmarks.ieee39_pf import DEFAULT_PF_DIR
+    from ..benchmarks.ieee39_ref import DEFAULT_REF_DIR
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
     parser.add_argument("--output-dir", type=Path, default=None)
     args = parser.parse_args()
-    for case, comparison in run_comparisons(args.pf_dir, args.output_dir).items():
+    for case, comparison in run_comparisons(args.ref_dir, args.output_dir).items():
         print(case, comparison["pass"], comparison["maxima"], comparison["demand_without_reference_mw"])
 
 
-def compare_results(model, result, pf_results_dir):
-    "Compare a load-flow result with the supplied PF table folder."
-    return compare_loadflow(model, result, read_reference(pf_results_dir))
+def compare_results(model, result, ref_results_dir):
+    "Compare a load-flow result with the supplied REF table folder."
+    return compare_loadflow(model, result, read_reference(ref_results_dir))

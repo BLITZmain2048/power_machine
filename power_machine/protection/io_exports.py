@@ -28,7 +28,7 @@ def identity(project_path, full_path, location=None, source_id=None):
     relative = full_path[len(prefix):] if full_path.startswith(prefix) and location != "library_template" and "\\Library.IntPrjfolder\\" not in full_path else None
     return {"object_id": source_id or "prot_"+hashlib.sha256((project_path+"\n"+full_path).encode("utf-8")).hexdigest(),
         "relative_path": relative, "source_full_path": full_path, "source_object_id": source_id,
-        "identity_origin": "pf_export_id" if source_id else "pf_path_derived"}
+        "identity_origin": "ref_export_id" if source_id else "ref_path_derived"}
 
 
 def _csv(path):
@@ -59,7 +59,7 @@ def read_protection_exports(directory) -> dict:
             inventory_files.append({"path": str(path), "sha256": file_sha256(path)})
     header, object_rows = _csv(directory/"objects.csv")
     if "path" in header and "class" in header:
-        dialect = "pf_protection_path_v1"
+        dialect = "ref_protection_path_v1"
         path_key, id_key = "path", "object_id"
     elif {"source_full_path", "object_id", "class"} <= set(header):
         dialect = "explicit_identity_v1"

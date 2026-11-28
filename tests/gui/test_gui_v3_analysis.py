@@ -142,7 +142,7 @@ def test_plot_cursor_updates_artists_without_full_redraw(shell,monkeypatch,tmp_p
     app=shell
     data,model=samples()
     key=data.keys[1]
-    spec=dict(name_key='v3.analysis.fault_response',axes=1,curves=[dict(key=key,label='B1')],show_pf=False)
+    spec=dict(name_key='v3.analysis.fault_response',axes=1,curves=[dict(key=key,label='B1')],show_ref=False)
     page=EngineeringPlotPage(app.book,spec,data)
     app.book.add(page,text='RMS',area='curves')
     app.book.select(page)

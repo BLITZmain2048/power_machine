@@ -76,7 +76,7 @@ class PanelController:
                                 selected_element_id=selected_element_id,
                                 profile=profile)
         self.job = self.context.submit_job("dyn_metrics", request, self.on_message)
-        self.context.log("info", tr('integration.rms_metrics_no_pf_validation'))
+        self.context.log("info", tr('integration.rms_metrics_no_ref_validation'))
         return request
 
     def on_message(self, message):

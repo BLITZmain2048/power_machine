@@ -123,7 +123,7 @@ class BlockInstance:
 
 @dataclass(frozen=True)
 class Connection:
-    'Source and destination of a BlkSig connection. Indices represent inodfrom/inodto. Endpoints preserve PF paths or IDs and sign preserves wire orientation.'
+    'Source and destination of a BlkSig connection. Indices represent inodfrom/inodto. Endpoints preserve REF paths or IDs and sign preserves wire orientation.'
     pnodfrom: str
     pnodto: str
     inodfrom: int = 0

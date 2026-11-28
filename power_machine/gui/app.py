@@ -43,8 +43,8 @@ def _domain_reference(root, name):
 
 
 def validity_messages(study, root=None, index=None):
-    """Diferencias de configuración frente a PF, sin confundir avisos de uso."""
-    return [tr('shell.no_powerfactory_comparison_for_the_current_configuration')]
+    """Diferencias de configuración frente a REF, sin confundir avisos de uso."""
+    return [tr('shell.no_reference_simulator_comparison_for_the_current_configuration')]
 
 
 def frequency_messages(study):
@@ -305,7 +305,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         file = self.menus['file']
         file.add_command(label=tr('shell.open_ieee_39_network'), command=self.open_ieee39)
         file.add_command(label=tr('shell.open_model_json'), command=self.choose_benchmark)
-        file.add_command(label=tr('shell.import_powerfactory_csv_folder'), command=self.import_pf)
+        file.add_command(label=tr('shell.import_csv_export_folder'), command=self.import_csv)
         file.add_command(label=tr('shell.save_network'), command=self.save_network)
         file.add_command(label=tr('shell.new_study_document'), command=self.new_case, accelerator='Ctrl+N')
         file.add_command(label=tr('shell.open_study_document'), command=self.open_case, accelerator='Ctrl+O')
@@ -322,7 +322,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         self.menus['calculation'].add_command(label=tr('shell.initial_conditions'), command=self.initial_conditions, accelerator='F11')
         self.menus['calculation'].add_command(label=tr('shell.calculation_options'), command=self.options_dialog)
         self.install_calculation_menu()
-        self.menus['rms'].add_command(label=tr('shell.compare_native_ieee_39_rms_with_powerfactory'),command=self.open_native_comparison)
+        self.menus['rms'].add_command(label=tr('shell.compare_native_ieee_39_rms_with_reference_simulator'),command=self.open_native_comparison)
         self.menus['rms'].add_command(label=tr('shell.start_simulation'), command=self.simulation_dialog, accelerator='F12')
         self.menus['rms'].add_command(label=tr('shell.ieee_39_example_three_phase_fault_with'), command=self.rms_fault_demo)
         self.menus['rms'].add_command(label=tr('shell.stop'), command=self.stop, accelerator='Esc')
@@ -403,7 +403,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             from .app_data_views import compact_data_manager
             compact_data_manager(self,self.data_manager)
             self.install_document(Document(benchmark_study(self.api, self.model, self.model_path, self.root_path)))
-            self.output.log('INFO', tr('shell.model_loaded_elements_with_pf_id', value0=len(self.index)))
+            self.output.log('INFO', tr('shell.model_loaded_elements_with_ref_id', value0=len(self.index)))
         except Exception:
             self.output.log('ERROR', traceback.format_exc())
             self.state_text.set(tr('shell.study_engine_unavailable'))
@@ -511,7 +511,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             if invalidate:
                 diagram.set_loadflow_results(None)
         notices = validity_messages(self.document.study, self.root_path, self.index)
-        self.validity_text.set(tr('shell.no_pf_comparison_for_the_current_configuration'))
+        self.validity_text.set(tr('shell.no_ref_comparison_for_the_current_configuration'))
         self.validity_label.configure(style='Warning.TLabel' if notices else 'Status.TLabel')
         self.refresh_data_windows()
         self.refresh_calculation_capabilities()
@@ -545,7 +545,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             return
         try:
             self.install_document(Document(self.api.reference_study(self.root_path, case)))
-            self.output.log('INFO', tr('shell.pf_template_loaded') + case)
+            self.output.log('INFO', tr('shell.ref_template_loaded') + case)
         except Exception as exc:
             self.show_error(exc)
 
@@ -887,7 +887,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             spec = dict(name=self.document.study.name+' · RMS', axes=max((c['axis'] for c in selected), default=0) + 1, curves=selected)
             page = PlotPage(self.book, spec, own, other,
                             source_label=Path(path).parent.name,
-                            reference_label=Path(comparison).parent.name if comparison else 'PF')
+                            reference_label=Path(comparison).parent.name if comparison else 'REF')
             self.configure_plot_page(page)
             self.book.add(page, text='RMS · ' + spec['name'])
             self.book.select(page)
@@ -958,7 +958,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
                 dynamic = self.model_path.parent / 'dynamic_data.json'
                 warning = (tr('shell.balanced_ac_load_flow_available_classical_dynamics') +
                            (tr('shell.dynamic_data_json_available') if dynamic.is_file() else tr('shell.no_dynamic_data_json_file')) +
-                           tr('shell.pf_rms_model_and_zero_sequence_independent'))
+                           tr('shell.ref_rms_model_and_zero_sequence_independent'))
             self.output.log('AVISO', warning)
         for view in self.diagrams.values():
             view.set_loadflow_results(result)
@@ -1084,7 +1084,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         def included():
             from power_machine.resources import readonly_path
             window.destroy()
-            self.open_ieee39(readonly_path('cases', 'ieee39_pf', 'model.json'))
+            self.open_ieee39(readonly_path('cases', 'ieee39_ref', 'model.json'))
         ttk.Button(frame, text=tr('int2.open_native_case'), command=included).pack(fill='x', pady=4)
         ttk.Button(frame, text=tr('study.close'), command=window.destroy).pack(fill='x', pady=4)
         return window
@@ -1187,7 +1187,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
         self.refresh_plot_templates()
 
     def toggle_reference(self, page, visible):
-        self.document.edit(lambda study: study.plots[page].update(show_pf=visible))
+        self.document.edit(lambda study: study.plots[page].update(show_ref=visible))
         self.update_title()
 
     def display_study_name(self):
@@ -1216,7 +1216,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
             count = simpledialog.askinteger(tr('shell.new_plot_page'), tr('shell.number_of_subplots_from_1_to_6'), initialvalue=2, minvalue=1, maxvalue=6, parent=self)
         if count is None:
             return
-        spec = dict(name=tr('shell.plots', value0=len(self.document.study.plots) + 1), axes=count, curves=[], show_pf=True)
+        spec = dict(name=tr('shell.plots', value0=len(self.document.study.plots) + 1), axes=count, curves=[], show_ref=True)
         self.document.edit(lambda study: study.plots.append(spec))
         self.rebuild_plots()
         self.book.select(self.plot_pages[-1])
@@ -1337,7 +1337,7 @@ class Application(BenchmarkActions, PanelCoordination, ViewActions, StudyActions
     def show_validity(self):
         if self.document:
             messages = validity_messages(self.document.study, self.root_path, self.index)
-            text = getattr(self,'pf_evidence_text','') or ('\n\n'.join(messages) if messages else tr('shell.within_the_reference_domain_scenario_and_events'))
+            text = getattr(self,'ref_evidence_text','') or ('\n\n'.join(messages) if messages else tr('shell.within_the_reference_domain_scenario_and_events'))
             for notice in frequency_messages(self.document.study):
                 text += tr('shell.frequency_use_notice') + notice
             messagebox.showinfo(tr('shell.validity_domain'), text, parent=self)

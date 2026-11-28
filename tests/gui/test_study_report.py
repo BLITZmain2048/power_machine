@@ -58,7 +58,7 @@ def test_generates_traceable_tex_csv_and_manifest(tmp_path):
         "scenario": {"alternative": "A_1", "stage": "2026"},
         "assumptions": ["Carga constante"],
         "missing_data": ["TC no informado"],
-        "diagnostics": ["Sin comparación PF y operación según condición válida"],
+        "diagnostics": ["Sin comparación REF y operación según condición válida"],
         "conclusions": ["Resultado limitado a {islas}~A^B, conclusión técnica"],
         "network_model": {"buses": [{"id": "B_1", "name": "Barra ágil", "un_kv": 220.0,
                                       "path": "Red\\SE Prueba.ElmNet\\Barra ágil.ElmTerm"}],
@@ -90,7 +90,7 @@ def test_generates_traceable_tex_csv_and_manifest(tmp_path):
     assert "10\\%" in text
     assert r"\{islas\}\textasciitilde{}A\textasciicircum{}B" in text
     assert r"\textbackslash{}" in text
-    assert "sin validar contra PF" in text
+    assert "sin validar contra la referencia externa" in text
     assert "partial" not in text
     assert "0.13\\textwidth" not in text
     assert "1.0123" in text

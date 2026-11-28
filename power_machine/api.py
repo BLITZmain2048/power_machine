@@ -372,12 +372,12 @@ def list_cases() -> list[str]:
 
 
 def load_case(name_or_path: str | Path) -> Network:
-    """Load an included case, model JSON, or a PowerFactory CSV folder."""
+    """Load an included case, model JSON, or a CSV element-table export folder."""
     name = str(name_or_path)
     if name.lower() in _CASES: path, label = _CASES[name.lower()], name.lower()
     else:
         path = Path(name_or_path).expanduser()
-        if path.is_dir() and not (path / "model.json").is_file(): return import_powerfactory(path)
+        if path.is_dir() and not (path / "model.json").is_file(): return import_csv_export(path)
         path = path / "model.json" if path.is_dir() else path; label = path.stem
     if not path.is_file(): raise InvalidModelError(f"Case was not found: {name_or_path}", field="name_or_path", action="Use list_cases() or provide model.json")
     from .study import load_network
@@ -389,12 +389,12 @@ def load_case(name_or_path: str | Path) -> Network:
     return Network(model, name=label, source_dir=path.parent)
 
 
-def import_powerfactory(csv_dir: str | Path, overrides: str | Path | None = None) -> Network:
-    """Build a network from a user-provided PowerFactory CSV export."""
+def import_csv_export(csv_dir: str | Path, overrides: str | Path | None = None) -> Network:
+    """Build a network from a user-provided CSV element-table export."""
     from .builder import build_model
     source = Path(csv_dir).expanduser().resolve()
     try: model = build_model(source, enrich_from=overrides)
-    except (OSError, ValueError, KeyError) as exc: raise InvalidModelError(str(exc), field="csv_dir", action="Provide a complete PowerFactory CSV export") from exc
+    except (OSError, ValueError, KeyError) as exc: raise InvalidModelError(str(exc), field="csv_dir", action="Provide a complete CSV element-table export") from exc
     dynamic = source / "dynamic"
     if (dynamic / "manifest.json").is_file(): model["_dynamic_dir"] = str(dynamic)
     return Network(model, name=source.name, source_dir=source)
@@ -651,21 +651,21 @@ def quasi_dynamic(net: Network, series: Any, *, options: QuasiDynamicOptions | N
                               StudyTable("records", tuple(records), {"t_s": "s", "elapsed_s": "s"}), summary)
 
 
-def compare_powerfactory(net: Network, pf_results_dir: str | Path | None = None, study: str = "loadflow") -> GenericStudyResult:
-    """Compare a fresh calculation against a PowerFactory export."""
-    from .resources import pf_data_root
-    _require_network(net); folder = pf_data_root(pf_results_dir); study = study.lower()
+def compare_reference(net: Network, ref_results_dir: str | Path | None = None, study: str = "loadflow") -> GenericStudyResult:
+    """Compare a fresh calculation against a reference simulator export."""
+    from .resources import ref_data_root
+    _require_network(net); folder = ref_data_root(ref_results_dir); study = study.lower()
     if study == "loadflow":
-        from .pfcompare.lf import compare_results; result = loadflow(net); comparison = compare_results(net.to_model(), result._raw, _study_folder(folder, "E39-LF-01", "buses.csv"))
+        from .refcompare.lf import compare_results; result = loadflow(net); comparison = compare_results(net.to_model(), result._raw, _study_folder(folder, "E39-LF-01", "buses.csv"))
     elif study == "network":
-        from .pfcompare.net import compare_network; result = loadflow(net); comparison, audits = compare_network(net.to_model(), result._raw, _study_folder(folder, "E39-LF-01", "buses.csv")); comparison = {"comparison": comparison, "audits": audits}
+        from .refcompare.net import compare_network; result = loadflow(net); comparison, audits = compare_network(net.to_model(), result._raw, _study_folder(folder, "E39-LF-01", "buses.csv")); comparison = {"comparison": comparison, "audits": audits}
     elif study == "shortcircuit":
-        from .pfcompare.cc import build_supplement, calculate_faults, compare_shortcircuit
+        from .refcompare.cc import build_supplement, calculate_faults, compare_shortcircuit
         ref = _study_folder(folder, "E39-CC-01", "fault_summary.csv"); root = next((p for p in (folder, *folder.parents) if (p / "modelo").is_dir()), None)
-        if root is None: raise MissingStudyDataError("PowerFactory SC model data is missing", field="pf_results_dir", action="Provide the complete IEC export")
+        if root is None: raise MissingStudyDataError("The external short-circuit reference model data is missing", field="ref_results_dir", action="Provide the complete IEC export")
         model_path = root / "model.json"
         if not model_path.is_file():
-            raise MissingStudyDataError("PowerFactory SC model is missing", field="pf_results_dir", action="Provide model.json with the complete IEC export")
+            raise MissingStudyDataError("The external short-circuit reference model is missing", field="ref_results_dir", action="Provide model.json with the complete IEC export")
         reference_model = json.loads(model_path.read_text(encoding="utf-8-sig"))
         comparison = compare_shortcircuit(reference_model, calculate_faults(reference_model, build_supplement(reference_model, root)), ref)
     else: raise UnsupportedStudyError("Unknown comparison study", field="study", action="Use loadflow, shortcircuit, or network")
@@ -675,9 +675,9 @@ def compare_powerfactory(net: Network, pf_results_dir: str | Path | None = None,
 def _study_folder(folder: Path, name: str, marker: str) -> Path:
     if (folder / marker).is_file(): return folder
     if (folder / name / marker).is_file(): return folder / name
-    raise MissingStudyDataError(f"Reference file is missing: {marker}", field="pf_results_dir", action="Provide a complete PowerFactory export")
+    raise MissingStudyDataError(f"Reference file is missing: {marker}", field="ref_results_dir", action="Provide a complete reference simulator export")
 def _require_network(net: Network) -> None:
     if not isinstance(net, Network): raise InvalidModelError("net must be a Network", field="net", action="Load a case first")
 
 
-__all__ = ["PowerMachineError", "MissingStudyDataError", "UnsupportedStudyError", "InvalidModelError", "UnknownElementError", "StudyTable", "StudyResult", "LoadflowResult", "ContingencyResult", "ShortCircuitResult", "RmsResult", "CctResult", "QuasiDynamicResult", "GenericStudyResult", "LoadflowOptions", "ContingencyOptions", "ShortCircuitOptions", "RmsOptions", "CctOptions", "QuasiDynamicOptions", "Network", "default_output_dir", "list_cases", "load_case", "import_powerfactory", "loadflow", "shortcircuit", "contingency", "pv_curve", "qv_curve", "sensitivities", "rms", "cct", "quasi_dynamic", "compare_powerfactory"]
+__all__ = ["PowerMachineError", "MissingStudyDataError", "UnsupportedStudyError", "InvalidModelError", "UnknownElementError", "StudyTable", "StudyResult", "LoadflowResult", "ContingencyResult", "ShortCircuitResult", "RmsResult", "CctResult", "QuasiDynamicResult", "GenericStudyResult", "LoadflowOptions", "ContingencyOptions", "ShortCircuitOptions", "RmsOptions", "CctOptions", "QuasiDynamicOptions", "Network", "default_output_dir", "list_cases", "load_case", "import_csv_export", "loadflow", "shortcircuit", "contingency", "pv_curve", "qv_curve", "sensitivities", "rms", "cct", "quasi_dynamic", "compare_reference"]

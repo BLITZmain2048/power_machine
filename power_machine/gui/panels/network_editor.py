@@ -148,7 +148,7 @@ class NetPanel(ttk.Frame):
                                                     tr('integration.absent') if new is None else new))
             self.diff_ids[row] = iid
         snapshot = self.controller.session.snapshot()
-        self.status.set(tr('integration.revision_drafts_no_pf_validation', value0=snapshot['revision'], value1=len(self.controller.drafts), value2=self.controller.flow_status)
+        self.status.set(tr('integration.revision_drafts_no_ref_validation', value0=snapshot['revision'], value1=len(self.controller.drafts), value2=self.controller.flow_status)
                         + (tr('integration.stale')+self.stale_reason if self.stale_reason else ''))
 
     def navigate(self, group):

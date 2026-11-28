@@ -68,7 +68,7 @@ class _Governor:
         else:
             values = list(parameters)
             if len(values) != len(names):
-                raise _coded_error(ValueError, 'invalid_governors_ieeeg_data', f'Require {len(names)} values in PF order, including limits')
+                raise _coded_error(ValueError, 'invalid_governors_ieeeg_data', f'Require {len(names)} values in REF order, including limits')
         p = {name: _number(value, name) for name, value in zip(names, values)}
         if not p["Uc"] < 0 < p["Uo"] or p["Pmin"] >= p["Pmax"]:
             raise _coded_error(ValueError, 'invalid_governors_ieeeg_data', 'Invalid limits. Require Uc<0<Uo and Pmin<Pmax')

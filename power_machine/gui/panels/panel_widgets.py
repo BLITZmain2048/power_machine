@@ -4,6 +4,7 @@ import math
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, filedialog
+from power_machine.resources import dynamic_catalog_root
 
 from ..i18n import tr, translate_text
 from ..theme import theme
@@ -40,7 +41,7 @@ def panel_status_text(value):
            "obsoleto": "stale", "vigente": "current", "completo": "complete",
            "parcial": "partial", "no soportado": "unsupported",
            "error de entrada": "input_error", "error": "error",
-           "sin validar contra PF": "not_validated_pf"}.get(str(value))
+           "sin validar contra la referencia externa": "not_validated_ref"}.get(str(value))
     return tr("panel.common." + key) if key else human_status(value)
 
 
@@ -139,7 +140,7 @@ class StudyPanel(ttk.Frame):
         super().__init__(parent, padding=6)
         self.freshness = "sin resultado"
         self.coverage = "sin cálculo"
-        self.validation_label = "sin validar contra PF"
+        self.validation_label = "sin validar contra la referencia externa"
         self.state_text = tk.StringVar(self)
         ttk.Label(self, textvariable=self.state_text).pack(fill="x")
         body = ttk.Frame(self)
@@ -874,7 +875,7 @@ class CapabilityGate:
                     profile = supplied.get('input', {}).get('profile', 'full_rms')
                     if profile == 'full_rms':
                         required = ('manifest.json', 'objects.csv', 'attributes.csv', 'references.csv')
-                        missing = [name for name in required if not (Path(self.context.root) / 'pf_dynamic' / name).is_file()]
+                        missing = [name for name in required if not (dynamic_catalog_root(self.context.root) / name).is_file()]
                         if missing:
                             blockers.append(dict(code='modal_inputs', message=tr('int2.modal_missing', files=', '.join(missing))))
                     elif profile == 'machine_admittance' and not supplied.get('input', {}).get('object_id'):
@@ -883,11 +884,11 @@ class CapabilityGate:
                         from power_machine.resources import readonly_path
                         from power_machine.modal.results import fingerprint
                         import json
-                        from power_machine.resources import pf_data_available
-                        if not pf_data_available():
-                            blockers.append(dict(code='pf_reference_data_not_included', message=tr('pf_reference_data_not_included')))
+                        from power_machine.resources import ref_data_available
+                        if not ref_data_available():
+                            blockers.append(dict(code='reference_data_not_included', message=tr('reference_data_not_included')))
                         else:
-                            reference = json.loads(readonly_path('cases', 'ieee39_pf', 'model.json').read_text(encoding='utf-8-sig'))
+                            reference = json.loads(readonly_path('cases', 'ieee39_ref', 'model.json').read_text(encoding='utf-8-sig'))
                             if fingerprint(snapshot['model']) != fingerprint(reference) or any(study.get('scenario', {}).values()):
                                 blockers.append(dict(code='modal_case', message=tr('int2.modal_reference_only')))
                 if self.module == "contingency":
@@ -967,8 +968,8 @@ def verified_qds_inputs(root, model, profile):
     from power_machine.qds_panel.adapter import fingerprint
     base = Path(root).resolve()
     builtin = profile.get("kind") == "builtin_ieee39"
-    from power_machine.resources import pf_data_root
-    model_path = (pf_data_root() / "model.json") if builtin else (base / profile.get("model_path", "power_machine/cases/ieee39/model.json")).resolve()
+    from power_machine.resources import ref_data_root
+    model_path = (ref_data_root() / "model.json") if builtin else (base / profile.get("model_path", "power_machine/cases/ieee39/model.json")).resolve()
     manifest = (base / ("power_machine/cases/ieee39/manifest.json" if builtin else profile.get("manifest_path", ""))).resolve()
     if (not builtin and not model_path.is_relative_to(base)) or not manifest.is_relative_to(base):
         raise ValueError(tr('integration.profile_must_remain_within_the_project'))

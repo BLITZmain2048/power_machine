@@ -8,6 +8,7 @@ import json
 import math
 from pathlib import Path
 import numpy as np
+from power_machine.resources import dynamic_catalog_root, reference_tables_root
 
 from .schema import OperatingPoint, StateRef, diagnostic, fail, real_vector
 
@@ -301,7 +302,7 @@ def prepare_rms(root, model, study, input_data):
         if native_path and not Path(native_path).resolve().is_relative_to(Path(root).resolve()):
             row = {"object_id": device.object_id, "relative_path": device.relative_path,
                    "path": str(native_path), "sha256": None,
-                   "pf_comparison": 'not validated against PF'}
+                   "ref_comparison": 'not validated against the external reference'}
             external_inputs.append(row)
             blockers.append({"code": "external_runtime_input", "object_id": device.object_id,
                 "relative_path": device.relative_path,
@@ -341,7 +342,8 @@ def prepare_machine(root, model, input_data):
         stored_bus = next(b for b in stored["buses"] if b["id"] == gen["bus"])
         if stored_gen != gen or stored_bus != bus:
             fail('invalid_input', 'reference_model_mismatch', 'Modified submodel requires its own operating point')
-        paths = [root/"pf_reference/ldf_buses.csv", root/"pf_reference/ldf_injections.csv"]
+        tables_root = reference_tables_root(root)
+        paths = [tables_root / "ldf_buses.csv", tables_root / "ldf_injections.csv"]
         tables = []
         for path in paths:
             with path.open(encoding="utf-8-sig", newline="") as handle:
@@ -356,11 +358,12 @@ def prepare_machine(root, model, input_data):
     selectors = input_data.get("dynamic_attributes")
     if selectors is None:
         from power_machine.dynamics.schema import read_dynamic_export
-        export = read_dynamic_export(root/"pf_dynamic")
+        catalog_root = dynamic_catalog_root(root)
+        export = read_dynamic_export(catalog_root)
         selectors = {r["attribute"]: json.loads(r["value_json"]) for r in export["attributes"]
                      if r["object_id"] == gen.get("type_id") and r["status"] == "PRESENT"
                      and r["attribute"] in {"model_inp", "iturbo", "isat", "isatSalient", "i_speedVar", "i_exactConv"}}
-        inputs += [file_input(root/"pf_dynamic"/name, root)
+        inputs += [file_input(catalog_root / name, root)
                    for name in ("manifest.json", "objects.csv", "attributes.csv", "references.csv")]
     machine = SynchronousMachine(gen, bus_un_kv=bus["un_kv"],
         s_base_mva=model["meta"]["s_base_mva"], f_nom_hz=model["meta"]["f_nom_hz"], dynamic_attributes=selectors)

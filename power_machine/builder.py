@@ -1,4 +1,4 @@
-"""Build the electrical inventory without changing original PF parameters."""
+"""Build the electrical inventory without changing original REF parameters."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 import math
 import warnings as python_warnings
 
-from .io_pf import Package, load_package
+from .io_csv import Package, load_package
 
 
 _PORTS = {
@@ -29,7 +29,7 @@ _PORTS = {
 
 
 def _source_relative(path: str) -> str:
-    """Remove only the absolute PF project prefix from the interface map."""
+    """Remove only the absolute REF project prefix from the interface map."""
     marker = "Network Model.IntPrjfolder"
     index = path.find(marker)
     return path[index:] if index >= 0 else path
@@ -220,7 +220,7 @@ def build_model(package_root: str | Path, enrich_from: str | Path | list[str | P
         })
     result["warnings"] = sorted(warnings)
     if enrich_from is not None:
-        from .pf_enrich import enrich_model
+        from .ref_enrich import enrich_model
         sources = enrich_from if isinstance(enrich_from, list) else [enrich_from]
         result["meta"]["enrichment"] = {}
         for source in sources:

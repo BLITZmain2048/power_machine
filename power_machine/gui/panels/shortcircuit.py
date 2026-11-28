@@ -69,8 +69,8 @@ class PanelController:
 
 def create_panel(parent,context):
     shell,frame,results=study_panel(parent); snapshot=context.get_snapshot(); model=snapshot["model"]
-    buses=[b for b in model.get("buses",[]) if b.get("outserv",0)!=1]; profile="iec_pf2016_c1_v1" if model.get("meta",{}).get("benchmark")=="ieee39_pf" else "iec_radial_v1"
-    choices={"kind":("3ph","ll","lg","llg"),"method":("iec60909","ansi_ieee"),"profile":("iec_radial_v1","iec_pf2016_c1_v1","analytical_rl_v1"),"case":("maximum","minimum"),"lv_tolerance":("","6","10")}
+    buses=[b for b in model.get("buses",[]) if b.get("outserv",0)!=1]; profile="iec_ref2016_c1_v1" if model.get("meta",{}).get("benchmark")=="ieee39_ref" else "iec_radial_v1"
+    choices={"kind":("3ph","ll","lg","llg"),"method":("iec60909","ansi_ieee"),"profile":("iec_radial_v1","iec_ref2016_c1_v1","analytical_rl_v1"),"case":("maximum","minimum"),"lv_tolerance":("","6","10")}
     defaults={"bus":buses[0]["id"] if buses else "","kind":"3ph","method":"iec60909","profile":profile,"case":"maximum","rf":"0","xf":"0","duration":"0.1","break":"0.02","prefault":"1.0","frequency":str(model.get("meta",{}).get("f_nom_hz",50)),"lv_tolerance":"","alpha":"0","rl_start":"0","rl_end":"0.02","path":""}
     vars_={k:tk.StringVar(frame,value=v) for k,v in defaults.items()}; fields=(("bus","bus"),("kind","fault_kind"),("method","method"),("profile","profile"),("case","case"),("rf","rf"),("xf","xf"),("duration","duration"),("break","break"),("prefault","prefault"),("frequency","frequency"),("lv_tolerance","lv_tolerance"),("alpha","alpha"),("rl_start","rl_start"),("rl_end","rl_end"),("path","data"))
     advanced=AdvancedOptions(frame) if parent is not None else None

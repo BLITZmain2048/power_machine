@@ -1,4 +1,4 @@
-"""Synthetic PF-shaped graphs. No plant exports or private parameters."""
+"""Synthetic REF-shaped graphs. No plant exports or private parameters."""
 import numpy as np
 import pytest
 from power_machine.dynamics.dsl_compile import DynamicCatalog, DSLCompileError
@@ -73,7 +73,7 @@ def test_avr_pss_infinite_bus_backward_and_response(dynamic_machine):
         net = NativeBlock.synchronous(model, lambda t: 1.+0j, 80.+10j)
     # Explicit base conversion: this adapter's speed channel is deviation pu.
     native = NativeBlock.pss2b(PSS2B())
-    # Slot names represent PF names, explicit mapping at the network boundary.
+    # Slot names represent REF names, explicit mapping at the network boundary.
     f = s.cat.compile_frame('C', adapters={'machine':net, 'pss':native})
     x, u = f.initialize({})
     y, dx = f.evaluate(0., x, u)

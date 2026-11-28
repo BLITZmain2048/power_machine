@@ -45,7 +45,7 @@ class PanelController:
     def submit(self, options, **selection):
         request = build_request(self.context, options, **selection)
         self.job = self.context.submit_job("contingency", request, self.on_message)
-        self.context.log("info", tr('integration.static_contingencies_no_pf_validation'))
+        self.context.log("info", tr('integration.static_contingencies_no_ref_validation'))
         return request
 
     def on_message(self, message):

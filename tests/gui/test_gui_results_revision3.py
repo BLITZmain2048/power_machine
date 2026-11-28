@@ -40,7 +40,7 @@ def test_panel_operativo_uses_api_ranking_and_explains_b25(tk_root, tmp_path, ca
         export_rows(exported, ranking.ranked_table.visible_columns, ranking.ranked_table.visible_rows)
         with exported.open(encoding='utf-8-sig', newline='') as stream:
             records = list(csv.DictReader(stream))
-        raw = next(r for r in records if r['ID PF'] == target['case_id'])
+        raw = next(r for r in records if r['ID REF'] == target['case_id'])
         detail = json.loads(raw['Detalle de violaciones · precisión completa en CSV'])
         assert next(v['u_pu'] for v in detail if v['object_id'] == 'B25') == next(v['u_pu'] for v in target['violations'] if v['object_id']=='B25')
         set_language('en')

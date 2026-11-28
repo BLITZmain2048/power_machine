@@ -1,17 +1,17 @@
 {
   "schema": "ieee39-classical-dynamics-v1",
-  "datos_dinamicos": "no_verificados_contra_PF",
-  "label": "NO VERIFICADOS contra PowerFactory",
+  "datos_dinamicos": "no_verificados_contra_REF",
+  "label": "NO VERIFICADOS contra la referencia externa",
   "s_base_mva": 100.0,
   "f_nom_hz": 60.0,
   "model": "classical_two_state_constant_emf_constant_pm_D0",
   "base_note": "H y Xd prima están expresados sobre 100 MVA. H representa energía cinética nominal dividida por 100 MVA, no H en una potencia nominal física desconocida. No se usa sgn del modelo LF como dato físico.",
   "sources": {
     "new_england_39_classical_parameters": {
-      "reference": "Classical New England 39 data set. Candidate primary references: Athay, Podmore and Virmani (1979), A Practical Method for the Direct Analysis of Transient Stability, and M. A. Pai (1989), Energy Function Analysis for Power System Stability.",
+      "reference": "Classical New England 39 data set. Candidate primary references: A Practical Method for the Direct Analysis of Transient Stability (1979) and Energy Function Analysis for Power System Stability (1989), both cited in NOTICE.",
       "access": "Provisional transcription. Primary-source edition, table and page have not been checked.",
       "status": "provisional_transcription_pending_primary_check",
-      "note": "The values match the classical New England 39 data set on a 100 MVA system base. The edition, table and page in Athay et al. (1979) and Pai (1989) still require primary-source verification. These values are not PowerFactory exports."
+      "note": "The values match the classical New England 39 data set on a 100 MVA system base. The edition, table and page of the cited works still require primary-source verification. These values are not reference simulator exports."
     },
     "assignment": {"reference": "Solicitud IEEE39-B del usuario, modelo clásico con D igual a cero", "status": "decision_de_modelado"}
   },

@@ -2,7 +2,7 @@
 
 Continuous transfer-block realization. Signals Vs1 (speed deviation) and
 Vs2 (electrical power) use the machine bases. Positive Vst adds to the AVR
-voltage error. No PF input-selector enumeration is inferred here.
+voltage error. No REF input-selector enumeration is inferred here.
 """
 from dataclasses import dataclass
 import math

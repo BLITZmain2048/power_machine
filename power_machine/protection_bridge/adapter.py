@@ -208,7 +208,7 @@ def execute_request(request):
         return _json_value({"schema": "power_machine-protection-bridge-result-v1", "module": "protection_bridge",
             "run_id": datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")+"_"+uuid.uuid4().hex,
             "status": status, "units": {"current_primary_a": "A", "ct_ratio": "1", "margin_s": "s", "time_s": "s"},
-            "provenance": {"pf_comparison": "sin validar contra PF", "adapter": "terminal_measurement_v1"},
+            "provenance": {"ref_comparison": "sin validar contra la referencia externa", "adapter": "terminal_measurement_v1"},
             "payload": {"fault_currents": currents, "pair_results": pairs,
                         "fault_markers": tcc_fault_markers(currents)}, "diagnostics": diagnostics})
     except (ProtectionError, TypeError, ValueError, KeyError) as exc:
@@ -216,5 +216,5 @@ def execute_request(request):
         return {"schema": "power_machine-protection-bridge-result-v1", "module": "protection_bridge",
                 "run_id": datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")+"_"+uuid.uuid4().hex,
                 "status": "invalid_input", "units": {"current_primary_a": "A", "margin_s": "s"},
-                "provenance": {"pf_comparison": "sin validar contra PF"}, "payload": {},
+                "provenance": {"ref_comparison": "sin validar contra la referencia externa"}, "payload": {},
                 "diagnostics": [_diagnostic("invalid_request", message, level="error")]}

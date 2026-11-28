@@ -1,4 +1,4 @@
-"""Executable, positional PowerFactory composite frames (stdlib and numpy)."""
+"""Executable, positional reference simulator composite frames (stdlib and numpy)."""
 from dataclasses import dataclass
 import numpy as np
 

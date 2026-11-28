@@ -188,7 +188,7 @@ def test_load_p10_02_s_matches_dsl_interpreter(monkeypatch, tmp_path):
         runner.solver.step = record
         report = runner.run(end_s=1.2, output=tmp_path / label, output_every=10)
         assert report["failure"] is None
-        # PF-04: h/2 y 2h/3 tras t=1; el aterrizaje final añade un paso.
+        # REF-04: h/2 y 2h/3 tras t=1; el aterrizaje final añade un paso.
         assert len(states) == 1301
         after = [s.t for s in states if s.t > 1.+1e-10]
         np.testing.assert_allclose(after[:2], [1.0005, 1.+.001/2+2*.001/3], atol=1e-12)

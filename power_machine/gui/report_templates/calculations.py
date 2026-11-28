@@ -73,7 +73,7 @@ def render_calculation(item, meta, snapshot, model, index, output):
         name = e.get('name') or 'Rama entre ' + ' y '.join((v for v in ends if v))
         b = e if key in buses else buses.get(e.get('bus_from', e.get('bus')), {})
         return {'elemento': name, 'subestacion': _substation(e.get('path')), 'kv': b.get('un_kv')}
-    legend = 'Corrida %d. Vigente. Sin validar contra PF.' % index
+    legend = 'Corrida %d. Vigente. Sin validar contra la referencia externa.' % index
     heading = ('Curva QV' if p.get('curve_type') == 'QV' else 'Curva PV') if module == 'voltage_stability' else NAMES.get(module, tr('integration.load_flow_limits_and_controls_verification') if module == 'lf_controls' else tr('integration.calculation'))
     out = ['\\section{' + heading + '}']
     figs = []

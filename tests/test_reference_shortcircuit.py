@@ -1,4 +1,4 @@
-"""Cotejo PF offline rápido y puertas de cobertura, sin ejecutar PowerFactory."""
+"""Cotejo de referencia offline rápido y puertas de cobertura, sin ejecutar un simulador comercial de referencia."""
 from copy import deepcopy
 from dataclasses import replace
 import json
@@ -6,7 +6,7 @@ import math
 
 import pytest
 
-from power_machine.pfcompare import cc
+from power_machine.refcompare import cc
 from power_machine.shortcircuit import FaultSpec, ShortCircuitOptions, run_shortcircuit
 from power_machine.shortcircuit.iec60909 import peak_factor
 from power_machine.shortcircuit.sequences import prepare_network
@@ -15,15 +15,15 @@ from test_shortcircuit_analytical import fixture, datum
 
 @pytest.fixture(scope="module")
 def comparison(tmp_path_factory):
-    if not (cc.DEFAULT_PF_DIR / "E39-CC-01/fault_summary.csv").exists():
-        pytest.skip("Carpeta de referencia PF no disponible")
-    return cc.run_comparisons(output_dir=tmp_path_factory.mktemp("pfc_cc"))
+    if not (cc.DEFAULT_REF_DIR / "E39-CC-01/fault_summary.csv").exists():
+        pytest.skip("Carpeta de referencia externa no disponible")
+    return cc.run_comparisons(output_dir=tmp_path_factory.mktemp("ref_cc"))
 
 
 def test_c1_analytical_single_source():
     model, data = fixture(True)
     options = ShortCircuitOptions("iec60909", "maximum", frequency_hz=60,
-                                  min_break_time_s=0.1, profile="iec_pf2016_c1_v1")
+                                  min_break_time_s=0.1, profile="iec_ref2016_c1_v1")
     r = run_shortcircuit(model, FaultSpec("B2", "3ph"), options, data)
     assert r.quantities["Ik_initial_sym_ka"] == pytest.approx(28.4018778722, rel=1e-9)
     assert r.quantities["kappa"] == pytest.approx(1.23866755695, rel=1e-9)
@@ -42,7 +42,7 @@ def test_c1_parallel_sources_use_virtual_network():
     z1, z2 = 0.1+0.2j, 0.02+0.3j
     data.sources["S2"] = {"kind": "external", "parameters": {"z1": datum(z2)}}
     options = ShortCircuitOptions("iec60909", "maximum", frequency_hz=60, min_break_time_s=0.1,
-                                  profile="iec_pf2016_c1_v1")
+                                  profile="iec_ref2016_c1_v1")
     result = run_shortcircuit(model, FaultSpec("B1", "3ph"), options, data)
     ze = 1/(1/complex(z1.real, 0.4*z1.imag)+1/complex(z2.real, 0.4*z2.imag))
     expected_rx = 0.4*ze.real/ze.imag
@@ -80,7 +80,7 @@ def test_ib_parity_and_missing_off_are_explicit(comparison):
     b20 = comparison["cc03"]
     assert b20["pass_Ikss_kA"] and b20["pass_ip_kA"]
     assert b20["pass_Ib_kA"] and b20["pass"]
-    assert b20["pf_correction_off"] is None and b20["ratio_on_off"] is None
+    assert b20["ref_correction_off"] is None and b20["ratio_on_off"] is None
     assert all(r["pass_Ib_kA"] for r in comparison["buses"])
     assert all(r["pass_Ib_kA"] for r in comparison["contributions"])
     metric = next(r for r in comparison["summary"] if r["metric"] == "Ib_kA_relative")
@@ -91,11 +91,11 @@ def test_ib_parity_and_missing_off_are_explicit(comparison):
 def test_station_factors_and_internal_fault(comparison):
     model, data = comparison["model"], comparison["data"]
     before = deepcopy((model, data))
-    options = ShortCircuitOptions("iec60909", "maximum", profile="iec_pf2016_c1_v1")
+    options = ShortCircuitOptions("iec60909", "maximum", profile="iec_ref2016_c1_v1")
     b20 = next(b["id"] for b in model["buses"] if b["name"] == "Bus 20")
     net = prepare_network(model, data, options, "3ph", b20)
-    pf = cc.read_json(cc.DEFAULT_PF_DIR / "E39-CC-03/correction_audit.json")
-    factors = {r["name"]: r["factor"] for r in pf["B20_transformer_factors"]}
+    ref_entry = cc.read_json(cc.DEFAULT_REF_DIR / "E39-CC-03/correction_audit.json")
+    factors = {r["name"]: r["factor"] for r in ref_entry["B20_transformer_factors"]}
     for b in net["branches"]:
         if b["item"]["class"] == "ElmTr2":
             assert b["factor"] == pytest.approx(factors[b["item"]["name"]], abs=1e-8)
@@ -114,7 +114,7 @@ def test_native_sc_data_and_base_invariance(comparison):
         assert p["x_d_subtransient_pu"]["value"] == pytest.approx(0.2, abs=1e-8)
         assert "xdsss" in p["x_d_subtransient_pu"]["source_attribute"]
         assert p["r_generator"]["value"] == pytest.approx(0.01*p["ur_kv"]["value"]**2/p["sn_mva"]["value"])
-    options = ShortCircuitOptions("iec60909", "maximum", frequency_hz=60, min_break_time_s=0.1, profile="iec_pf2016_c1_v1")
+    options = ShortCircuitOptions("iec60909", "maximum", frequency_hz=60, min_break_time_s=0.1, profile="iec_ref2016_c1_v1")
     bus = comparison["runs"][20].fault["bus_id"]
     model["meta"]["s_base_mva"] = 250
     changed = run_shortcircuit(model, FaultSpec(bus, "3ph"), options, data)
@@ -123,13 +123,13 @@ def test_native_sc_data_and_base_invariance(comparison):
 
 
 def test_nulls_signs_and_incomplete_coverage(comparison):
-    pf = cc.read_csv(cc.DEFAULT_PF_DIR / "E39-CC-01/fault_summary.csv")[0]
+    ref_entry = cc.read_csv(cc.DEFAULT_REF_DIR / "E39-CC-01/fault_summary.csv")[0]
     bus = next(b for b in comparison["model"]["buses"] if b["name"] == "Bus 01")
-    empty = dict(pf, Ikss_kA="")
+    empty = dict(ref_entry, Ikss_kA="")
     assert not cc.compare_bus(empty, comparison["runs"][1], bus)["pass_Ikss_kA"]
-    altered = dict(pf, angle_deg=float(pf["angle_deg"])+180)
+    altered = dict(ref_entry, angle_deg=float(ref_entry["angle_deg"])+180)
     assert not cc.compare_bus(altered, comparison["runs"][1], bus)["pass_angle"]
-    refs = list(cc.read_incident_reference(cc.DEFAULT_PF_DIR / "E39-CC-01/all_element_end_currents.csv"))
+    refs = list(cc.read_incident_reference(cc.DEFAULT_REF_DIR / "E39-CC-01/all_element_end_currents.csv"))
     with pytest.raises(ValueError, match="Cobertura incompleta"):
         cc.compare_contributions(comparison["model"], comparison["runs"], refs[:-1], comparison["buses"])
     refs[0]["into_fault_re_kA"] = -float(refs[0]["into_fault_re_kA"])
@@ -140,11 +140,11 @@ def test_nulls_signs_and_incomplete_coverage(comparison):
 
 def test_export_confinement_and_completeness(comparison, tmp_path):
     with pytest.raises(ValueError, match="working directory"):
-        cc.write_table(cc.WORKSPACE.parent / "pfc_cc_forbidden.csv", [{"value": 1}])
+        cc.write_table(cc.WORKSPACE.parent / "ref_cc_forbidden.csv", [{"value": 1}])
     cc.write_table(tmp_path / "check.csv", comparison["buses"], output_dir=tmp_path)
     assert len(cc.read_csv(tmp_path / "check.csv")) == 39
     assert cc.number("") is None
 
 
 import pytest
-pytestmark = [pytest.mark.pfdata]
+pytestmark = [pytest.mark.refdata]

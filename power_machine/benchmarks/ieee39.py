@@ -28,8 +28,8 @@ BUS_COLUMNS = ("bus", "type", "pd_mw", "qd_mvar", "area", "vm_pu", "va_deg")
 GEN_COLUMNS = ("bus", "pg_mw", "qg_mvar", "qmax_mvar", "qmin_mvar", "vg_pu")
 BR_COLUMNS = ("from_bus", "to_bus", "r_pu", "x_pu", "b_pu", "rate_a_mva", "tap")
 SOURCE_NOTE = (
-    "Datos del caso publicado MATPOWER case39, no del proyecto de PowerFactory. "
-    "IDs y rutas de origen propios de MATPOWER, no identificadores PowerFactory."
+    "Datos del caso publicado MATPOWER case39, no del proyecto del simulador comercial de referencia. "
+    "IDs y rutas de origen propios de MATPOWER, no identificadores del simulador comercial de referencia."
 )
 
 
@@ -135,7 +135,7 @@ def build_model(source: str | Path = DEFAULT_SOURCE) -> dict:
                              "reference_gen": "G31", "reference_angle_deg": tables["BUS"][30][6]},
         "generator_base_note": "sgn=100 MVA solo para convertir límites Q, no potencia nominal física",
         "rating_note": "rateA conservado en MVA, carga calculada como max(|S_desde|, |S_hasta|)/rateA",
-        "pf_comparison": "Sin comparación contra PowerFactory",
+        "ref_comparison": "Sin comparación contra la referencia externa",
     }, **{key: [] for key in ("buses", "switches", "branches", "branches3", "shunts",
                               "loads", "gens", "controllers", "interface", "other_elements")},
         "warnings": [SOURCE_NOTE,

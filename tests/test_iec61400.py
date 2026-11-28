@@ -208,7 +208,7 @@ def test_overvoltage_sign_and_trip_gate_after_accepted_time():
 def test_packaged_attribute_map_and_static_generator_composition():
     import json
     from importlib.resources import files
-    data = json.loads(files('power_machine.dynamics').joinpath('iec_pf_parameters.json').read_text())
+    data = json.loads(files('power_machine.dynamics').joinpath('iec_ref_parameters.json').read_text())
     assert len(data['parameters']) == 92
     assert all(r['status'] in ('confirmed', 'candidate') and 'value' not in r for r in data['parameters'])
     port = StaticGeneratorRMS('a', 'synthetic/a', 'bus', 1, 100., 1)

@@ -94,7 +94,7 @@ class PanelCoordination:
             context.stale = False
         self.refresh_tab_navigation()
 
-        self.output.log('INFO', f"{result['module']}: {result['status']}, "+result.get('gui_validation_label',tr('shell.no_pf_validation')))
+        self.output.log('INFO', f"{result['module']}: {result['status']}, "+result.get('gui_validation_label',tr('shell.no_ref_validation')))
         if result.get('gui_validation_label'):self.validity_text.set(result['gui_validation_label'])
 
     def initialize_benchmark_controls(self, panel_id, panel):
@@ -228,7 +228,7 @@ class PanelCoordination:
             self.book.sync()
         current = self.book.select()
         state = tr('shell.study_no_result')
-        validation = tr('shell.no_pf_comparison_for_the_current_configuration')
+        validation = tr('shell.no_ref_comparison_for_the_current_configuration')
         if current:
             page=self.book.nametowidget(current)
             if hasattr(page,'buffer'):
@@ -254,14 +254,14 @@ class PanelCoordination:
         if hasattr(self, 'stop_button'):
             active = self.manager.running or any(context.worker.running for _,context in self.parity_panels.values())
             self.stop_button.configure(state='normal' if active else 'disabled')
-        from .pf_context import comparison_context
+        from .ref_context import comparison_context
         active_page = self.book.nametowidget(current) if current else None
         active_result, active_module = None, None
         for panel_id, (frame, context) in self.parity_panels.items():
             if str(frame) == current:
                 active_module = panel_id
                 active_result = next(reversed(context.results.values())) if context.results and not getattr(context, 'stale', False) else None
-        badge, self.pf_evidence_text = comparison_context(active_page, active_result, active_module)
+        badge, self.ref_evidence_text = comparison_context(active_page, active_result, active_module)
         if hasattr(self,'validity_text'):self.validity_text.set(badge)
         if hasattr(self,'evidence_button'):self.evidence_button.configure(text=tr('int2.evidence'))
         if hasattr(self, 'study_state_text'):

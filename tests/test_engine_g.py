@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from power_machine.dynamics.events import Event, EventTimeline
-from power_machine.benchmarks.ieee39_pf import build_rms_case
+from power_machine.benchmarks.ieee39_ref import build_rms_case
 from power_machine.study import SimEvent, _translate_event
 
 
@@ -66,7 +66,7 @@ def test_results_directory_legacy_compatibility(tmp_path, monkeypatch):
 
 def test_import_frequency_warning_and_explicit_value(monkeypatch):
     from power_machine import builder
-    from power_machine.io_pf import Package
+    from power_machine.io_csv import Package
     package = Package(Path('.'), {}, {}, {}, {}, [])
     monkeypatch.setattr(builder, 'load_package', lambda *args, **kwargs: package)
     with pytest.warns(UserWarning, match='Nominal frequency'):
@@ -120,4 +120,4 @@ def test_modal_profile_uses_declared_frequency(tmp_path, monkeypatch, frequency)
     assert not any(d.get('code') == 'electrical_base' for d in result['diagnostics'])
 
 import pytest
-pytestmark = [pytest.mark.pfdata]
+pytestmark = [pytest.mark.refdata]

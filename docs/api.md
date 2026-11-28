@@ -16,6 +16,8 @@ print(net.summary()["counts"])
 
 `list_cases()` lists bundled cases and `load_case(name_or_path)` loads `ieee39`, a model JSON file, or a documented CSV export. `Network` is editable in memory: use `get`, `elements`, `set`, `switch`, `copy`, `to_model`, and `save`. `to_model()` always returns a deep copy.
 
+Use [`import_csv_export(csv_dir, overrides=None)`](csv_import.md) to import CSV element tables. `compare_reference(net, ref_results_dir=None, study="loadflow")` compares a fresh result for `loadflow`, `network`, or `shortcircuit` with the supplied external reference.
+
 Public exceptions are `MissingStudyDataError`, `UnsupportedStudyError`, `InvalidModelError`, and `UnknownElementError`. Each provides a stable `code`, affected `field`, and suggested `action` through `to_dict()`.
 
 ## Study functions
@@ -37,4 +39,4 @@ Set `POWER_MACHINE_OUTPUT_DIR` to choose where user-created networks, tables, RM
 For CLI equivalents, see [cli.md](cli.md). For the portable model schema, see [network_format.md](network_format.md).
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

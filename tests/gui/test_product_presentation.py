@@ -8,8 +8,8 @@ from power_machine.gui.batch_panel import batch_scenarios
 
 
 def test_public_messages_hide_personal_paths():
-    text=public_text(r"Resultado C:\Users\persona\salidas\corrida\signals.csv")
-    assert 'persona' not in text and 'Users' not in text
+    text=public_text(r"Resultado D:\Profiles\sample_account\salidas\corrida\signals.csv")
+    assert 'sample_account' not in text and 'Profiles' not in text
     assert 'signals.csv' in text
     assert elapsed_text(.04699999999986)=='47 ms'
     assert elapsed_text(12.345)=='12.35 s'

@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from ..benchmarks.ieee39_pf import DEFAULT_PF_DIR, WORKSPACE, LDF_OPTIONS
+from ..benchmarks.ieee39_ref import DEFAULT_REF_DIR, WORKSPACE, LDF_OPTIONS
 from .machine_init import initialize_machine
 from .network import DynamicNetwork
 from .synchronous import SynchronousMachine
@@ -26,8 +26,8 @@ LABEL = 'Partial comparison due to model differences'
 MAX_ERROR_LIMIT = 0.02
 ANGLE_PEAK_LIMIT = 0.01
 INITIAL_LIMITS = {"p.u.": 1e-8, "rad": 1e-8, "deg": 1e-6, "Hz": 1e-8, "MW": 1e-5, "Mvar": 1e-5}
-MODEL_FILE = required_readonly_path("cases", "ieee39_pf", "model.json")
-OUTPUT_DIR = output_root() / "comparison_results/ieee39_pf"
+MODEL_FILE = required_readonly_path("cases", "ieee39_ref", "model.json")
+OUTPUT_DIR = output_root() / "comparison_results/ieee39_ref"
 MACHINE_FIELDS = """sgn ugn cosn h tag iner_inp iturbo model_inp i_exactConv
 xd xq xds xqs xdss xqss tds0 tqs0 tdss0 tqss0 tds tqs tdss tqss xl xrl xrlq
 rstr dpu dkd dpe isat isatSalient iusesat sg10 sg12 sg10q sg12q satv satse
@@ -43,7 +43,7 @@ ENGINE_COVERAGE = {
     "machine_initialization": 'Load flow, sgn/ugn/ngnum bases, isat saturation and i_speedVar',
     "ControlledSynchronousMachine": 'AVR and governor with explicit case ports',
     "IEEET1_IEEEG1_IEEEG3": 'No generic IEEE39 frame coupling',
-    "DynamicCatalog": 'Requires pf-dynamic-v1 export, parnam, BlkDef equations, limits and connections',
+    "DynamicCatalog": 'Requires ref-dynamic-v1 export, parnam, BlkDef equations, limits and connections',
     "PSS_CONV": 'outserv=1 in all nine instances. Execution is unnecessary for these trials',
     "RMSLoad": 'Static correction without t1. Missing kpu1/kqu1 aliases and low-voltage regime',
     "network": 'DynamicNetwork Z matches only load flow and is not used to simulate trials',
@@ -56,7 +56,7 @@ def read_json(path):
 
 
 def identity(path):
-    'Return a deterministic PF object ID and the path relative to IntPrj.'
+    'Return a deterministic REF object ID and the path relative to IntPrj.'
     relative = path.split(".IntPrj\\", 1)[1]
     return {"object_id": "pf_" + hashlib.sha256(relative.encode()).hexdigest()[:20],
             "relative_path": relative}
@@ -110,18 +110,18 @@ def load_reference(case_dir):
     return time_s, {c["signal"]: matrix[:, i] for i, c in enumerate(channels)}, channels
 
 
-def native_inventory(pf_dir):
+def native_inventory(ref_dir):
     'Extract field-level data and provenance without copying large source JSON files.'
-    pf_dir = Path(pf_dir)
+    ref_dir = Path(ref_dir)
     types = {}
-    for obj in read_json(pf_dir / "modelo/types.json"):
+    for obj in read_json(ref_dir / "modelo/types.json"):
         names = MACHINE_FIELDS if obj["cls"] == "TypSym" else LOAD_FIELDS
         if obj["cls"] in ("TypSym", "TypLod"):
             types[obj["path"]] = {**identity(obj["path"]),
                 "path": obj["path"], "name": obj["name"], "class": obj["cls"],
                 "fields": projected_fields(obj, names)}
     controllers = []
-    for obj in read_json(pf_dir / "modelo/controllers.json"):
+    for obj in read_json(ref_dir / "modelo/controllers.json"):
         controller = {**identity(obj["path"]), "name": obj["name"], "path": obj["path"],
                       "class": obj["cls"], "fields": projected_fields(obj, ("params", "typ_id", "outserv")),
                       "type_fields": obj["type_fields"]}
@@ -136,15 +136,15 @@ def native_inventory(pf_dir):
             else 'Cannot represent without BlkDef graphs and limit names')
         controllers.append(controller)
     composites = []
-    for obj in read_json(pf_dir / "modelo/composites.json"):
+    for obj in read_json(ref_dir / "modelo/composites.json"):
         composites.append({**identity(obj["path"]), "path": obj["path"],
                            "fields": projected_fields(obj, ("pelm", "typ_id", "outserv"))})
     generator_attributes = {obj["path"]: projected_fields(obj,
         ("ngnum", "ip_ctrl", "efdBaseRatio", "ifdBase", "addmt", "typ_id", "bus1"))
-        for obj in read_json(pf_dir / "modelo/generators.json")}
+        for obj in read_json(ref_dir / "modelo/generators.json")}
     trials = {}
     for case in CASES:
-        directory = pf_dir / case
+        directory = ref_dir / case
         config = read_json(directory / "configuration.json")
         options = read_json(directory / "effective_command_options.json")
         report = read_json(directory / "report.json")
@@ -162,16 +162,16 @@ def native_inventory(pf_dir):
 class NativeDynamicCase:
     'Native initial operating point. Do not substitute missing RMS loads or controls. The DynamicNetwork Z stamp checks only the load-flow KCL point.'
 
-    def __init__(self, pf_dir=DEFAULT_PF_DIR, model=None):
-        self.pf_dir = Path(pf_dir)
-        self.model = copy.deepcopy(model if model is not None else read_json(self.pf_dir / "model.json"))
-        self.inventory = native_inventory(self.pf_dir)
-        with (self.pf_dir / "E39-LF-01/buses.csv").open(encoding="utf-8-sig", newline="") as handle:
-            buses_pf = {r["path"]: r for r in csv.DictReader(handle)}
-        with (self.pf_dir / "E39-LF-01/generators.csv").open(encoding="utf-8-sig", newline="") as handle:
-            power_pf = {r["path"]: r for r in csv.DictReader(handle)}
-        self.voltages = {b["id"]: float(buses_pf[b["path"]]["u_pu"])*np.exp(
-            1j*np.deg2rad(float(buses_pf[b["path"]]["angle_deg"]))) for b in self.model["buses"]}
+    def __init__(self, ref_dir=DEFAULT_REF_DIR, model=None):
+        self.ref_dir = Path(ref_dir)
+        self.model = copy.deepcopy(model if model is not None else read_json(self.ref_dir / "model.json"))
+        self.inventory = native_inventory(self.ref_dir)
+        with (self.ref_dir / "E39-LF-01/buses.csv").open(encoding="utf-8-sig", newline="") as handle:
+            buses_ref = {r["path"]: r for r in csv.DictReader(handle)}
+        with (self.ref_dir / "E39-LF-01/generators.csv").open(encoding="utf-8-sig", newline="") as handle:
+            power_ref = {r["path"]: r for r in csv.DictReader(handle)}
+        self.voltages = {b["id"]: float(buses_ref[b["path"]]["u_pu"])*np.exp(
+            1j*np.deg2rad(float(buses_ref[b["path"]]["angle_deg"]))) for b in self.model["buses"]}
         buses = {b["id"]: b for b in self.model["buses"]}
         self.machines, self.states, self.initializations = {}, {}, {}
         self.machine_by_path = {}
@@ -183,7 +183,7 @@ class NativeDynamicCase:
             machine = SynchronousMachine(gen, bus_un_kv=buses[gen["bus"]]["un_kv"],
                                          s_base_mva=100.0, f_nom_hz=60.0)
             machine.relative_path = gen["relative_path"]
-            row = power_pf[gen["path"]]
+            row = power_ref[gen["path"]]
             init = initialize_machine(machine, self.voltages[gen["bus"]],
                                       complex(float(row["P_MW"]), float(row["Q_Mvar"])))
             self.machines[gen["id"]], self.states[gen["id"]] = machine, init.state
@@ -198,8 +198,8 @@ class NativeDynamicCase:
             i = self.network.index_of_bus(machine.bus_id)
             injection[i] += machine.current_injection(self.states[key], vector[i])
         self.kcl_max_pu = float(np.max(abs(injection-self.network.ybus@vector)))
-        # La referencia PF y las estampas guardadas difieren en sus últimos
-        # decimales. Se proyecta el punto PF al LF consistente de PFC-MODEL,
+        # La referencia externa y las estampas guardadas difieren en sus últimos
+        # decimales. Se proyecta el punto REF al LF consistente de PFC-MODEL,
         # sin cambiar datos de equipo ni conservar un residual de arranque.
         source_voltages = dict(self.voltages)
         source_kcl = self.kcl_max_pu
@@ -212,13 +212,13 @@ class NativeDynamicCase:
         self.derivative_max = 0.0
         for gen in self.model["gens"]:
             key, machine = gen["id"], self.machines[gen["id"]]
-            source = power_pf[gen["path"]]
+            source = power_ref[gen["path"]]
             power_corrections.append(abs(projected_power[key]-complex(float(source["P_MW"]), float(source["Q_Mvar"]))))
             init = initialize_machine(machine, self.voltages[machine.bus_id], projected_power[key])
             self.states[key], self.initializations[key] = init.state, init
             self.derivative_max = max(self.derivative_max, float(np.max(abs(
                 machine.f(0, init.state, np.empty(0), self.voltages[machine.bus_id])))))
-        self.lf_projection = {"source_pf_kcl_max_pu": source_kcl,
+        self.lf_projection = {"source_ref_kcl_max_pu": source_kcl,
             "max_voltage_phasor_correction_pu": max(abs(self.voltages[k]-v) for k, v in source_voltages.items()),
             "max_generator_power_correction_mva": max(power_corrections),
             "method": 'PFC-MODEL load flow, unchanged parameters and explicit consistency correction'}

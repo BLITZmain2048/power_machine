@@ -1,4 +1,4 @@
-"""Editor DSL autónomo. Compilar y calcular no implica aceptación contra PF."""
+"""Editor DSL autónomo. Compilar y calcular no implica aceptación contra REF."""
 from .schema import ModelDraft, CompileDiagnostic, CompilePreview, PreviewCase
 from .compiler_adapter import compile_draft, block_view, coverage_catalog
 from .preview import simulate_preview, compare_interpreter

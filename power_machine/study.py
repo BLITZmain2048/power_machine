@@ -21,14 +21,14 @@ from .dynamics.events import Event
 from .dynamics.runner import CASES, NEW_CASES, RMSRunner, load_case
 from .dynamics.switching import resolve_element_switches
 from .topology import build_topology
-from .resources import writable_root
+from .resources import dynamic_catalog_root, reference_tables_root, writable_root
 
 STUDY_SCHEMA = "power_machine-study-v1"
 REFERENCE_CASES = CASES
 EVENT_KINDS = ("short_circuit", "clear_short_circuit", "switch_element",
                "switch", "load_step", "gen_trip")
 _GROUPS = ("buses", "branches", "branches3", "switches", "gens", "loads", "shunts", "controllers")
-_TRIP_DOMAIN = 'Desconexión de generador fuera del dominio validado contra PowerFactory.'
+_TRIP_DOMAIN = 'Desconexión de generador fuera del dominio validado contra la referencia externa.'
 
 
 @dataclass
@@ -152,7 +152,7 @@ def reference_study(root, case: str) -> StudyCase:
             target = target.split("\\Cub_", 1)[0]
             code = int(attrs["i_shc"])
             if code not in (0, 4):
-                raise ValueError(f"Falla PF no soportada: {code}")
+                raise ValueError(f"Falla REF no soportada: {code}")
             kind = "clear_short_circuit" if code == 4 else "short_circuit"
             params = {} if code == 4 else {"r_ohm": float(attrs["R_f"]), "x_ohm": float(attrs["X_f"])}
         elif row["class"] == "EvtLod":
@@ -167,9 +167,9 @@ def reference_study(root, case: str) -> StudyCase:
                 kind = "switch" if cls in ("StaSwitch", "ElmCoup") else "switch_element"
                 params = {"action": "open" if int(attrs["i_switch"]) == 0 else "close"}
         else:
-            raise ValueError(f"Evento PF desconocido: {row['class']}")
+            raise ValueError(f"Evento REF desconocido: {row['class']}")
         events.append(SimEvent(float(row["time_s"]), kind, by_path[target]["id"], params))
-    with (root / "pf_reference/rms" / case / "signals.csv").open(encoding="utf-8-sig", newline="") as f:
+    with (reference_tables_root(root) / "rms" / case / "signals.csv").open(encoding="utf-8-sig", newline="") as f:
         monitored = next(csv.reader(f))
     supported = {row['key'] for row in signal_catalog(root, model)}
     return StudyCase(name=case, events=events, reference_case=case,
@@ -316,7 +316,7 @@ def validate_study(root, study, model=None) -> list[dict]:
         from .dynamics.converters import converter_bindings
         from .dynamics.schema import read_dynamic_export
         shared_generators = set(converter_bindings(
-            read_dynamic_export(Path(root)/'pf_dynamic'))['controlled_genstat'])
+            read_dynamic_export(dynamic_catalog_root(root)))['controlled_genstat'])
     load_factors = {}
     for event in sorted(study.events, key=lambda e: e.time_s):
         try:
@@ -403,7 +403,7 @@ def run_loadflow(root, study, model=None) -> dict:
 def reference_signals(root, case) -> tuple[list[str], list[list[float]]]:
     if case not in (*REFERENCE_CASES, *NEW_CASES):
         raise ValueError(f"Caso desconocido: {case}")
-    with (Path(root)/'pf_reference/rms'/case/'signals.csv').open(encoding='utf-8-sig', newline='') as f:
+    with (reference_tables_root(root) / "rms"/case/'signals.csv').open(encoding='utf-8-sig', newline='') as f:
         reader = csv.reader(f)
         return next(reader), [[float(v) for v in row] for row in reader]
 

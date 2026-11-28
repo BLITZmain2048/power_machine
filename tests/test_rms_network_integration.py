@@ -1,4 +1,4 @@
-"""Pruebas dirigidas native RMS, sin ejecutar PF ni depender de su API."""
+"""Pruebas dirigidas native RMS, sin ejecutar REF ni depender de su API."""
 from collections import Counter
 import copy
 import json
@@ -6,16 +6,16 @@ import json
 import numpy as np
 import pytest
 
-from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR, WORKSPACE, build_rms_case
+from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR, WORKSPACE, build_rms_case
 from power_machine.dynamics.native_registry import NativeControllerCatalog
-from power_machine.pfcompare.rms_replay import load_reference
-from power_machine.pfcompare.rms_network import compare_channel, fresh_output, sample_channels, simulate
-from power_machine.pfcompare.modal_network import native_matrix, state_transform
+from power_machine.refcompare.rms_replay import load_reference
+from power_machine.refcompare.rms_network import compare_channel, fresh_output, sample_channels, simulate
+from power_machine.refcompare.modal_network import native_matrix, state_transform
 
 
 @pytest.fixture
 def rms():
-    if not DEFAULT_PF_DIR.is_dir():
+    if not DEFAULT_REF_DIR.is_dir():
         pytest.skip("Referencia offline IEEE39 ausente")
     return build_rms_case()
 
@@ -38,7 +38,7 @@ def test_full_count_identity_references_and_equilibrium(rms):
 
 @pytest.mark.parametrize("stage,count", [("loads", 78), ("avr", 114)])
 def test_staged_equilibrium(stage, count):
-    if not DEFAULT_PF_DIR.exists():
+    if not DEFAULT_REF_DIR.exists():
         pytest.skip("Referencia offline ausente")
     model = build_rms_case(stage=stage)
     assert model.solver.nx == count
@@ -80,7 +80,7 @@ def test_fault_exact_voltage_and_jacobian_row(rms):
     i = rms.network.index_of_bus(bid)
     assert abs(state.v[i]) < 1e-12
     assert not rms.network.faults  # Sin impedancia arbitraria pequeña.
-    _, _, channels = load_reference(DEFAULT_PF_DIR/"E39-DIN-01")
+    _, _, channels = load_reference(DEFAULT_REF_DIR/"E39-DIN-01")
     outputs = sample_channels(rms, state, channels, {bid: 60. for bid in rms.case.voltages})
     assert np.isnan(outputs["B16_angle_deg"])
     assert np.isnan(outputs["B16_frequency_Hz"])
@@ -125,7 +125,7 @@ def test_fault_crossing_avr_limit_converges(rms):
 
 
 def test_short_no_event_independent_prediction(rms):
-    _, refs, channels = load_reference(DEFAULT_PF_DIR/"E39-DIN-03")
+    _, refs, channels = load_reference(DEFAULT_REF_DIR/"E39-DIN-03")
     t, pred, diag = simulate(rms, "E39-DIN-03", channels, stop_s=.03)
     assert len(pred) == 29 and len(t) == 4
     assert len(diag["steps"]) == 30
@@ -135,12 +135,12 @@ def test_short_no_event_independent_prediction(rms):
 
 
 def test_modal_transform_count_and_full_matrix(rms):
-    pf_a, states, frozen = native_matrix(DEFAULT_PF_DIR)
+    ref_a, states, frozen = native_matrix(DEFAULT_REF_DIR)
     transform, mapping = state_transform(rms, states)
     assert transform.shape == (166, 166)
     assert len(mapping) == 166
     assert len(frozen) == 10
-    assert pf_a.shape == transform.shape
+    assert ref_a.shape == transform.shape
     assert np.count_nonzero(transform) == 166
 
 
@@ -186,4 +186,4 @@ def test_output_requires_the_comparator_workspace(tmp_path, monkeypatch):
 
 
 import pytest
-pytestmark = [pytest.mark.pfdata]
+pytestmark = [pytest.mark.refdata]

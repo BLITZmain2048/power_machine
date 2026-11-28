@@ -1,4 +1,4 @@
-"""Flujo cuasi dinámico offline, sin validar contra PF.
+"""Flujo cuasi dinámico offline, sin validar contra la referencia externa.
 
 P/Q de cargas positivos consumidos, generación positiva inyectada.
 """

@@ -8,7 +8,7 @@ import math
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PROFILE = "pf_blkdef_fields_v1/compiler_existing_v1"
+PROFILE = "ref_blkdef_fields_v1/compiler_existing_v1"
 MAX_SOURCE_BYTES = 1024 * 1024
 MAX_DRAFT_BYTES = 32 * 1024 * 1024
 MAX_STATES = 256
@@ -92,6 +92,8 @@ def source_hash(draft):
 def draft_from_dict(data):
     data = dict(data)
     data["ports"] = tuple(data["ports"])
+    if data["source_format"] == "pf_blkdef_fields_v1":
+        data["source_format"] = "ref_blkdef_fields_v1"
     return ModelDraft(**data)
 
 
@@ -122,8 +124,8 @@ def diagnostic(error, draft=None):
 
 
 def validate_draft(draft):
-    if draft.schema != "pm-dsl-draft-v1" or draft.source_format != "pf_blkdef_fields_v1":
-        raise EditorError("unsupported_format", "Solo se admite pm-dsl-draft-v1/pf_blkdef_fields_v1", status="unsupported")
+    if draft.schema != "pm-dsl-draft-v1" or draft.source_format != "ref_blkdef_fields_v1":
+        raise EditorError("unsupported_format", "Solo se admite pm-dsl-draft-v1/ref_blkdef_fields_v1", status="unsupported")
     if not all(isinstance(x, str) and x for x in (draft.draft_id, draft.object_id, draft.relative_path)):
         raise EditorError("missing_identity", "Faltan draft_id, object_id o relative_path")
     if not isinstance(draft.source_text, str) or not isinstance(draft.parameters, dict) or not isinstance(draft.metadata, dict) or not isinstance(draft.ports, (tuple, list)):

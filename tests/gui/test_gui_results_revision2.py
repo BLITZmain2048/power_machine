@@ -83,7 +83,7 @@ def test_ranking_groups_and_live_translation(tk_root, cases):
         set_language('en')
         tk_root.update_idletasks()
         assert 'worst' in view.ranked_table.rows[0]['violation']
-        assert tr('results.id_pf') == 'PF ID'
+        assert tr('results.id_ref') == 'REF ID'
     finally:
         view.destroy()
         set_language(old)

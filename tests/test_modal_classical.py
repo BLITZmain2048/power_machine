@@ -1,4 +1,4 @@
-"""Propiedades del swing clásico y SMIB, sin validar contra PF.
+"""Propiedades del swing clásico y SMIB, sin validar contra la referencia externa.
 
 Fixtures propias de red recíproca sin pérdidas y fuerzas en base 100 MVA.
 δ está en radianes y ν es desviación de velocidad en p.u. de 50 Hz.
@@ -145,7 +145,7 @@ def test_classical_multimachine_properties(n, seed, tmp_path):
         "n_machines": n, "seed": seed, "s_base_mva": 100., "f_nom_hz": 50.,
         "inertia_system_s": inertia_s.tolist(), "stiffness_pu_per_rad": stiffness.tolist(),
         "undamped_modes": list(result.modes), "decay_rates_per_s": decay_rates,
-        "pf_comparison": "sin validar contra PF"}, allow_nan=False), encoding="utf-8")
+        "ref_comparison": "sin validar contra la referencia externa"}, allow_nan=False), encoding="utf-8")
 
 
 class SMIB:
@@ -199,5 +199,5 @@ def test_smib_frequency_matches_closed_form(damping_pu, tmp_path):
         "frequency_closed_form_hz": float(expected_frequency_hz), "s_base_mva": s_base_mva,
         "h_system_s": h_system_s, "x_system_pu": x_system_pu,
         "damping_system_pu": damping_pu, "modes": list(result.modes),
-        "pf_comparison": "sin validar contra PF"}, allow_nan=False), encoding="utf-8")
+        "ref_comparison": "sin validar contra la referencia externa"}, allow_nan=False), encoding="utf-8")
 

@@ -78,7 +78,7 @@ def signal_columns(path, columns):
     """Adapta CSV clásico sin convertir sample_side ni ausentes en números.
 
     Se conservan las dos muestras de cada evento. La frecuencia clásica
-    recibe su propia variable y nunca se identifica como m:fehz de PF.
+    recibe su propia variable y nunca se identifica como m:fehz de REF.
     """
     if columns[:3] != ['time_s', 'sample_side', 'coi_frequency_hz']:
         return list(columns), list(range(len(columns)))

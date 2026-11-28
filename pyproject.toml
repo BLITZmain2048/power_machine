@@ -10,7 +10,7 @@ requires-python = ">=3.10"
 dependencies = ["numpy"]
 license = "MIT"
 license-files = ["LICENSE", "NOTICE"]
-authors = [{ name = "Diego" }]
+authors = [{ name = "BLITZmain2048" }]
 readme = "README.md"
 keywords = ["power systems", "load flow", "contingency analysis", "short circuit", "dynamic simulation"]
 classifiers = [
@@ -52,7 +52,7 @@ include = ["power_machine*"]
 
 [tool.setuptools.package-data]
 power_machine = [
-    "dynamics/iec_pf_parameters.json",
+    "dynamics/iec_ref_parameters.json",
     "gui/assets/*",
     "gui/locale/*.json",
     "cases/ieee39/case39.py",

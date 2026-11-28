@@ -186,7 +186,7 @@ class PanelContext:
         result.update(job_id=job_id, generation=self.generation)
         result['freshness'] = 'current'
         result['stale'] = False
-        result.setdefault("provenance", {})["pf_comparison"] = result.get("gui_validation_label", tr('shell.no_pf_validation'))
+        result.setdefault("provenance", {})["ref_comparison"] = result.get("gui_validation_label", tr('shell.no_ref_validation'))
         self.results[result["module"]] = result
         self.on_result(deepcopy(result))
 

@@ -303,12 +303,12 @@ class NativeIEEESolver(DAESolver):
 
 
 class IEEE39NativeRMS:
-    'Assemble 166 states from a consistent load flow and read-only IEEE39 PF data.'
+    'Assemble 166 states from a consistent load flow and read-only IEEE39 REF data.'
 
-    def __init__(self, pf_dir, *, step_s=.001, stage="full", avr_profile="dyn_a",
+    def __init__(self, ref_dir, *, step_s=.001, stage="full", avr_profile="dyn_a",
                  linear_solver="compatibility", retry_steps=False,
                  min_step_s=1e-6, max_step_retries=12):
-        """Read explicit PF case data and configure a native RMS solver.
+        """Read explicit REF case data and configure a native RMS solver.
 
         Step and minimum step are in seconds. Backend and transactional
         retry options follow DAESolver. The default preserves reference
@@ -317,7 +317,7 @@ class IEEE39NativeRMS:
         from .native_case import NativeDynamicCase, values
         if stage not in ("loads", "avr", "full"):
             raise _coded_error(ValueError, 'invalid_ieee39_native_data', 'Unknown stage')
-        self.case = NativeDynamicCase(pf_dir)
+        self.case = NativeDynamicCase(ref_dir)
         self.model, self.network = self.case.model, self.case.network
         self.catalog = NativeControllerCatalog(self.case.inventory, avr_profile=avr_profile)
         self.avr_profile = avr_profile
@@ -387,7 +387,7 @@ class IEEE39NativeRMS:
         return rows
 
     def apply_events(self, trial, time_s, state):
-        'Apply simultaneous exported PF events while retaining the pre-event side.'
+        'Apply simultaneous exported REF events while retaining the pre-event side.'
         from .native_case import values
         by_path = {e["path"]: e for group in ("buses", "branches", "gens", "loads")
                    for e in self.model[group]}

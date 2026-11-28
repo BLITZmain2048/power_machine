@@ -21,7 +21,7 @@ def _voltage_factor(params: Mapping[str, object], suffix: str, ratio: float) -> 
             continue
         exponent = params.get(key+suffix)
         if exponent is None:
-            # Alias efectivos PF 2024 comprobados en attributes.csv/description.
+            # Alias efectivos REF 2024 comprobados en attributes.csv/description.
             alias = {"e_aP": "kpu0", "e_aQ": "kqu0",
                      "e_cP": "kpu", "e_cQ": "kqu"}.get(key+suffix)
             exponent = params.get(alias) if alias else None

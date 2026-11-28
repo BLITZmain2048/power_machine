@@ -4,7 +4,7 @@ title: "Power Machine"
 version: "0.1.0"
 date-released: 2026-11-17
 authors:
-  - name: "Diego"
+  - name: "BLITZmain2048"
 type: software
 license: MIT
 abstract: "Python tools for reproducible power-system studies."

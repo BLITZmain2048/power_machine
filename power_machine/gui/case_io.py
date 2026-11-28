@@ -14,18 +14,18 @@ def load_case(case):
     from power_machine.study import load_model
     path = ieee39_root() / 'model.json' if str(case).lower() == 'ieee39' else Path(case).resolve()
     if path.is_dir() and not (path / 'model.json').exists():
-        return import_powerfactory(path)
+        return import_csv_export(path)
     return load_model(path.parent, path) if path.is_file() else load_model(path)
 
 
-def import_powerfactory(folder):
+def import_csv_export(folder):
     """Importa CSV mediante la función pública disponible del motor."""
     try:
         from power_machine import api
     except ImportError:
         api = None
-    if hasattr(api, 'import_powerfactory'):
-        return api.import_powerfactory(folder)
+    if hasattr(api, 'import_csv_export'):
+        return api.import_csv_export(folder)
     from power_machine.builder import build_model
     return build_model(folder)
 

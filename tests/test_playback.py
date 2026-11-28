@@ -85,7 +85,7 @@ def test_consistent_constraint_jacobian_and_event():
     assert abs(solver.network.ybus[0, 0]) < 1.
 
 
-@pytest.mark.pfdata
+@pytest.mark.refdata
 def test_ieee39_cut_replay():
     from benchmarks.playback_ieee39 import verify
     result = verify()

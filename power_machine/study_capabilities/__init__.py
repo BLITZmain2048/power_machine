@@ -1,4 +1,4 @@
-"""Preflight conservador capabilities, sin cálculo numérico, E/S ni validación PF.
+"""Preflight conservador capabilities, sin cálculo numérico, E/S ni validación externa.
 
 capability_inputs es un diccionario opcional del estudio con una entrada por
 motor: input, options y evidencias consumibles. No modifica StudyCase v1.
@@ -37,7 +37,7 @@ Un LF calculado por el consumidor debe pasar energized_status, no converged.
     for module in MODULES:
         rows[module] = dict(evaluable=False, status='conditional', coverage=[],
                             missing_data=[], blockers=[], restrictions=[],
-                            validation='sin validar contra PF')
+                            validation='sin validar contra la referencia externa')
     def block(module, code, message, item=None):
         item = item or {}
         rows[module]['blockers'].append(dict(code=code, message=message,
@@ -136,7 +136,7 @@ Un LF calculado por el consumidor debe pasar energized_status, no converged.
     elif 'B16' not in index or cct_input.get('fault_bus_id') != 'B16' or cct_input.get('fault_inception_s', 1.) != 1. or any(cct_input.get(k) not in (None, 0.) for k in ('fault_r_ohm', 'fault_x_ohm')):
         block('cct', 'classical_domain', 'Dominio clásico acreditado: B16 a 1 s, falla sólida')
     rows['cct']['restrictions'] = ['Requiere fronteras opuestas y consistencia h/2',
-        'Horizonte y umbrales explícitos, sin validación PF',
+        'Horizonte y umbrales explícitos, sin validación externa',
         'power_machine exploratorio: campañas moderadas estables no acreditan CCT ni duración segura de protección',
         'Fallo numérico es no evaluable, nunca inestable']
     rows['qds_panel']['coverage'] = ['Serie de LF, sin dinámica entre instantes']
@@ -204,7 +204,7 @@ Un LF calculado por el consumidor debe pasar energized_status, no converged.
         sc['restrictions'] += ['ElmTr2 en posición principal SC, toma operativa LF solo trazada',
             'Cierre de lazos e invariancia de fase acreditados en el caso oficial, revisar variantes',
             'Sk, X/R y c deben tener procedencia para interpretar niveles reales',
-            'Sin validación PF del barrido power_machine ni acreditación para seleccionar protecciones']
+            'Sin validación externa del barrido power_machine ni acreditación para seleccionar protecciones']
     for branch in effective.get('branches', []):
         if branch.get('class') == 'ElmZpu' and branch.get('derived_from') and bus_kv.get(branch.get('bus_from')) != bus_kv.get(branch.get('bus_to')):
             block('sc_sweep', 'sc_derived_voltage_bases', 'Estrella SC con bases distintas no admitida por el solver', branch)
@@ -233,4 +233,4 @@ Un LF calculado por el consumidor debe pasar energized_status, no converged.
         row['status'] = 'conditional' if row['evaluable'] else 'blocked'
     return dict(schema='power_machine-study-capabilities-v1', qualification_revision='capabilities-v1', case_id=study.get('case_id'),
                 model_sha256=_hash(model), study_sha256=_hash(study), calculations=rows,
-                note='Preflight estático, no acredita convergencia, validación PF ni cumplimiento normativo')
+                note='Preflight estático, no acredita convergencia, validación externa ni cumplimiento normativo')

@@ -21,7 +21,7 @@ class ExternalGridRMS:
         if tag is not None and not item.get('rms_fixed_voltage',False):
             self.tag=number(item,'tag','s')
             if self.tag<=0:raise ValueError('ElmXnet tag must be positive')
-            # PF2024 TechRef ExternalGrid eq.38 and 75. tag=2H on snom.
+            # 2024 reference simulator TechRef ExternalGrid eq.38 and 75. tag=2H on snom.
             rx=number(item,'rntxn')
             snom=.2*math.hypot(1,rx)*number(item,'snss','MVA')/number(item,'cmax')
             self.acceleration_base=self.tag*snom/self.s_base_mva

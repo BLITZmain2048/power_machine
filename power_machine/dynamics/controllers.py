@@ -114,7 +114,7 @@ class ControlledSynchronousMachine:
                 row = catalog.object_at(self.configuration["voltage_measurement_path"])
                 self.voltage_measurement = VoltageMeasurement(row['object_id'], row['relative_path'])
             descriptions = [(path, "replicado" if path in active else 'out_of_service',
-                             'Connected PF frame' if path in active else "outserv=1")
+                             'Connected REF frame' if path in active else "outserv=1")
                             for path, _, _ in descriptions]
         self.discrete_state: dict[str, object] = {
             "coverage": ControllerCoverage(self.comp_id, self.comp_path,

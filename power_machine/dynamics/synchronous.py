@@ -134,7 +134,7 @@ class EquivalentCircuit:
         cosn = _required(p, "cosn")
         if not 0 < cosn <= 1:
             raise _coded_error(ValueError, 'invalid_synchronous_data', 'cosn is out of range')
-        # tag es la conversión PF a Pgn y prevalece sobre h/iner_inp.
+        # tag es la conversión REF a Pgn y prevalece sobre h/iner_inp.
         if p.get("tag") is not None:
             tag = _required(p, "tag")
         elif p.get("h") is not None and p.get("iner_inp") == "DEF":
@@ -215,7 +215,7 @@ class SynchronousMachine:
                 speed_effect = "neglected"
                 self.discrete_state["speed_effect_assumed"] = True
             else:
-                # PF-05: i_speedVar=1 aplica n a psi'', pero no a x''·i.
+                # REF-05: i_speedVar=1 aplica n a psi'', pero no a x''·i.
                 # TechRef §6.1.2.1 (73)–(74), variante parcialmente despreciada;
                 # checked against reference d/q currents and rotor fluxes. No se cambian
                 # los otros códigos heredados, no contrastados por esta campaña.

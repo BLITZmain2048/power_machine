@@ -54,8 +54,8 @@ def compare_flows(base_model,base_result,other_model,other_result):
 
 
 COLUMNS={
- 'buses':[('name',tr('results.busbar')),('status',tr('results.coverage')),('base_u_pu',tr('results.base_u_p_u')),('other_u_pu',tr('results.alternative_u_p_u')),('delta_u_pu',tr('results.u_p_u_d5c5')),('object_id',tr('results.id_pf'))],
- 'branches':[('name',tr('results.branch')),('status',tr('results.coverage')),('delta_p_from_mw',tr('results.p_desde_mw')),('delta_q_from_mvar',tr('results.q_desde_mvar')),('delta_p_to_mw',tr('results.p_hasta_mw')),('delta_q_to_mvar',tr('results.q_hasta_mvar')),('base_loading_pct',tr('results.base_loading')),('other_loading_pct',tr('results.alternative_loading')),('delta_loading_pct',tr('results.loading_percentage_points')),('object_id',tr('results.id_pf'))]}
+ 'buses':[('name',tr('results.busbar')),('status',tr('results.coverage')),('base_u_pu',tr('results.base_u_p_u')),('other_u_pu',tr('results.alternative_u_p_u')),('delta_u_pu',tr('results.u_p_u_d5c5')),('object_id',tr('results.id_ref'))],
+ 'branches':[('name',tr('results.branch')),('status',tr('results.coverage')),('delta_p_from_mw',tr('results.p_desde_mw')),('delta_q_from_mvar',tr('results.q_desde_mvar')),('delta_p_to_mw',tr('results.p_hasta_mw')),('delta_q_to_mvar',tr('results.q_hasta_mvar')),('base_loading_pct',tr('results.base_loading')),('other_loading_pct',tr('results.alternative_loading')),('delta_loading_pct',tr('results.loading_percentage_points')),('object_id',tr('results.id_ref'))]}
 for field, unit in [('p_from_mw', 'MW'), ('q_from_mvar', 'Mvar'), ('p_to_mw', 'MW'), ('q_to_mvar', 'Mvar')]:
     position = next(i for i, (key, _) in enumerate(COLUMNS['branches']) if key == 'delta_' + field)
     COLUMNS['branches'][position:position] = [('base_' + field, tr('results.base_' + field)), ('other_' + field, tr('results.other_' + field))]

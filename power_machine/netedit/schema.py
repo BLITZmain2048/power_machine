@@ -64,7 +64,7 @@ class NetworkVariant:
     revision: int
     commands: tuple[VariantCommand, ...] = ()
     layout: dict = field(default_factory=lambda: {"schema": LAYOUT_SCHEMA, "groups": {}})
-    metadata: dict = field(default_factory=lambda: {"pf_comparison": "sin validar contra PF"})
+    metadata: dict = field(default_factory=lambda: {"ref_comparison": "sin validar contra la referencia externa"})
 
 
 @dataclass(frozen=True)
@@ -118,4 +118,4 @@ def variant_sha256(variant):
 
 def element_ref(element):
     return {"object_id": element.get("id"), "relative_path": element.get("path"),
-            "origin": element.get("provenance", {}).get("origin", element.get("origin", "powerfactory"))}
+            "origin": element.get("provenance", {}).get("origin", element.get("origin", "external_reference"))}

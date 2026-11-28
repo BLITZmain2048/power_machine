@@ -1,4 +1,4 @@
-"""Cotejo E39-PRO-01 con corrientes locales PF, independiente del modelo de red.
+"""Cotejo E39-PRO-01 con corrientes locales REF, independiente del modelo de red.
 
 Corrientes en A primarios/secundarios y tiempos puros de relé en s.
 La tolerancia relativa es 0.01, con el tiempo nativo como denominador.
@@ -21,7 +21,7 @@ from ..protection import RelayStage, operating_time, standard_curve
 
 WORKSPACE = output_root()
 DEFAULT_SOURCE = None
-DEFAULT_OUTPUT = WORKSPACE / "comparison_results/ieee39_pf/E39-PRO-01"
+DEFAULT_OUTPUT = WORKSPACE / "comparison_results/ieee39_ref/E39-PRO-01"
 TIME_REL_TOL = 0.01
 NO_TRIP_SENTINEL_S = 9999.999
 PROFILES = {"IEC": ("iec", "normal_inverse", 0.2),
@@ -72,7 +72,7 @@ def relative_path(full_path):
     """Retira solo el prefijo hasta el proyecto IntPrj explícito."""
     marker = ".IntPrj\\"
     if marker not in full_path:
-        raise ValueError("Ruta PF sin proyecto IntPrj")
+        raise ValueError("Ruta REF sin proyecto IntPrj")
     return full_path.split(marker, 1)[1]
 
 
@@ -100,7 +100,7 @@ def load_settings(source):
         expected_matrix = ([[0.14], [0.02], [1.0]] if family == "iec" else
                            [[19.61], [2.0], [1.0], [0.491]])
         if matrix != expected_matrix or attr(params, "i_type") != (1 if family == "iec" else 2):
-            raise ValueError("Definición PF distinta del perfil protection, requiere revisión")
+            raise ValueError("Definición REF distinta del perfil protection, requiere revisión")
         first_item = first_relays[label]
         stage_attrs = first_item["stage_attrs"]
         for section, original in (("curve_parameters", "curve_attrs"),
@@ -135,7 +135,7 @@ def load_settings(source):
             "curve_name": item["curve"]["name"], "nominal_dial": nominal_dial,
             "ct_primary_rated_a": ct_primary_a, "ct_secondary_rated_a": ct_secondary_a,
             "secondary_pickup_a": pickup_secondary_a,
-            "pf_primary_pickup_raw_a": raw_pickup_a,
+            "ref_primary_pickup_raw_a": raw_pickup_a,
             "pickup_conversion": "Ipsetr [sec.A] por ptapset/stapset, cpIpset [pri.A] se conserva como dato redondeado",
             "curve_min_m": attr(params, "imin", "I/Ip"),
             "curve_max_m": attr(params, "imax", "I/Ip"),
@@ -161,7 +161,7 @@ def formula_time(stage, current_primary_a, dial):
 
 
 def compare_rows(rows, settings, *, curve_points):
-    """Compara cada etapa y relé con corriente local, sin consumir tiempos analíticos PF."""
+    """Compara cada etapa y relé con corriente local, sin consumir tiempos analíticos REF."""
     output = []
     seen = set()
     for line_number, row in enumerate(rows, 2):
@@ -178,7 +178,7 @@ def compare_rows(rows, settings, *, curve_points):
         if not math.isclose(secondary_a * base_stage.ct_ratio, current_a, rel_tol=1e-12):
             raise ValueError("Corriente primaria/secundaria discordante con TC")
         check_primary_pickup(raw_pickup_a, pickup_a)
-        if not curve_points and (pickup_a != base_stage.pickup_primary_a or raw_pickup_a != config["pf_primary_pickup_raw_a"]):
+        if not curve_points and (pickup_a != base_stage.pickup_primary_a or raw_pickup_a != config["ref_primary_pickup_raw_a"]):
             raise ValueError("Pickup no restaurado en ensayo de falla")
         stage = replace(base_stage, pickup_primary_a=pickup_a)
         multiple = current_a / pickup_a
@@ -195,12 +195,12 @@ def compare_rows(rows, settings, *, curve_points):
         if key in seen:
             raise ValueError("Punto CSV duplicado")
         seen.add(key)
-        pf_stage_s = csv_number(row, "native_stage_time_s")
-        pf_relay_s = csv_number(row, "native_relay_time_s")
-        if pf_stage_s < 0 or pf_relay_s < 0:
-            raise ValueError("Tiempo PF negativo")
-        pf_operates = pf_stage_s != NO_TRIP_SENTINEL_S
-        if pf_operates != (pf_relay_s != NO_TRIP_SENTINEL_S):
+        ref_stage_s = csv_number(row, "native_stage_time_s")
+        ref_relay_s = csv_number(row, "native_relay_time_s")
+        if ref_stage_s < 0 or ref_relay_s < 0:
+            raise ValueError("Tiempo REF negativo")
+        ref_operates = ref_stage_s != NO_TRIP_SENTINEL_S
+        if ref_operates != (ref_relay_s != NO_TRIP_SENTINEL_S):
             raise ValueError("Estado de etapa y relé discordante")
         power_machine_s = operating_time(stage, current_a)
         nominal_s = formula_time(stage, current_a, config["nominal_dial"])
@@ -211,14 +211,14 @@ def compare_rows(rows, settings, *, curve_points):
             raise ValueError("Dominio CSV ausente")
         if inside != (row["within_curve_domain"] == "True"):
             raise ValueError("Dominio CSV discordante con M")
-        comparable = inside and pf_operates and power_machine_s is not None
-        delta_s = pf_stage_s - power_machine_s if comparable else None
-        rel_error = abs(delta_s) / pf_stage_s if comparable and pf_stage_s > 0 else None
-        relay_rel_error = abs(pf_relay_s - power_machine_s) / pf_relay_s if comparable and pf_relay_s > 0 else None
-        nominal_error = abs(pf_stage_s - nominal_s) / pf_stage_s if comparable and pf_stage_s > 0 else None
-        operation_matches = pf_operates == (power_machine_s is not None)
+        comparable = inside and ref_operates and power_machine_s is not None
+        delta_s = ref_stage_s - power_machine_s if comparable else None
+        rel_error = abs(delta_s) / ref_stage_s if comparable and ref_stage_s > 0 else None
+        relay_rel_error = abs(ref_relay_s - power_machine_s) / ref_relay_s if comparable and ref_relay_s > 0 else None
+        nominal_error = abs(ref_stage_s - nominal_s) / ref_stage_s if comparable and ref_stage_s > 0 else None
+        operation_matches = ref_operates == (power_machine_s is not None)
         time_pass = (rel_error <= TIME_REL_TOL and relay_rel_error <= TIME_REL_TOL) if rel_error is not None else None
-        if not pf_operates and multiple <= 1 and operation_matches:
+        if not ref_operates and multiple <= 1 and operation_matches:
             interpretation = "sin arranque, 9999.999 es centinela"
             accepted = True
         elif not comparable:
@@ -227,11 +227,11 @@ def compare_rows(rows, settings, *, curve_points):
         else:
             accepted = operation_matches and time_pass
             if rel_error <= 1e-12 and stage.time_dial != config["nominal_dial"]:
-                interpretation = "redondeo del dial PF, fórmula con ajuste efectivo coincide"
+                interpretation = "redondeo del dial REF, fórmula con ajuste efectivo coincide"
             elif rel_error <= 1e-12:
                 interpretation = "coincide con fórmula, residuo de aritmética flotante"
             else:
-                interpretation = "diferencia sin resolver, revisar definición o límites PF"
+                interpretation = "diferencia sin resolver, revisar definición o límites REF"
         output.append({
             "source_csv": "native_curve_points.csv" if curve_points else "actual_fault_relay_times.csv",
             "source_row": line_number, "relay": label, "object_id": stage.object_id,
@@ -240,16 +240,16 @@ def compare_rows(rows, settings, *, curve_points):
             "fault_bus": int(row["fault_bus"]), "line": row["line"],
             "target_m": target_m, "primary_current_a": current_a, "secondary_current_a": secondary_a,
             "primary_pickup_a": pickup_a, "secondary_pickup_a": pickup_secondary_a,
-            "pf_primary_pickup_raw_a": raw_pickup_a,
-            "pf_minus_effective_pickup_a": raw_pickup_a-pickup_a,
+            "ref_primary_pickup_raw_a": raw_pickup_a,
+            "ref_minus_effective_pickup_a": raw_pickup_a-pickup_a,
             "current_multiple": multiple, "target_m_error": abs(multiple-target_m) if target_m is not None else None,
             "effective_dial": stage.time_dial, "nominal_dial": config["nominal_dial"],
-            "pf_stage_time_raw_s": pf_stage_s, "pf_relay_time_raw_s": pf_relay_s,
-            "pf_operating": pf_operates, "power_machine_operating": power_machine_s is not None,
+            "ref_stage_time_raw_s": ref_stage_s, "ref_relay_time_raw_s": ref_relay_s,
+            "ref_operating": ref_operates, "power_machine_operating": power_machine_s is not None,
             "power_machine_time_s": power_machine_s, "formula_effective_time_s": effective_s,
             "formula_nominal_time_s": nominal_s,
-            "time_using_raw_pf_pickup_s": raw_pickup_s,
-            "pf_minus_power_machine_s": delta_s, "relative_error": rel_error,
+            "time_using_raw_ref_pickup_s": raw_pickup_s,
+            "ref_minus_power_machine_s": delta_s, "relative_error": rel_error,
             "relative_error_percent": rel_error * 100 if rel_error is not None else None,
             "relay_relative_error": relay_rel_error, "nominal_relative_error": nominal_error,
             "relative_tolerance": TIME_REL_TOL, "within_curve_domain": inside,
@@ -267,23 +267,23 @@ def compare_order(faults):
         rows = [r for r in faults if r["fault_bus"] == bus]
         if {r["relay"] for r in rows} != set(PROFILES) or len(rows) != 2:
             raise ValueError("Falla sin ambos relés")
-        pf_rows = sorted((r for r in rows if r["pf_operating"]), key=lambda r: r["pf_relay_time_raw_s"])
+        ref_rows = sorted((r for r in rows if r["ref_operating"]), key=lambda r: r["ref_relay_time_raw_s"])
         power_machine_rows = sorted((r for r in rows if r["power_machine_operating"]), key=lambda r: r["power_machine_time_s"])
-        pf_order = [r["object_id"] for r in pf_rows]
+        ref_order = [r["object_id"] for r in ref_rows]
         power_machine_order = [r["object_id"] for r in power_machine_rows]
         # Compara también igualdad de tiempos, para no convertir empates en precedencia.
         tie_matches = True
-        if len(pf_rows) == len(power_machine_rows) == 2 and set(pf_order) == set(power_machine_order):
-            tie_matches = ((pf_rows[0]["pf_relay_time_raw_s"] == pf_rows[1]["pf_relay_time_raw_s"]) ==
+        if len(ref_rows) == len(power_machine_rows) == 2 and set(ref_order) == set(power_machine_order):
+            tie_matches = ((ref_rows[0]["ref_relay_time_raw_s"] == ref_rows[1]["ref_relay_time_raw_s"]) ==
                            (power_machine_rows[0]["power_machine_time_s"] == power_machine_rows[1]["power_machine_time_s"]))
         output.append({
-            "fault_bus": bus, "pf_order": ">".join(r["relay"] for r in pf_rows),
+            "fault_bus": bus, "ref_order": ">".join(r["relay"] for r in ref_rows),
             "power_machine_order": ">".join(r["relay"] for r in power_machine_rows),
-            "pf_order_object_ids": ">".join(map(str, pf_order)),
+            "ref_order_object_ids": ">".join(map(str, ref_order)),
             "power_machine_order_object_ids": ">".join(map(str, power_machine_order)),
-            "same_operating_set": set(pf_order) == set(power_machine_order),
-            "same_order": pf_order == power_machine_order and tie_matches,
-            "scope": "tiempos estáticos con corrientes locales PF, secuencia de aperturas sin validar",
+            "same_operating_set": set(ref_order) == set(power_machine_order),
+            "same_order": ref_order == power_machine_order and tie_matches,
+            "scope": "tiempos estáticos con corrientes locales REF, secuencia de aperturas sin validar",
         })
     return output
 
@@ -306,8 +306,8 @@ def compare(source):
             measured = [r for r in items if r["relative_error"] is not None]
             summaries.append({
                 "kind": kind, "relay": label, "points": len(items), "timed_points": len(measured),
-                "no_pickup_points": sum(not r["pf_operating"] for r in items),
-                "max_absolute_error_s": max((abs(r["pf_minus_power_machine_s"]) for r in measured), default=None),
+                "no_pickup_points": sum(not r["ref_operating"] for r in items),
+                "max_absolute_error_s": max((abs(r["ref_minus_power_machine_s"]) for r in measured), default=None),
                 "max_relative_error_percent": max((r["relative_error_percent"] for r in measured), default=None),
                 "max_nominal_relative_error_percent": max((100*r["nominal_relative_error"] for r in measured), default=None),
                 "all_pass": all(r["accepted"] for r in items),
@@ -317,7 +317,7 @@ def compare(source):
         stage = config["stage"]
         settings_rows.append({
             "relay": label, "object_id": stage.object_id, "relative_path": stage.relative_path,
-            "relay_id": stage.relay_id, "identity_origin": "PF oid_ original",
+            "relay_id": stage.relay_id, "identity_origin": "REF oid_ original",
             "source_full_path": config["source_full_path"], "relay_full_path": config["relay_full_path"],
             "curve_full_path": config["curve_full_path"], "curve_name": config["curve_name"],
             "standard": stage.curve.source["standard"], "edition": stage.curve.source["edition"],
@@ -334,11 +334,11 @@ def compare(source):
                     all(r["same_operating_set"] and r["same_order"] for r in order),
         "provenance": {
             "source": str(source), "time_relative_tolerance": TIME_REL_TOL,
-            "error_denominator": "tiempo nativo PF", "current_basis": "corriente local del TC exportada por PF",
+            "error_denominator": "tiempo nativo REF", "current_basis": "corriente local del TC exportada por REF",
             "pickup_basis": "Ipsetr [sec.A] por ratio del TC, cpIpset redondeado a float32 conservado por separado",
             "inputs": [{"path": name, "sha256": hashlib.sha256((source/name).read_bytes()).hexdigest()} for name in INPUT_NAMES],
             "normative_evidence": "Perfiles del estudio protection, norma íntegra sin consultar, sin uso de red",
-            "network_current_comparison": "sin validar, depende del modelo PF-nativo de PFC-MODEL",
+            "network_current_comparison": "sin validar, depende del modelo REF-nativo de PFC-MODEL",
             "instantaneous_stage": "sin validar, no hay evaluación nativa de etapa 50 exportada",
             "ct_saturation": "sin validar, solo relación ideal 2000/1 comprobada",
             "graph_source": read_json(source / "protection_curves_manifest.json")["transforms"],
@@ -351,7 +351,7 @@ def compare(source):
 def write_tables(result, output=None):
     """Escribe exclusivamente dentro de la raíz, sin borrar ni sobrescribir archivos."""
     from ..resources import confined_output
-    output = Path(output).resolve() if output is not None else writable_root() / "comparacion_pf" / "proteccion"
+    output = Path(output).resolve() if output is not None else writable_root() / "comparacion_ref" / "proteccion"
     tables = {name + ".csv": result[name] for name in ("curves", "faults", "order", "settings", "summary")}
     paths = [output / name for name in (*tables, "provenance.json")]
     if any(path.exists() for path in paths):

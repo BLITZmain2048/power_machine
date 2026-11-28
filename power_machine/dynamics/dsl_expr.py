@@ -506,7 +506,7 @@ def _prepare_curve(points: Sequence[Sequence[float]]) -> tuple:
 
 def linear_lookup(x: float, points: Sequence[Sequence[float]], *,
                   inverse: bool = False) -> float:
-    'Interpolate PF piecewise-linear curves. Inverse lookup may skip a plateau outside the requested value. Reject multivalued inverse results, invalid ordering and nonfinite points. Preserve signed zero.'
+    'Interpolate REF piecewise-linear curves. Inverse lookup may skip a plateau outside the requested value. Reject multivalued inverse results, invalid ordering and nonfinite points. Preserve signed zero.'
     cached = _CURVE_CACHE.get(id(points))
     values = (cached[1] if cached is not None and cached[0] is points
               else _prepare_curve(points))

@@ -1,4 +1,4 @@
-"""Memoria DSL transaccional según User Manual PF 2024 §29.16."""
+"""Memoria DSL transaccional según User Manual REF 2024 §29.16."""
 import pytest
 
 from power_machine.dynamics.dsl_expr import DSLMemory, evaluate, parse_expression

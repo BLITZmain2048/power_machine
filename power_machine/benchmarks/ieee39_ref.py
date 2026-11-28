@@ -1,6 +1,6 @@
-"""IEEE39 nativo PF exportado, LF de secuencia positiva a 100 MVA y 60 Hz.
+"""IEEE39 nativo REF exportado, LF de secuencia positiva a 100 MVA y 60 Hz.
 
-Lectura offline, sin importar PowerFactory. P/Q de carga son consumo positivo,
+Lectura offline, sin importar simulador comercial de referencia. P/Q de carga son consumo positivo,
 generación positiva inyectada y flujos positivos saliendo de cada extremo.
 """
 from __future__ import annotations
@@ -11,23 +11,23 @@ import math
 from pathlib import Path
 
 from ..loadflow import run_loadflow
-from power_machine.pfcompare.lf import read_csv, number
+from power_machine.refcompare.lf import read_csv, number
 
 from ..resources import resource_root, readonly_path, writable_root
 WORKSPACE = resource_root()
-DEFAULT_PF_DIR = readonly_path("cases", "ieee39_pf")
+DEFAULT_REF_DIR = readonly_path("cases", "ieee39_ref")
 LDF_OPTIONS = {"q_limits": False, "missing": "error", "tolerance_pu": 1e-10,
                "max_iter": 40, "warm_start": False}
 
 
-def build_rms_case(pf_dir=DEFAULT_PF_DIR, *, step_s=.001, stage="full", avr_profile="dyn_a"):
-    """Construye DAE cerrado para cases/ieee39_pf con perfil AVR explícito.
+def build_rms_case(ref_dir=DEFAULT_REF_DIR, *, step_s=.001, stage="full", avr_profile="dyn_a"):
+    """Construye DAE cerrado para cases/ieee39_ref con perfil AVR explícito.
 
-    dyn_a conserva la curva cuadrática. pf_identificado usa la exponencial
+    dyn_a conserva la curva cuadrática. ref_identificado usa la exponencial
     y xr congelado con Tr=0, sin modificar parámetros ni el benchmark LF.
     """
     from ..dynamics.ieee39_native import IEEE39NativeRMS
-    return IEEE39NativeRMS(pf_dir, step_s=step_s, stage=stage, avr_profile=avr_profile)
+    return IEEE39NativeRMS(ref_dir, step_s=step_s, stage=stage, avr_profile=avr_profile)
 
 
 FIELDS = {
@@ -59,7 +59,7 @@ def _entity(obj, types):
     tp = {k: a["value"] for k, a in typ["attributes"].items()
           if a["value"] is not None} if typ else {}
     return {"id": key, "object_id": key, "name": obj["name"], "class": obj["cls"],
-            "scope": "ieee39_pf", "path": path, "relative_path": relative,
+            "scope": "ieee39_ref", "path": path, "relative_path": relative,
             "outserv": values.get("outserv", 0), "params": values, "units": units,
             "type_params": tp,
             "type_units": {k: a["unit"] for k, a in typ["attributes"].items() if k in tp} if typ else {},
@@ -67,8 +67,8 @@ def _entity(obj, types):
             "provenance": {"params": "modelo: " + path, "type_params": typ["path"] if typ else None}}
 
 
-def build_model(pf_dir=DEFAULT_PF_DIR):
-    """Construye v1 desde rutas PF, cargas efectivas CSV y tipos nativos.
+def build_model(ref_dir=DEFAULT_REF_DIR):
+    """Construye v1 desde rutas REF, cargas efectivas CSV y tipos nativos.
 
     R/X totales [ohm], G/B totales [uS]. Tipos por km multiplicados por dline
     [km], cotejados con totales exportados. No usa tensiones resueltas para
@@ -76,16 +76,16 @@ def build_model(pf_dir=DEFAULT_PF_DIR):
     """
     # La identidad de origen conserva el localizador del usuario. Resolver un
     # alias para leer sus archivos no debe reescribir esa procedencia histórica.
-    source_identity = str(Path(pf_dir).expanduser().absolute())
-    pf_dir = Path(pf_dir).resolve()
-    objects = {g: _read_objects(pf_dir / "modelo" / (g + ".json"), fields.split())
+    source_identity = str(Path(ref_dir).expanduser().absolute())
+    ref_dir = Path(ref_dir).resolve()
+    objects = {g: _read_objects(ref_dir / "modelo" / (g + ".json"), fields.split())
                for g, fields in FIELDS.items()}
     types = {obj["path"]: obj for obj in objects["types"]}
     model = {"schema": "power_machine-model-v1", "meta": {
-        "benchmark": "ieee39_pf", "source_package": source_identity,
+        "benchmark": "ieee39_ref", "source_package": source_identity,
         "s_base_mva": 100.0, "f_nom_hz": 60.0,
         "sha256_inputs": {f"modelo/{g}.json": hashlib.sha256(
-            (pf_dir / "modelo" / (g + ".json")).read_bytes()).hexdigest() for g in FIELDS},
+            (ref_dir / "modelo" / (g + ".json")).read_bytes()).hexdigest() for g in FIELDS},
         "loadflow_profile": {"q_limits": False, "tap_adjustment": False,
                              "load_model": "constant_pq"}},
         **{k: [] for k in ("buses", "branches", "branches3", "switches", "gens",
@@ -133,8 +133,8 @@ def build_model(pf_dir=DEFAULT_PF_DIR):
             else:
                 item["provenance"]["transformer"] = "TypTr2: strn[MVA], uktr[%], pcutr[kW], utrn_h/l[kV], vecgrp, nt2ag*30[deg], dutap[%], tap_side, nntap0. ElmTr2: nntap fijo, ntnum"
             model["branches"].append(item)
-    effective_loads = {r["path"]: r for r in read_csv(pf_dir / "E39-LF-01/loads.csv")}
-    references = {r["path"]: int(r["reference"]) for r in read_csv(pf_dir / "E39-LF-01/generators.csv")}
+    effective_loads = {r["path"]: r for r in read_csv(ref_dir / "E39-LF-01/loads.csv")}
+    references = {r["path"]: int(r["reference"]) for r in read_csv(ref_dir / "E39-LF-01/generators.csv")}
     for obj in objects["loads"]:
         item = _entity(obj, types)
         row = effective_loads[obj["path"]]
@@ -160,27 +160,27 @@ def build_model(pf_dir=DEFAULT_PF_DIR):
         raise ValueError("Se requiere una referencia única")
     for name in ("loads", "generators"):
         rel = f"E39-LF-01/{name}.csv"
-        model["meta"]["sha256_inputs"][rel] = hashlib.sha256((pf_dir / rel).read_bytes()).hexdigest()
+        model["meta"]["sha256_inputs"][rel] = hashlib.sha256((ref_dir / rel).read_bytes()).hexdigest()
     return model
 
 
-def write_model(pf_dir=DEFAULT_PF_DIR, *, output_dir=None):
+def write_model(ref_dir=DEFAULT_REF_DIR, *, output_dir=None):
     """Escribe el modelo construido en la carpeta de resultados indicada."""
-    model = build_model(pf_dir)
-    target = Path(output_dir) if output_dir is not None else writable_root() / "ieee39_pf"
+    model = build_model(ref_dir)
+    target = Path(output_dir) if output_dir is not None else writable_root() / "ieee39_ref"
     target.mkdir(parents=True, exist_ok=True)
     (target / "model.json").write_text(json.dumps(model, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
-    lines = ["IEEE39 nativo PowerFactory 2024, 100 MVA, 60 Hz.",
-             "Fuente de solo lectura: " + str(Path(pf_dir).resolve()),
+    lines = ["IEEE39 nativo del simulador comercial de referencia (2024), 100 MVA, 60 Hz.",
+             "Fuente de solo lectura: " + str(Path(ref_dir).resolve()),
              "P/Q de carga positivos consumidos, generación positiva inyectada.",
              "Flujos de rama positivos saliendo del extremo, ángulos en grados.",
-             "IDs deterministas desde la ruta relativa al proyecto PF.",
+             "IDs deterministas desde la ruta relativa al proyecto REF.",
              "Supuestos: secuencia positiva, pi concentrado, cargas PQ constantes.",
              "Sin límites Q, sin ajuste automático de taps, sin promoción de referencia.",
              "Atributo outserv ausente implica en servicio en este inventario LF.",
              "Escala de generación ausente implica 1, pgini se multiplica por ngnum.",
              "B1 [uS] también se verifica contra 2*pi*60*C1 [uF].",
-             "Los totales de línea redondeados por PF se cotejan con tipo por longitud.",
+             "Los totales de línea redondeados por REF se cotejan con tipo por longitud.",
              "Se utilizan los productos de tipo por longitud sin redondeo intermedio.",
              "Controladores y composites dinámicos no intervienen en este LF.",
              "No se afirma validación dinámica ni paridad total.", "", "Trazabilidad por elemento:"]

@@ -110,7 +110,7 @@ class StaticGeneratorRMS:
         """Compose this port with explicit IEC Type 4A module parameters.
 
         Returns a DynamicDevice for DAESolver. Does not inspect or replace
-        an exported DLL or infer any PF frame connections.
+        an exported DLL or infer any REF frame connections.
         """
         from .iec61400 import IECType4A
         return IECType4A(self, **modules)

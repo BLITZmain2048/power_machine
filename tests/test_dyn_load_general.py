@@ -1,4 +1,4 @@
-"""General Load según TechRef, sin afirmar equivalencia numérica con PF."""
+"""General Load según TechRef, sin afirmar equivalencia numérica con REF."""
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ from power_machine.dynamics.load_general import GeneralLoad
 
 
 # Proyección de modelo/types.json del IEEE 39 reference export, sin dependencia
-# del paquete externo. La carga PF usa P lineal y Q cuadrática, no ambas Z.
-PF_PARAMETERS = {
+# del paquete externo. La carga REF usa P lineal y Q cuadrática, no ambas Z.
+REF_PARAMETERS = {
     "loddy": 100, "i_nln": 1,
     "aP": 0.0, "bP": 1.0, "cP": 0.0,
     "aQ": 0.0, "bQ": 0.0, "cQ": 1.0,
@@ -26,8 +26,8 @@ PF_PARAMETERS = {
 
 
 def _load(**changes):
-    params = dict(PF_PARAMETERS, **changes)
-    return GeneralLoad("pf_load", r"Grid.ElmNet\Load.ElmLod", "pf_bus", params)
+    params = dict(REF_PARAMETERS, **changes)
+    return GeneralLoad("ref_load", r"Grid.ElmNet\Load.ElmLod", "ref_bus", params)
 
 
 def _trapezoid(load, initial, v, step_s, end_s):
@@ -60,7 +60,7 @@ def test_exact_lf_initialization_equilibrium_and_contract(v0, s0):
     assert isinstance(load, DynamicDevice)
     assert isinstance(load, LocalJacobianDevice)
     assert (load.n_states, load.n_alg) == (1, 0)
-    assert load.object_id == "pf_load"
+    assert load.object_id == "ref_load"
     assert load.relative_path == r"Grid.ElmNet\Load.ElmLod"
     assert x[0] == abs(v0)
     assert load.consumed_power_mva(v0, x) == pytest.approx(s0, abs=1e-12)
@@ -73,7 +73,7 @@ def test_exact_lf_initialization_equilibrium_and_contract(v0, s0):
 
 def test_from_model_and_nineteen_independent_states():
     items = [{"class": "ElmLod", "id": f"load_{i}", "path": f"grid/load_{i}",
-              "bus": f"bus_{i}", "type_params": dict(PF_PARAMETERS)} for i in range(19)]
+              "bus": f"bus_{i}", "type_params": dict(REF_PARAMETERS)} for i in range(19)]
     devices = [GeneralLoad.from_model(item, s_base_mva=50) for item in items]
     states = [device.init(1.0, 500+184j) for device in devices]
     assert sum(device.n_states for device in devices) == 19
@@ -82,7 +82,7 @@ def test_from_model_and_nineteen_independent_states():
     assert devices[1].consumed_power_mva(1.0, states[1]) == pytest.approx(500+184j)
     assert devices[0].object_id == items[0]["id"]
     assert devices[0].relative_path == items[0]["path"]
-    assert items[0]["type_params"] == PF_PARAMETERS
+    assert items[0]["type_params"] == REF_PARAMETERS
     with pytest.raises(ValueError, match="ElmLod"):
         GeneralLoad.from_model(dict(items[0], **{"class": "ElmSym"}))
 
@@ -95,7 +95,7 @@ def test_voltage_step_against_analytic_filter_and_power(target_u):
     v = target_u*np.exp(-.2j)
     actual = _trapezoid(load, initial, v, step_s, end_s)
     times = np.arange(actual.size)*step_s
-    expected = target_u+(initial[0]-target_u)*np.exp(-times/PF_PARAMETERS["t1"])
+    expected = target_u+(initial[0]-target_u)*np.exp(-times/REF_PARAMETERS["t1"])
     np.testing.assert_allclose(actual, expected, atol=3e-6, rtol=0)
     # Multiplicador (47) independiente de la implementación.
     if target_u < .4:
@@ -119,7 +119,7 @@ def test_h_half_second_order_for_state_and_pq():
     coarse = _trapezoid(load, x0, .94, .002, .4)
     fine = _trapezoid(load, x0, .94, .001, .4)
     times = np.arange(coarse.size)*.002
-    exact = .94+(1.03-.94)*np.exp(-times/PF_PARAMETERS["t1"])
+    exact = .94+(1.03-.94)*np.exp(-times/REF_PARAMETERS["t1"])
     error_coarse = np.max(abs(coarse-exact))
     error_fine = np.max(abs(fine[::2]-exact))
     assert error_coarse/error_fine == pytest.approx(4, rel=.002)
@@ -223,7 +223,7 @@ def test_zero_voltage_finite_current_and_jacobian_convention():
     x = load.init(1.03, 500+184j)
     assert load.current_injection(x, 0j) == 0j
     assert load.consumed_power_mva(0j, x) == 0j
-    assert load.f(0, x, [], 0j)[0] == pytest.approx(-1.03/PF_PARAMETERS["t1"])
+    assert load.f(0, x, [], 0j)[0] == pytest.approx(-1.03/REF_PARAMETERS["t1"])
     jac = load.jacobian_local(0, x, [], 0j)
     np.testing.assert_array_equal(jac[0, 1:], [0., 0.])
     for column, v in ((1, 1e-8+0j), (2, 1e-8j)):
@@ -236,7 +236,7 @@ def test_zero_voltage_finite_current_and_jacobian_convention():
 
 
 def test_canonical_exponent_aliases_and_polynomial_mixture():
-    params = dict(PF_PARAMETERS, aP=.2, bP=.3, cP=.5)
+    params = dict(REF_PARAMETERS, aP=.2, bP=.3, cP=.5)
     aliases = {"kpu0": "e_aP", "kpu1": "e_bP", "kpu": "e_cP",
                "kqu0": "e_aQ", "kqu1": "e_bQ", "kqu": "e_cQ"}
     for alias, canonical in aliases.items():
@@ -244,7 +244,7 @@ def test_canonical_exponent_aliases_and_polynomial_mixture():
     load = GeneralLoad("id", "path", "bus", params)
     load.init(1., 500+184j)
     assert load.consumed_power_mva(.9) == pytest.approx(500*(.2+.3*.9+.5*.9**2)+184j*.9**2)
-    without_c = dict(PF_PARAMETERS)
+    without_c = dict(REF_PARAMETERS)
     del without_c["cP"]
     assert GeneralLoad("id", "path", "bus", without_c)._polynomials[0] == ((1., 1.),)
 
@@ -281,5 +281,5 @@ def test_reject_invalid_initial_state_voltage_and_base():
     with pytest.raises(ValueError):
         load.jacobian_local(0, np.array([1.]), [1.], 1.)
     with pytest.raises(ValueError):
-        GeneralLoad("id", "path", "bus", PF_PARAMETERS, s_base_mva=0)
+        GeneralLoad("id", "path", "bus", REF_PARAMETERS, s_base_mva=0)
 

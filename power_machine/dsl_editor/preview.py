@@ -107,7 +107,7 @@ def _base_payload(draft):
         "state_units": draft.metadata.get("state_units", {}), "input_semantics": "ZOH derecha, sin interpolación de discontinuidades",
         "initialization_completed": False, "internal_events": [], "input_events": [], "time_events": [],
         "discontinuity_semantics": "muestra ordinaria derecha, eventos con before/after y estado continuo común",
-        "analytical_checks": [], "pf_comparison": "sin validar contra PF"}
+        "analytical_checks": [], "ref_comparison": "sin validar contra la referencia externa"}
 
 
 def _simulate_local(draft, case, options, *, checkpoint=None, interpreted=False):
@@ -202,7 +202,7 @@ def _simulate_local(draft, case, options, *, checkpoint=None, interpreted=False)
                 if tolerance < 0:
                     raise EditorError("invalid_expected", "Tolerancia negativa")
                 error = max(abs(a-b) for a, b in zip(payload["outputs"][name], values))
-                checks.append({"signal": name, "reference": "analítica aportada, sin validar contra PF", "max_abs_error": error,
+                checks.append({"signal": name, "reference": "analítica aportada, sin validar contra la referencia externa", "max_abs_error": error,
                                "atol": tolerance, "passed": error <= tolerance})
             payload["analytical_checks"] = checks
         return envelope("completed", payload, options=options, inputs=draft.metadata.get("source_inputs", []))
@@ -310,7 +310,7 @@ def compare_interpreter(draft, case, *, options=None, cancel=None, progress=None
             other = reference["payload"][group][name]
             error = max(abs(a-b) / max(1., abs(b)) for a, b in zip(values, other))
             errors.append({"kind": group, "signal": name, "max_relative_error": error, "passed": len(values) == len(other) and error <= 1e-12})
-    compiled["payload"]["interpreter_comparison"] = {"reference": "intérprete AST local actual, sin validar contra PF",
+    compiled["payload"]["interpreter_comparison"] = {"reference": "intérprete AST local actual, sin validar contra la referencia externa",
         "errors": errors, "passed": same_calendar and all(e["passed"] for e in errors), "same_calendar": same_calendar,
         "normalization": "max(1,abs(reference))", "tolerance": 1e-12,
         "reference_run_id": reference["run_id"]}

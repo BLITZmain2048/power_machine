@@ -1,4 +1,4 @@
-"Offline PF network-variant comparisons with explicit inputs and missing-reference states."
+"Offline REF network-variant comparisons with explicit inputs and missing-reference states."
 from __future__ import annotations
 
 from copy import deepcopy
@@ -12,7 +12,7 @@ from ..resources import output_root, writable_root
 from ..resources import readonly_path
 import uuid
 
-from ..benchmarks.ieee39_pf import DEFAULT_PF_DIR, LDF_OPTIONS
+from ..benchmarks.ieee39_ref import DEFAULT_REF_DIR, LDF_OPTIONS
 from ..loadflow import run_loadflow
 from ..netedit import (VariantHistory, create_command, edit_command, new_variant,
                       materialize_variant, save_variant, load_variant, canonical_json)
@@ -20,8 +20,8 @@ from ..netedit.storage import safe_path
 from .lf import canonical_reference_model, compare_loadflow, read_reference, number, write_comparison
 
 WORKSPACE = output_root()
-MODEL_PATH = readonly_path("cases", "ieee39_pf", "model.json")
-OUTPUT_DIR = WORKSPACE / "comparison_results/ieee39_pf/E39-NET-01"
+MODEL_PATH = readonly_path("cases", "ieee39_ref", "model.json")
+OUTPUT_DIR = WORKSPACE / "comparison_results/ieee39_ref/E39-NET-01"
 FIELDS = {
     "ElmLod": "bus1 typ_id outserv plini qlini scale0",
     "ElmLne": "bus1 bus2 typ_id outserv R1 X1 B1 G1 dline nlnum i_dist",
@@ -66,13 +66,13 @@ def _branch(base, a, b):
 
 
 def _create(base, variant_id, obj, group):
-    """Crea desde entradas PF, conserva correspondencia sin fabricar origen PF."""
+    """Crea desde entradas REF, conserva correspondencia sin fabricar origen REF."""
     p = _values(obj)
     terminals = {b["path"]: b["id"] for b in base["buses"]}
     def bus(port):
         return terminals[p[port].rsplit("\\", 1)[0]]
     _require(p, "outserv bus1 typ_id")
-    data = {"name": obj["name"], "class": obj["cls"], "scope": "ieee39_pf",
+    data = {"name": obj["name"], "class": obj["cls"], "scope": "ieee39_ref",
             "outserv": p["outserv"], "params": deepcopy(p),
             "units": {k: obj["attrs"][k]["unit"] for k in p},
             "type_id": p["typ_id"], "type_params": {}, "type_units": {}}
@@ -104,7 +104,7 @@ def _create(base, variant_id, obj, group):
         notes.append("R/X/G/B from TypLne times dline, checked against native totals")
     else:
         _require(p, "pgini qgini ngnum usetp av_mode ip_ctrl")
-        # PF no exporta escala para ElmSym en este paquete. Misma regla explícita
+        # REF no exporta escala para ElmSym en este paquete. Misma regla explícita
         # de PFC-MODEL, sin usar P/Q resueltos como entradas del generador.
         scale = p.get("scale0", 1.0)
         data["params"]["scale0"] = scale
@@ -131,7 +131,7 @@ def _create(base, variant_id, obj, group):
 def build_variant(base, description):
     "Build an independent variant from declared inputs before solving load flow."
     tag = description["variant"]
-    variant = new_variant(base, description["description"], variant_id="v_pfc_net_" + tag)
+    variant = new_variant(base, description["description"], variant_id="v_ref_net_" + tag)
     mappings, notes = [], []
     if tag == "A":
         command = edit_command(base, "retire", "branches", _branch(base, 16, 21)["id"])
@@ -141,7 +141,7 @@ def build_variant(base, description):
         observed = {"position": tr["params"]["nntap"], "neutral": tr["type_params"]["nntap0"],
                     "step_pct": tr["type_params"]["dutap"], "side": tr["type_params"]["tap_side"]}
         if old != observed:
-            raise RepresentationGap("[reference_tap_mismatch] Original PF tap differs from the base model")
+            raise RepresentationGap("[reference_tap_mismatch] Original REF tap differs from the base model")
         command = edit_command(base, "update", "branches", tr["id"],
                                {"params": {"nntap": new["position"]},
                                 "type_params": {"nntap0": new["neutral"], "dutap": new["step_pct"], "tap_side": new["side"]}})
@@ -152,15 +152,15 @@ def build_variant(base, description):
     else:
         raise RepresentationGap("[unsupported_reference_variant] Variant is outside the protocol: " + tag)
     variant = replace(variant, metadata={"source_sha256": description["source_sha256"],
-                                        "pf_correspondence": mappings, "assumptions": notes,
-                                        "pf_comparison": "pending"})
+                                        "ref_correspondence": mappings, "assumptions": notes,
+                                        "ref_comparison": "pending"})
     history = VariantHistory(base, variant)
     history.apply(command)
     return history
 
 
 def comparison_model(model, mappings):
-    "Map PF comparison paths without changing electrical parameters or model IDs."
+    "Map external comparison paths without changing electrical parameters or model IDs."
     view = deepcopy(model)
     for mapping in mappings:
         row = next(r for r in view[mapping["group"]] if r["id"] == mapping["power_machine_id"])
@@ -173,24 +173,24 @@ def compare_variant(model, result, reference, mappings):
     view = canonical_reference_model(comparison_model(model, mappings), reference)
     comparison = compare_loadflow(view, result, reference)
     audits = []
-    for group, pf_group in (("buses", "buses"), ("branches", "branches"), ("gens", "generators"), ("loads", "loads")):
-        expected = {r["path"] for r in reference[pf_group]}
+    for group, ref_group in (("buses", "buses"), ("branches", "branches"), ("gens", "generators"), ("loads", "loads")):
+        expected = {r["path"] for r in reference[ref_group]}
         actual = {r["path"] for r in view[group]}
         audits.append({"check": group + "_paths", "pass": expected == actual,
                        "detail": canonical_json({"missing": sorted(expected - actual), "extra": sorted(actual - expected)})})
     by_path = {r["path"]: r for r in view["branches"]}
-    for pf in reference["branches"]:
-        row = by_path.get(pf["path"])
-        audits.append({"check": "branch_state", "pass": row is not None and row["outserv"] == int(pf["outserv"]), "detail": pf["path"]})
+    for ref_entry in reference["branches"]:
+        row = by_path.get(ref_entry["path"])
+        audits.append({"check": "branch_state", "pass": row is not None and row["outserv"] == int(ref_entry["outserv"]), "detail": ref_entry["path"]})
     loads = {r["path"]: r for r in view["loads"]}
-    for pf in reference["loads"]:
-        row = loads.get(pf["path"])
+    for ref_entry in reference["loads"]:
+        row = loads.get(ref_entry["path"])
         for field, native, unit in (("p_mw", "plini", "MW"), ("q_mvar", "qlini", "Mvar")):
             power_machine = row["params"][native] * row["params"]["scale0"] if row else None
-            measured = number(pf["P_MW" if field == "p_mw" else "Q_Mvar"])
+            measured = number(ref_entry["P_MW" if field == "p_mw" else "Q_Mvar"])
             delta = power_machine - measured if power_machine is not None and measured is not None else None
-            comparison["rows"].append({"group": "loads", "element": pf["path"], "field": field,
-                                       "pf": measured, "power_machine": power_machine, "delta": delta,
+            comparison["rows"].append({"group": "loads", "element": ref_entry["path"], "field": field,
+                                       "ref": measured, "power_machine": power_machine, "delta": delta,
                                        "abs_delta": abs(delta) if delta is not None else None, "tolerance": 0.05,
                                        "pass": delta is not None and abs(delta) <= 0.05,
                                        "probable_cause": "Entrada PQ constante en " + unit})
@@ -218,7 +218,7 @@ def export_roundtrip(model, mappings, path):
     "Export and reimport a model, then verify numerical and identity consistency."
     target = safe_path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    envelope = {"schema": "power_machine-pfc-net-export-v1", "model": model, "pf_correspondence": mappings}
+    envelope = {"schema": "power_machine-pfc-net-export-v1", "model": model, "ref_correspondence": mappings}
     target.write_text(canonical_json(envelope) + "\n", encoding="utf-8")
     imported = json.loads(target.read_text(encoding="utf-8"))
     if imported["schema"] != envelope["schema"]:
@@ -255,7 +255,7 @@ def compare_pfd_initial_lf(base, result, path):
         if delta is not None and field == "angle_deg":
             delta = (delta + 180) % 360 - 180
         rows.append({"element": name, "object_id": item["object_id"], "relative_path": item["relative_path"],
-                     "variable": variable, "pf": expected, "power_machine": actual, "delta": delta,
+                     "variable": variable, "ref": expected, "power_machine": actual, "delta": delta,
                      "tolerance": tolerance, "pass": delta is not None and abs(delta) <= tolerance})
     if not rows:
         raise ValueError("No hay observables LF comparables en la fila inicial PFD")
@@ -272,14 +272,14 @@ def _write_rows(path, rows):
         writer.writerows(rows)
 
 
-def run_comparisons(pf_dir, output_dir=None, *, model=None):
+def run_comparisons(ref_dir, output_dir=None, *, model=None):
     "Compare five variants, or return an explicit reference_not_included record before creating outputs."
-    source = Path(pf_dir)
+    source = Path(ref_dir)
     if not (source / "E39-NET-01").is_dir():
         return {"E39-NET-01":{"status":"reference_not_included", "campaign":"E39-NET-01",
                               "included":False, "pass":None,
                               "limitation":"The reference export does not include E39-NET-01."}}
-    target = Path(output_dir).resolve() if output_dir is not None else writable_root() / "comparacion_pf" / "red"
+    target = Path(output_dir).resolve() if output_dir is not None else writable_root() / "comparacion_ref" / "red"
     base_bytes = (source / "model.json").read_bytes() if model is None else canonical_json(model).encode("utf-8")
     base = json.loads(base_bytes.decode("utf-8-sig"))
     base_result = run_loadflow(base, options=LDF_OPTIONS)
@@ -301,7 +301,7 @@ def run_comparisons(pf_dir, output_dir=None, *, model=None):
             comparisons[tag] = {"pass": False, "limitation": str(exc)}
             continue
         model = history.model
-        mappings = history.variant.metadata["pf_correspondence"]
+        mappings = history.variant.metadata["ref_correspondence"]
         mappings_table.extend({"variant": tag, **r} for r in mappings)
         result = run_loadflow(model, options=LDF_OPTIONS)
         reference = read_reference(folder)
@@ -323,12 +323,12 @@ def run_comparisons(pf_dir, output_dir=None, *, model=None):
             view = canonical_reference_model(comparison_model(model, mappings), reference)
             loads = {r["path"]: r for r in view["loads"]}
             matches = []
-            for pf in completion["new_load"]:
-                row = loads.get(pf["path"])
-                matches.append(row is not None and row["p_mw"] == pf["plini_MW"] and
-                               row["q_mvar"] == pf["qlini_Mvar"] and row["scale"] == pf["scale"] and
-                               next(b for b in base["buses"] if b["id"] == row["bus"])["name"] == f"Bus {pf['bus']:02d}")
-            checks["pf_export_completion"] = completion["code"] == 0 and completion["load_rows"] == len(loads) and len(matches) == 1 and all(matches)
+            for ref_entry in completion["new_load"]:
+                row = loads.get(ref_entry["path"])
+                matches.append(row is not None and row["p_mw"] == ref_entry["plini_MW"] and
+                               row["q_mvar"] == ref_entry["qlini_Mvar"] and row["scale"] == ref_entry["scale"] and
+                               next(b for b in base["buses"] if b["id"] == row["bus"])["name"] == f"Bus {ref_entry['bus']:02d}")
+            checks["ref_export_completion"] = completion["code"] == 0 and completion["load_rows"] == len(loads) and len(matches) == 1 and all(matches)
         comparison["reversibility_pass"] = all(checks.values())
         comparison["pass"] &= comparison["reversibility_pass"]
         comparisons[tag] = comparison
@@ -337,16 +337,16 @@ def run_comparisons(pf_dir, output_dir=None, *, model=None):
         overview.append({"variant": tag, "pass": comparison["pass"], "status": "compared",
                          "reversibility_pass": comparison["reversibility_pass"],
                          "loss_power_machine_mw": result["totals"]["branch_loss_p_mw"],
-                         "loss_pf_mw": reference["report"]["summary"]["loss_MW"],
+                         "loss_ref_mw": reference["report"]["summary"]["loss_MW"],
                          "limitation": " | ".join(history.variant.metadata["assumptions"]),
                          **comparison["maxima"]})
     pfd = json.loads((source / "verification/pfd_import_validation.json").read_text(encoding="utf-8-sig"))
-    pf_base = next(check for check in pfd["checks"] if check["name"] == "Base load flow")
-    verification.append({"variant": "PF_PFD", "check": "reported_base_lf", "pass": pf_base["code"] == 0 and pf_base["max_voltage_difference_pu"] == 0,
-                         "detail": "PF evidence was read, not executed. DIN03 RMS, DSL and protection are outside scope"})
+    ref_base = next(check for check in pfd["checks"] if check["name"] == "Base load flow")
+    verification.append({"variant": "REF_PFD", "check": "reported_base_lf", "pass": ref_base["code"] == 0 and ref_base["max_voltage_difference_pu"] == 0,
+                         "detail": "REF evidence was read, not executed. DIN03 RMS, DSL and protection are outside scope"})
     pfd_initial = compare_pfd_initial_lf(base, base_result, source / "verification/PFD_import_DIN03.csv")
     _write_rows(target / "pfd_initial_lf.csv", pfd_initial)
-    verification.append({"variant": "PF_PFD", "check": "initial_lf_observables", "pass": all(r["pass"] for r in pfd_initial),
+    verification.append({"variant": "REF_PFD", "check": "initial_lf_observables", "pass": all(r["pass"] for r in pfd_initial),
                          "detail": f"{len(pfd_initial)} LF observables at t=0 without evaluating RMS"})
     verification_pass = all(r["pass"] for r in verification)
     for tag, comparison in comparisons.items():
@@ -366,15 +366,15 @@ def run_comparisons(pf_dir, output_dir=None, *, model=None):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pf-dir", type=Path, default=DEFAULT_PF_DIR)
+    parser.add_argument("--ref-dir", type=Path, default=DEFAULT_REF_DIR)
     parser.add_argument("--output-dir", type=Path, default=None)
     args = parser.parse_args()
-    comparisons = run_comparisons(args.pf_dir, args.output_dir)
+    comparisons = run_comparisons(args.ref_dir, args.output_dir)
     for tag, comparison in comparisons.items():
         print(tag, comparison["pass"], comparison.get("maxima", comparison.get("limitation")))
     raise SystemExit(0 if all(c["pass"] for c in comparisons.values()) else 1)
 
 
-def compare_network(model, result, pf_results_dir, mappings=None):
-    "Compare a network variant against user-supplied PF tables."
-    return compare_variant(model, result, read_reference(pf_results_dir), mappings or [])
+def compare_network(model, result, ref_results_dir, mappings=None):
+    "Compare a network variant against user-supplied REF tables."
+    return compare_variant(model, result, read_reference(ref_results_dir), mappings or [])

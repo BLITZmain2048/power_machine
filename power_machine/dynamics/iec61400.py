@@ -51,7 +51,7 @@ def pi(x, error, kp, ki, lo, hi, freeze=False):
 class Curve:
     """IEC 2020 D.6, Figure D.8, linear table with held endpoints.
 
-    Points must be explicit. An absent PF oarray is not inferred as a curve.
+    Points must be explicit. An absent REF oarray is not inferred as a curve.
     """
     points: tuple
 

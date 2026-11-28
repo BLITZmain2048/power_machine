@@ -80,7 +80,7 @@ class PanelController:
     def submit(self, options, input_data):
         request = build_request(self.context, options, input_data)
         self.job = self.context.submit_job("cct", request, self.on_message)
-        self.context.log("INFO", tr('integration.rms_cct_no_pf_validation'))
+        self.context.log("INFO", tr('integration.rms_cct_no_ref_validation'))
         return request
 
     def cancel(self):

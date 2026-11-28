@@ -1,6 +1,6 @@
-# Importing a PowerFactory CSV export
+# Importing a CSV element-table export
 
-`import_powerfactory(csv_dir, overrides=None)` builds a portable `power_machine-model-v1` network from a user-provided CSV export. It does not open a project file or infer electrical, sequence, control, or dynamic parameters that are absent from the export.
+`import_csv_export(csv_dir, overrides=None)` builds a portable `power_machine-model-v1` network from a user-provided CSV export. It does not open a project file or infer electrical, sequence, control, or dynamic parameters that are absent from the export.
 
 The importer recognizes terminals, lines, two- and three-winding transformers, couplers, loads, generators, shunts, controllers, DSL objects, and related inventory where documented fields are present. Unsupported objects can remain as inventory rather than becoming calculations.
 
@@ -12,9 +12,9 @@ For a dynamic user profile, place `dynamic/manifest.json`, `objects.csv`, `attri
 
 ## Use
 
-Pass the export directory to `import_powerfactory`, `load_case`, or `power-machine import-pf`. Save the resulting `Network` only to a user output destination. Preserve source identifiers, units, and provenance. Review importer warnings before relying on an interface or derived network. PowerFactory is a trademark of its owner. This project is not affiliated with or endorsed by that owner.
+Pass the export directory to `import_csv_export`, `load_case`, or `power-machine import-csv`. Save the resulting `Network` only to a user output destination. Preserve source identifiers, units, and provenance. Review importer warnings before relying on an interface or derived network.
 
-## Native passive elements (PF 2024)
+## Native passive elements (REF 2024)
 
 | Class | Connections | Supported native attributes and units |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ The native `shtype` enumeration is:
 | 3 | C in series with `(R-L) parallel Rp` | Reactor data, capacitor data, `rpara` |
 | 4 | Main C2 in series with `((R-L-C1) parallel Rp)` | `xrea` or `qrean`, `rrea` or `grea`, `c1`, `c2`, `rpara`, nominal frequency |
 
-`rpara=0` means the parallel resistor is absent, as defined by PF. It does not short the R-L arm. `grea=0` explicitly selects zero reactor resistance. The model's `meta.f_nom_hz` supplies the C1/C2 circuit frequency to LF and RMS. Direct `y_shunt` calls can supply `f_nom_hz` as a keyword or an element parameter. SC uses the study frequency.
+`rpara=0` means the parallel resistor is absent, as defined by REF. It does not short the R-L arm. `grea=0` explicitly selects zero reactor resistance. The model's `meta.f_nom_hz` supplies the C1/C2 circuit frequency to LF and RMS. Direct `y_shunt` calls can supply `f_nom_hz` as a keyword or an element parameter. SC uses the study frequency.
 
 For three-phase star connections (`ctech=1` YN or `2` Y), `B=qcapn/ushnm**2` and `X=ushnm**2/qrean`. Delta (`ctech=0`) uses `B=qcapn/(3 ushnm**2)` and `X=3 ushnm**2/qrean`, with three times the per-phase layout admittance in the positive-sequence stamp. String aliases `3PH-D`, `3PH-YN`, `3PH-Y` are also accepted. Legacy exports without `ctech` use the star equivalent. Single-phase technologies and measurement-table shunts (`iTaps`) require a different model and raise an explicit error.
 
@@ -67,4 +67,4 @@ Balanced initial short-circuit calculations use `Z1 = c Un² / Sk` and the decla
 
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

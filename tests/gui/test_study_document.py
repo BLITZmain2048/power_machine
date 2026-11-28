@@ -211,7 +211,7 @@ def test_result_content_workspace_and_history(sample, tmp_path):
     link = dict(run_id=rid, case_id=doc.active_case_id, module='lf', panel_id='lf', created_at_utc=v2.now(),
         result_path=relative_path(result), result_file_sha256=file_sha256(result), schema='result-v1',
         status='partial', raw_status='partial', cancelled=False, dependencies=dep,
-        calculation_sha256=calculation_sha256(dep), validation={'pf_comparison': {'status': 'not_compared'}}, coverage={})
+        calculation_sha256=calculation_sha256(dep), validation={'ref_comparison': {'status': 'not_compared'}}, coverage={})
     doc.attach_result(link)
     assert doc.result_freshness(rid) == 'current'
     doc.put_workspace('protection', {'pickup_a': 120}, {}, doc.revision, wid)
@@ -241,11 +241,11 @@ def test_paths_nonfinite_and_tampered_base(sample, tmp_path):
 
 def test_private_type_explicit_commands(sample):
     _, base, ids = sample
-    source = dict(type_id='pf_type', type_class='TypLod', instance_class='ElmLod', params={'x': 1}, units={'x': '1'})
+    source = dict(type_id='ref_type', type_class='TypLod', instance_class='ElmLod', params={'x': 1}, units={'x': '1'})
     own = copy_type(source, 'Propio')
     own_before = deepcopy(own)
     commands = application_commands(base, own, [ids['l1']])
-    assert len(commands) == 1 and source['type_id'] == 'pf_type' and own == own_before
+    assert len(commands) == 1 and source['type_id'] == 'ref_type' and own == own_before
     with pytest.raises(ValueError, match='incompatible'):
         application_commands(base, own, [ids['b1']])
 

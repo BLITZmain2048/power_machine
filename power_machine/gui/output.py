@@ -30,7 +30,7 @@ def normalize_level(level):
 
 
 def normalize_element_ref(reference):
-    """Normaliza una referencia trazable de PowerFactory sin inferir nombres."""
+    """Normaliza una referencia trazable del simulador comercial de referencia sin inferir nombres."""
     if not isinstance(reference, dict):
         raise ValueError('La referencia de elemento debe ser un diccionario')
     object_id = reference.get('object_id', reference.get('id'))

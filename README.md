@@ -59,7 +59,7 @@ The [API guide](docs/api.md) explains typed result tables and diagnostics. The i
 
 ```mermaid
 flowchart LR
-    Source["model.json or PowerFactory CSV"] --> Network["Network"]
+    Source["model.json or element-table CSV"] --> Network["Network"]
     Network --> Studies["Load flow, contingencies, short circuit, RMS, CCT, modal, PV/QV, QSS"]
     Studies --> Results["Typed results"]
     Results --> API["Python API"]
@@ -150,7 +150,7 @@ All completed load-flow runs converged. The 5,000- and 10,000-bus sparse runs us
 - N-1 ranking reports calculated constraints and topology outcomes. It does not establish operating feasibility, protection coordination, frequency response, or reserves.
 - Performance values are measurements for the stated configuration and are not comparisons with another product.
 
-PowerFactory is a trademark of its owner. This project is not affiliated with or endorsed by that owner.
+
 
 ## Repository layout
 
@@ -169,4 +169,4 @@ Run `python -m pytest -m "not gui"` for the non-GUI suite and `python -m validat
 The source code is MIT licensed. IEEE 39 case data  have separate provenance and terms described in [NOTICE](NOTICE). They are not covered by the code license. Cite the software using [CITATION.cff](CITATION.cff).
 
 
-Includes importers and comparators for user-supplied PowerFactory exports; no PowerFactory data or results are distributed. Set `POWER_MACHINE_PF_IEEE39` to your export directory. Dependent features report `pf_reference_data_not_included` when data is absent.
+The importers accept user-supplied CSV element-table exports. Comparisons use external references supplied by the user. External reference data and results are not distributed. Set `POWER_MACHINE_REF_IEEE39` to your export directory. Dependent features report `reference_data_not_included` when data is absent.

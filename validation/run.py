@@ -1,7 +1,7 @@
 """Run the offline IEEE 39 validation campaign.
 
 Run ``python -m validation`` from the repository root.  The command uses only
-user-supplied PowerFactory exports and writes a timestamped, immutable result
+user-supplied reference simulator exports and writes a timestamped, immutable result
 folder below ``validation/results``.  It never changes model parameters or
 tolerances after measurements have started.
 """
@@ -111,16 +111,16 @@ def _classical_convergence(tolerances):
 
 
 def _native_convergence(tolerances):
-    from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR, build_rms_case
-    from power_machine.pfcompare.rms_network import simulate
-    from power_machine.pfcompare.rms_replay import load_reference
+    from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR, build_rms_case
+    from power_machine.refcompare.rms_network import simulate
+    from power_machine.refcompare.rms_replay import load_reference
     h, h2, h4 = tolerances["steps_s"]
     end_s = tolerances["comparison_time_s"]
-    _, _, channels = load_reference(DEFAULT_PF_DIR / "E39-DIN-03")
+    _, _, channels = load_reference(DEFAULT_REF_DIR / "E39-DIN-03")
     vectors = []
     diagnostics = []
     for step in (h, h2, h4):
-        rms = build_rms_case(DEFAULT_PF_DIR, step_s=step)
+        rms = build_rms_case(DEFAULT_REF_DIR, step_s=step)
         _, predicted, detail = simulate(rms, "E39-DIN-03", channels, stop_s=end_s, progress=None)
         vectors.append(np.asarray([predicted[channel["signal"]][-1] for channel in channels], dtype=float))
         diagnostics.append({"step_s": step, "state_count": rms.solver.nx, "max_kcl_pu": detail["max_kcl_pu"],
@@ -135,11 +135,11 @@ def _native_convergence(tolerances):
 
 
 def _native_trials(output, tolerances):
-    from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR
-    from power_machine.pfcompare.rms_network import run_trial
+    from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR
+    from power_machine.refcompare.rms_network import run_trial
     trials = []
     for trial in ("E39-DIN-01", "E39-DIN-02", "E39-DIN-03"):
-        summary = run_trial(DEFAULT_PF_DIR, output / "native", trial, stop_s=tolerances["horizon_s"], progress=None)
+        summary = run_trial(DEFAULT_REF_DIR, output / "native", trial, stop_s=tolerances["horizon_s"], progress=None)
         metrics = _read_csv(output / "native" / trial / "rms_network" / "metrics.csv")
         failures = [row for row in metrics if not (_bool(row.get("max_pass")) and row.get("peak_pass", "") in ("", "True", "true"))]
         trials.append({"trial": trial, "summary": summary, "channels": metrics, "failed_or_incomplete_channels": failures,
@@ -148,27 +148,27 @@ def _native_trials(output, tolerances):
 
 
 def _static_campaign(output):
-    from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR
-    from power_machine.pfcompare import cc, lf, net
-    from power_machine.benchmarks.ieee39_pf import LDF_OPTIONS, build_model
+    from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR
+    from power_machine.refcompare import cc, lf, net
+    from power_machine.benchmarks.ieee39_ref import LDF_OPTIONS, build_model
     from power_machine.loadflow import run_loadflow
     # The distributed export contains E39-LF-01 but not the optional CT folders.
     # Call the public single-case comparator rather than the campaign helper,
     # which currently assumes those absent folders exist.
-    lf_model = build_model(DEFAULT_PF_DIR)
-    lf_comparison = lf.compare_results(lf_model, run_loadflow(lf_model, options=LDF_OPTIONS), DEFAULT_PF_DIR / "E39-LF-01")
+    lf_model = build_model(DEFAULT_REF_DIR)
+    lf_comparison = lf.compare_results(lf_model, run_loadflow(lf_model, options=LDF_OPTIONS), DEFAULT_REF_DIR / "E39-LF-01")
     lf.write_comparison(lf_comparison, output / "load_flow" / "E39-LF-01")
     lf_result = {"E39-LF-01": lf_comparison}
-    network_reference = DEFAULT_PF_DIR / "E39-NET-01"
+    network_reference = DEFAULT_REF_DIR / "E39-NET-01"
     if network_reference.is_dir():
-        net_result = net.run_comparisons(DEFAULT_PF_DIR, output / "network")
+        net_result = net.run_comparisons(DEFAULT_REF_DIR, output / "network")
         network_summary = {"variants": {key: bool(value["pass"]) for key, value in net_result.items()},
                            "pass": all(value["pass"] for value in net_result.values()), "status": "compared"}
     else:
         # Do not substitute an internal round trip for an external reference.
         network_summary = {"variants": {}, "pass": False, "status": "reference_not_included",
-                           "detail": "E39-NET-01 is not present under cases/ieee39_pf."}
-    sc_result = cc.run_comparisons(DEFAULT_PF_DIR, output / "short_circuit")
+                           "detail": "E39-NET-01 is not present under cases/ieee39_ref."}
+    sc_result = cc.run_comparisons(DEFAULT_REF_DIR, output / "short_circuit")
     sc_summary = [{key: row[key] for key in ("metric", "maximum", "median", "measured", "passed", "total")}
                   for row in sc_result["summary"]]
     # RtoX and derived kappa are diagnostic rows without an acceptance count.
@@ -184,12 +184,12 @@ def _static_campaign(output):
 def _markdown(result):
     lines = ["# IEEE 39 validation report", "", "This report is generated by `python -m validation`. Tolerances were read from `validation/tolerances.json` before execution.",
              "", "## Outcome", "", f"Overall result: **{'PASS' if result['pass'] else 'FAIL'}**.", "",
-             "## Static PowerFactory comparisons", "", "| Study | Result | Coverage |", "| --- | --- | --- |"]
+             "## Static reference simulator comparisons", "", "| Study | Result | Coverage |", "| --- | --- | --- |"]
     static = result["static"]
     lines.extend([f"| Load flow | {'PASS' if static['load_flow']['pass'] else 'FAIL'} | {len(static['load_flow']['cases'])} cases |",
                   f"| Network variants | {'PASS' if static['network']['pass'] else 'FAIL'} | {len(static['network']['variants'])} variants |",
                   f"| 3-phase short circuit | {'PASS' if static['short_circuit']['pass'] else 'FAIL'} | {static['short_circuit']['fault_buses']} buses |", "",
-                  "## Native RMS PowerFactory comparison", "", "All included channels are listed. A blank criterion is not silently counted as a pass.",
+                  "## Native RMS reference simulator comparison", "", "All included channels are listed. A blank criterion is not silently counted as a pass.",
                   "", "| Trial | Channel | Unit | Maximum normalized error | Max pass | Peak pass | Complete samples |", "| --- | --- | --- | ---: | --- | --- | --- |"])
     for trial in result["native_rms"]:
         for channel in trial["channels"]:
@@ -204,7 +204,7 @@ def _markdown(result):
         order = "n/a" if entry["observed_order"] is None else f"{entry['observed_order']:.3f}"
         lines.append(f"| {entry['engine']} | {entry['comparison_time_s']:.3f} s | {order} | {'PASS' if entry['pass'] else 'FAIL'} |")
     lines.extend(["", "The classical CCT B16 resolution results are in `summary.json`. They are not presented as a global order estimate because bisection, events and finite-horizon classification are discontinuous.",
-                  "", "## Limits", "", "The native RMS result is limited to the included IEEE 39 export, the stated settings and the 1.2 s horizon. Classical RMS is reported separately and has no PowerFactory comparison label. See `CAPABILITIES.md` and `DYNAMIC_DATA_PROVENANCE.md`."])
+                  "", "## Limits", "", "The native RMS result is limited to the included IEEE 39 export, the stated settings and the 1.2 s horizon. Classical RMS is reported separately and has no reference simulator comparison label. See `CAPABILITIES.md` and `DYNAMIC_DATA_PROVENANCE.md`."])
     return "\n".join(lines) + "\n"
 
 
@@ -219,14 +219,14 @@ def run(output=None, *, quick=False):
     os.environ["POWER_MACHINE_OUTPUT_DIR"] = str(output)
     _write_json(output / "tolerances_before_run.json", tolerances)
     analytical = run_cases(tolerances["analytical"])
-    from power_machine.resources import pf_data_available
-    if not pf_data_available() and not quick:
+    from power_machine.resources import ref_data_available
+    if not ref_data_available() and not quick:
         convergence = [_classical_convergence(tolerances["temporal_convergence"])]
         result = {"schema": "power-machine-validation-summary-v1", "mode": "internal",
                   "analytical": analytical, "convergence": convergence,
-                  "powerfactory": {"status": "not included", "code": "pf_reference_data_not_included"},
+                  "external_reference": {"status": "not included", "code": "reference_data_not_included"},
                   "pass": all(item["pass"] for item in analytical) and all(item["pass"] for item in convergence)}
-        (output / "report.md").write_text("PowerFactory comparisons: not included\n", encoding="utf-8")
+        (output / "report.md").write_text("reference simulator comparisons: not included\n", encoding="utf-8")
     elif quick:
         result = {"schema": "power-machine-validation-summary-v1", "mode": "quick", "tolerances": tolerances,
                   "analytical": analytical, "pass": all(item["pass"] for item in analytical)}
@@ -249,8 +249,8 @@ def main(argv=None):
     parser.add_argument("--quick", action="store_true", help="Run only closed-form analytical validation")
     args = parser.parse_args(argv)
     result, output = run(args.output, quick=args.quick)
-    if result.get("powerfactory"):
-        print("PowerFactory comparisons: not included")
+    if result.get("external_reference"):
+        print("reference simulator comparisons: not included")
     print(output)
     return 0 if result["pass"] else 1
 

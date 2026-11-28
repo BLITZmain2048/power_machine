@@ -51,7 +51,7 @@ def envelope(model: dict, study: dict, options: dict) -> dict:
                           "profile": "static_pv_qv_newton_v1",
                           "formula": "Puntos por Newton-Raphson independiente, sin continuación predictor-corrector"}],
             "analytical_checks": [],
-            "pf_comparison": "sin validar contra PF",
+            "ref_comparison": "sin validar contra la referencia externa",
             "collapse_method": "La no convergencia acota una estimación, no demuestra el punto de silla-nodo",
             "bases": {"s_base_mva": model.get("meta", {}).get("s_base_mva"),
                       "f_nom_hz": model.get("meta", {}).get("f_nom_hz")},

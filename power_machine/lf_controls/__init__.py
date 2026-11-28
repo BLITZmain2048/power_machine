@@ -1,4 +1,4 @@
-"""Regulación discreta externa del LF. Sin validar contra PF.
+"""Regulación discreta externa del LF. Sin validar contra la referencia externa.
 
 Las consignas están en p.u., las posiciones son enteras. No escribe el modelo.
 """
@@ -28,7 +28,7 @@ def _number(value):
 def inventory(model):
     """Inventario por canal, con localizador y unidad de cada campo exportado.
 
-    path del modelo es el relative_path PF. No se infiere una barra regulada
+    path del modelo es el relative_path REF. No se infiere una barra regulada
     desde el puerto conectado. El mínimo físico de ncapa es cero.
     """
     rows = []
@@ -189,7 +189,7 @@ def execute_request(request, *, cancel=None, progress=None):
     ciclo de dos posiciones. No extrapola el signo de respuesta de una barra.
     """
     output = dict(schema='power_machine-lf-controls-result-v1', module='lf_controls', status='invalid_input',
-                  validation_label='sin validar contra PF', payload={}, diagnostics=[])
+                  validation_label='sin validar contra la referencia externa', payload={}, diagnostics=[])
     try:
         request = deepcopy(request)
         json.dumps(request, allow_nan=False)
@@ -289,7 +289,7 @@ def execute_request(request, *, cancel=None, progress=None):
                 iterations=iterations, energized_status=energized_status(lf), lf_result=lf, violations=violations,
                 not_evaluable=unknown, loading=loading, proposed_scenario=dict(edits=edits, base_model_sha256=fingerprint(snapshot['model'])))
         output['diagnostics'] = [dict(level='info', message=reason), dict(level='warning',
-            message='Propuesta discreta sin validar contra PF. Bandas configuradas sin carácter normativo. Carga I/Inom o S/Sn sin factores térmicos.')]
+            message='Propuesta discreta sin validar contra la referencia externa. Bandas configuradas sin carácter normativo. Carga I/Inom o S/Sn sin factores térmicos.')]
     except (ValueError, KeyError, TypeError) as exc:
         output['diagnostics'] = [dict(level='error', message=str(exc))]
     except Exception as exc:

@@ -42,7 +42,7 @@ def build_ribbon(app):
           ('shell.short_circuit','shortcircuit',10),('shell.contingencies','contingency',11),
           ('integration.small_signal_analysis','modal',8),('tools.cct','calc_cct',8),('tools.qds','calc_qds',8),('tools.pvqv','calc_pvqv',8),('tools.sensitivity','calc_sens',8)]]+
           [('shell.load_flow',app.run_loadflow,3,'F5'),('shell.rms_simulation',app.simulation_dialog,5,'F12'),('shell.stop',app.stop,6,'Esc')]),
-      ('results',[('tools.tables',app.show_results,9,''),('integration.plots',app.new_plot,8,''),('tools.compare_pf',app.open_native_comparison,8,''),('study.generate_report',app.generate_report_dialog,2,'')]),
+      ('results',[('tools.tables',app.show_results,9,''),('integration.plots',app.new_plot,8,''),('tools.compare_ref',app.open_native_comparison,8,''),('study.generate_report',app.generate_report_dialog,2,'')]),
       ('window',[('tools.diagram',app.open_diagram,7,'F9'),('tools.theme',lambda:theme.set('dark' if theme.name=='light' else 'light'),9,''),('tools.language',lambda:set_language('es' if language()=='en' else 'en'),9,'')])]
     app.action_buttons,app.toolbar_images=[],[]
     captions=[]

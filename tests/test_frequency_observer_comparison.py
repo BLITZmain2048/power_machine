@@ -6,10 +6,10 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from power_machine.benchmarks.ieee39_pf import DEFAULT_PF_DIR, WORKSPACE, build_rms_case
-from power_machine.pfcompare.rms_replay import load_reference
-from power_machine.pfcompare import rms_network as original
-from power_machine.pfcompare import frequency_observers as frequency_observers
+from power_machine.benchmarks.ieee39_ref import DEFAULT_REF_DIR, WORKSPACE, build_rms_case
+from power_machine.refcompare.rms_replay import load_reference
+from power_machine.refcompare import rms_network as original
+from power_machine.refcompare import frequency_observers as frequency_observers
 
 
 def test_default_estimator_disabled():
@@ -18,10 +18,10 @@ def test_default_estimator_disabled():
 
 
 def test_original_simulation_and_h_option_bit_identical():
-    if not DEFAULT_PF_DIR.is_dir():
+    if not DEFAULT_REF_DIR.is_dir():
         pytest.skip("Referencia offline ausente")
-    _, _, channels = load_reference(DEFAULT_PF_DIR/"E39-DIN-03")
-    rms = [build_rms_case(avr_profile="pf_identificado") for _ in range(3)]
+    _, _, channels = load_reference(DEFAULT_REF_DIR/"E39-DIN-03")
+    rms = [build_rms_case(avr_profile="ref_identificado") for _ in range(3)]
     t0, p0, d0 = original.simulate(rms[0], "E39-DIN-03", channels, stop_s=.02)
     t1, p1, d1 = frequency_observers.simulate(rms[1], "E39-DIN-03", channels, stop_s=.02)
     t2, p2, d2 = frequency_observers.simulate(rms[2], "E39-DIN-03", channels, stop_s=.02, freq_estimator="nominal_grid")
@@ -39,13 +39,13 @@ def test_original_simulation_and_h_option_bit_identical():
 def test_destination_guard_and_no_overwrite(tmp_path, monkeypatch):
     monkeypatch.setenv("POWER_MACHINE_OUTPUT_DIR", str(tmp_path))
     with pytest.raises(ValueError, match="carpeta de trabajo"):
-        frequency_observers.run_trial(DEFAULT_PF_DIR, WORKSPACE.parent, "E39-DIN-01")
+        frequency_observers.run_trial(DEFAULT_REF_DIR, WORKSPACE.parent, "E39-DIN-01")
     target = tmp_path/"E39-DIN-01"/"frequency_observers"
     target.mkdir(parents=True)
     with pytest.raises(FileExistsError):
-        frequency_observers.run_trial(DEFAULT_PF_DIR, tmp_path, "E39-DIN-01")
+        frequency_observers.run_trial(DEFAULT_REF_DIR, tmp_path, "E39-DIN-01")
     with pytest.raises(ValueError, match="Estimador"):
-        frequency_observers.run_trial(DEFAULT_PF_DIR, tmp_path, "E39-DIN-01", freq_estimator="fit")
+        frequency_observers.run_trial(DEFAULT_REF_DIR, tmp_path, "E39-DIN-01", freq_estimator="fit")
 
 
 def test_completed_campaign_identity_if_present():
@@ -126,4 +126,4 @@ def test_adaptive_steps_and_both_event_sides_keep_27_channels(monkeypatch):
 
 
 import pytest
-pytestmark = [pytest.mark.pfdata]
+pytestmark = [pytest.mark.refdata]

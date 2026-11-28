@@ -43,12 +43,12 @@ def test_status_keeps_freshness_independent(window):
     panel.show_state({"status": "completed"})
     assert panel.freshness == "sin resultado"
     assert panel.coverage == "completo"
-    panel.set_status("partial", freshness="vigente", validation_label="sin validar contra PF")
+    panel.set_status("partial", freshness="vigente", validation_label="sin validar contra la referencia externa")
     panel.mark_stale("Cambió el suplemento")
     panel.show_state({"status": "completed"})
     assert panel.freshness == "obsoleto"
     assert panel.coverage == "completo"
-    assert panel.validation_label == "sin validar contra PF"
+    assert panel.validation_label == "sin validar contra la referencia externa"
     assert 330 <= panel.form.winfo_width() <= 350
     assert panel.results.winfo_height() >= 150 and panel.plot_area.winfo_height() >= 150
 

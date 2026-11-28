@@ -1,4 +1,4 @@
-"""Native balanced PowerFactory ElmXnet data. No machine rating is inferred."""
+"""Native balanced reference simulator ElmXnet data. No machine rating is inferred."""
 import math
 from .elements import MissingParameter
 

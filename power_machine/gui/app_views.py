@@ -182,7 +182,7 @@ class ViewActions:
                     self.update_idletasks()
                     target.center_on(ident)
             self.select(ident)
-        return self.form(tr('shell.find_and_centre'),[('query',tr('shell.pf_name_or_identifier'),'',None)],apply)
+        return self.form(tr('shell.find_and_centre'),[('query',tr('shell.ref_name_or_identifier'),'',None)],apply)
 
     def legend_dialog(self):
         page=self.diagram_page()

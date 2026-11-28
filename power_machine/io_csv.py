@@ -1,4 +1,4 @@
-"""Read portable PowerFactory CSV files without electrical conversions."""
+"""Read portable element-table CSV files without electrical conversions."""
 
 from __future__ import annotations
 

@@ -43,7 +43,7 @@ def test_request_result_roundtrip_context_and_spawn_target(parallel_model, tmp_p
     request = json.loads(json.dumps(request, allow_nan=False))
     result = execute_request(request)
     assert result['payload']['completed_count'] == 2
-    assert result['provenance']['pf_comparison'] == 'not validated against PowerFactory'
+    assert result['provenance']['ref_comparison'] == 'not validated against the external reference'
     assert result['study_sha256'] == fingerprint(context.snapshot['study'])
     controller.on_message(('result', result))
     assert context.published == [result]

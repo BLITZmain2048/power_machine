@@ -7,7 +7,7 @@ from .elements import series_bypassed
 
 
 def ideal_line_candidate(branch: dict) -> bool:
-    "Return whether an untyped ElmLne has zero R1, X1 and B1. Confirm ideal links against PF."
+    "Return whether an untyped ElmLne has zero R1, X1 and B1. Confirm ideal links against REF."
     p = branch.get("params", {})
     return (branch.get("class") == "ElmLne" and branch.get("outserv", 0) != 1
             and not branch.get("type_id") and not branch.get("type_class")

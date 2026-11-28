@@ -16,7 +16,7 @@ from datetime import datetime
 from pathlib import Path
 from power_machine.resources import output_root, confined_output
 
-from power_machine.benchmarks.ieee39_pf import LDF_OPTIONS
+from power_machine.benchmarks.ieee39_ref import LDF_OPTIONS
 from power_machine.lf_status import energized_status
 from power_machine.loadflow import run_loadflow
 from power_machine.qss import Series, read_series
@@ -60,7 +60,7 @@ def _envelope(model, study):
             "current": "kA", "loading": "%", "energy": "MWh",
         },
         "provenance": {
-            "pf_comparison": "sin validar contra PF",
+            "ref_comparison": "sin validar contra la referencia externa",
             "calculation": "QSS por flujos de potencia consecutivos, sin cambio topológico",
         },
         "diagnostics": [],
@@ -447,7 +447,7 @@ def _series_payload(model: dict, records: list[dict]):
                         "unknown_overload_hours": sum(item["unknown_hours"] for item in overloads.values()),
                         "branches_without_rating": sum(item["rating_ka"] is None and not _transformer_end_ratings_ka(branches[key], buses)
                                                        for key, item in branch_data.items()),
-                        "loading_note": "Cargabilidad indicativa con ratings de unidad explícita, sin validar contra PF",
+                        "loading_note": "Cargabilidad indicativa con ratings de unidad explícita, sin validar contra la referencia externa",
                         "interface_note": "P y Q positivos saliendo de interfaz hacia el equivalente, por enlace y extremo de interfaz",
                         "duration_note": "Duración integrada entre timestamps. Paso o isla no resuelta es desconocido"}}
 
@@ -535,7 +535,7 @@ def execute_request(request: dict, *, cancel=None, progress=None) -> dict:
         previous_result = base_result
         previous_loss_p_mw = base_result["totals"]["branch_loss_p_mw"]
         loss_source_index = -1
-        metadata = {"schema": "pm-qds-panel-v1", "validation_status": "sin validar contra PF",
+        metadata = {"schema": "pm-qds-panel-v1", "validation_status": "sin validar contra la referencia externa",
                     "series_name": series.name, "rule": rule, "policy": policy,
                     "warm_start": warm_start, "lf_options": lf_options,
                     "model_sha256": fingerprint(source_model), "provenance": series.provenance,

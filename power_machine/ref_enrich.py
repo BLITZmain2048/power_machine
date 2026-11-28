@@ -1,4 +1,4 @@
-"""Completa atributos de modelo ausentes desde el volcado PF de solo lectura."""
+"""Completa atributos de modelo ausentes desde el volcado REF de solo lectura."""
 
 from __future__ import annotations
 

@@ -14,7 +14,7 @@ def audit_body(text):
     assert not re.search(r'[A-Za-zÁÉÍÓÚáéíóúñ]\?[A-Za-zÁÉÍÓÚáéíóúñ]',body)
     for word in ('schema','validation status','elapsed s','model sha256','steps executed','energized\\_status','summary rows','Increase Mw','Total Load'):
         assert word not in body
-    assert 'pf\\_' not in body
+    assert 'ref\\_' not in body
     for block in body.split(r'\begin{longtable}')[1:]:
         data=block.split(r'\endhead',1)[1].split(r'\bottomrule',1)[0]
         rows=[line[:-2].split(' & ') for line in data.splitlines() if ' & ' in line and line.endswith(r'\\')]

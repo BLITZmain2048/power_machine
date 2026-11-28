@@ -15,8 +15,8 @@ PARAMETER_NAMES = (
     "Vrmin", "Vrmax",
 )
 
-AVR_PROFILES = ("dyn_a", "pf_identificado")
-PF_IDENTIFIED_STATUS = ('Structure identified from PF linearization. BlkDef was not exported or validated')
+AVR_PROFILES = ("dyn_a", "ref_identificado")
+REF_IDENTIFIED_STATUS = ('Structure identified from REF linearization. BlkDef was not exported or validated')
 
 
 @dataclass(frozen=True)
@@ -40,8 +40,8 @@ class IEEET1AVR:
         if profile not in AVR_PROFILES:
             raise _coded_error(ValueError, 'invalid_avr_ieeet1_data', 'Perfil IEEET1 desconocido: ' + str(profile))
         self.profile = profile
-        self.saturation_curve = "exponential" if profile == "pf_identificado" else "quadratic"
-        self.freeze_vm_when_tr_zero = profile == "pf_identificado"
+        self.saturation_curve = "exponential" if profile == "ref_identificado" else "quadratic"
+        self.freeze_vm_when_tr_zero = profile == "ref_identificado"
         self.object_id = object_id
         self.relative_path = relative_path
         if isinstance(parameters, Mapping):

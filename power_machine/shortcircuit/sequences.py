@@ -204,7 +204,7 @@ def prepare_network(model, data, options, kind, fault_bus_id=None):
                         mat = elements.y_series(item, *(buses[b]["un_kv"] for b in ids), s_base)
                     branches.append({"item": item, "record": {}, "unit_count": 1, "factor": 1.0,
                                      "native_matrix": mat, "bus_ids": ids})
-                    coverage.append({"object_id": item["id"], "status": "supported", "sequences": list(seqs), "source": "native_pf_parameters"})
+                    coverage.append({"object_id": item["id"], "status": "supported", "sequences": list(seqs), "source": "native_ref_parameters"})
                     continue
                 if item.get("class") == "ElmXnet" and record is None:
                     from power_machine.external_grid import impedance
@@ -214,7 +214,7 @@ def prepare_network(model, data, options, kind, fault_bus_id=None):
                     c=voltage_factor(kv,options.case,options.lv_tolerance_pct) if options.method=='iec60909' else 1.0
                     z=impedance(item,kv,case=options.case,voltage_factor=c)
                     sources.append(dict(item=item,record={},bus_id=item['bus'],unit_count=1,kind='external',factor=1.0,z_ohm={s:z for s in seqs}))
-                    coverage.append(dict(object_id=item['id'],status='supported',sequences=list(seqs),source='native_pf_parameters'))
+                    coverage.append(dict(object_id=item['id'],status='supported',sequences=list(seqs),source='native_ref_parameters'))
                     continue
                 if record is None:
                     missing_keys = [f"z{s}" for s in seqs]
@@ -287,7 +287,7 @@ def prepare_network(model, data, options, kind, fault_bus_id=None):
             diagnostics.append(diagnostic("missing_sc_data", str(exc), item, level="error"))
         except SCError as exc:
             diagnostics.append(exc.diagnostic)
-    if options.profile == "iec_pf2016_c1_v1":
+    if options.profile == "iec_ref2016_c1_v1":
         _station_corrections(branches, sources, fault_bus_id)
     diagnostics.append(diagnostic("omitted_loads_shunts", "Ordinary loads and transformer magnetization are omitted. Explicit shunts are included", level="info"))
     return {"model": model, "topology": topology, "buses": buses, "branches": branches, "sources": sources,
@@ -298,7 +298,7 @@ def _station_corrections(branches, sources, fault_bus_id):
     """Unit without OLTC, IEC 2016 equation (24), K_SO and internal fault equation (21).
 
 K_SO=K_G*(Un_H/Ur_H)^2*(Ur_L/Un_G)^2*(1-p_T)/(1+p_G).
-The adapter declares the detected pair and dimensionless PF ranges.
+The adapter declares the detected pair and dimensionless power factor ranges.
 Calculated b:Kf factors are never imported as input parameters.
 """
     source_by_id = {s["item"]["id"]: s for s in sources}

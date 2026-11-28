@@ -11,6 +11,7 @@ import tkinter as tk
 import power_machine.gui.panels.calc_sens as panel
 import pytest
 from test_result_widgets import create_evidence_root
+from power_machine.gui.i18n import tr
 from power_machine.gui.panels.calc_sens import PANEL_SPEC, PanelController, build_request
 from power_machine.sensitivities import SensitivityOptions, execute_request
 from power_machine.sensitivities.results import fingerprint
@@ -42,7 +43,7 @@ def test_controller_submits_and_publishes_invalid_case(tmp_path):
     assert build_request(context, options)["module"] == "sensitivities"
     controller.submit(options)
     assert context.jobs[0][0] == "sensitivities" and context.results[0]["status"] == "invalid_input"
-    assert "PowerFactory" in context.logs[0][1]
+    assert context.logs[0][1] == tr("panel.sensitivity.log_started")
     assert PANEL_SPEC["id"] == "calc_sens" and PANEL_SPEC["api_version"] == 1
 
 

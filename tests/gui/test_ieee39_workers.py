@@ -92,12 +92,17 @@ def test_dynamic_worker_cancelled_before_export(tmp_path, monkeypatch):
                                       'wall_s': pytest.approx(0, abs=2), 'steps': 0})
 
 
-def test_saved_classical_csv_keeps_event_sides_and_missing_values():
+def test_saved_classical_csv_keeps_event_sides_and_missing_values(tmp_path, monkeypatch):
     import csv
     import math
     from power_machine.gui.history import read_signals
     from power_machine.gui.plots import SignalBuffer
-    path = ROOT / 'cases/ieee39/results/E39-DIN-02/signals.csv'
+    from power_machine.benchmarks import ieee39_dynamics as engine
+    monkeypatch.setattr(engine, "WORKSPACE", tmp_path)
+    system = engine.ClassicalSystem.from_files()
+    run = engine.simulate(system, "E39-DIN-02", end_s=1.02, step_s=.01)
+    engine.export_run(run, system, tmp_path)
+    path = tmp_path / "signals.csv"
     with path.open(encoding='utf-8-sig', newline='') as stream:
         reader = csv.reader(stream)
         header, rows = next(reader), list(reader)
@@ -107,7 +112,7 @@ def test_saved_classical_csv_keeps_event_sides_and_missing_values():
         raw.append(rows)
     adapted = read_signals(path)
     assert len(adapted.rows) == len(rows)
-    assert sum(row[0] == 1. for row in adapted.rows) == sum(float(row[0]) == 1. for row in rows)
+    assert sum(row[0] == 1. for row in adapted.rows) == sum(float(row[0]) == 1. for row in rows) == 2
     assert any(math.isnan(value) for row in adapted.rows for value in row)
 
 

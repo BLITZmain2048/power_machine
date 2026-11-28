@@ -7,7 +7,7 @@ from .i18n import tr
 
 def native_comparison(native_directory, reference_directory, signals=('B4_U_pu','G32_speed_pu')):
     """Alinea identidades por metadatos, sin interpolar ni modificar muestras."""
-    from power_machine.pfcompare.rms_replay import load_reference
+    from power_machine.refcompare.rms_replay import load_reference
     native_directory,reference_directory=Path(native_directory),Path(reference_directory)
     with (native_directory/'channel_units.csv').open(encoding='utf-8-sig',newline='') as stream:
         channels=list(csv.DictReader(stream))
@@ -29,7 +29,7 @@ def native_comparison(native_directory, reference_directory, signals=('B4_U_pu',
     curves=[dict(key=key,axis=i,label=signal.split('_')[0],line_style='-',color_token='accent',reference_color_token='warn',line_width=1.8)
             for i,(key,signal) in enumerate(zip(keys,signals))]
     spec=dict(name=tr('plots.native_title'), name_key='plots.native_title',
-              axes=len(curves),curves=curves,show_pf=True,source_legend=True,frequency_base_hz=60.,
+              axes=len(curves),curves=curves,show_ref=True,source_legend=True,frequency_base_hz=60.,
               events=[dict(time_s=1.,label=tr('plots.fault_b16'), label_key='plots.fault_b16'),dict(time_s=1.1,label=tr('plots.clear_l16'), label_key='plots.clear_l16')],
               axis_scales={str(i):dict(xlim_s=[.9,1.2]) for i in range(len(curves))})
     return spec,own,reference

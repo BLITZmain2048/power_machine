@@ -1,4 +1,4 @@
-"""Synthetic analytical circuits for native PF passive elements."""
+"""Synthetic analytical circuits for native REF passive elements."""
 import copy
 from pathlib import Path
 import math
