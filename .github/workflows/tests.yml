@@ -24,9 +24,11 @@ jobs:
         extra: [standard, fast]
     env:
       OPENBLAS_NUM_THREADS: "1"
-      POWER_MACHINE_OUTPUT_DIR: ${{ runner.temp }}/power-machine-output
     steps:
       - uses: actions/checkout@v4
+      - name: Set output directory
+        shell: bash
+        run: echo "POWER_MACHINE_OUTPUT_DIR=$RUNNER_TEMP/power-machine-output" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -50,9 +52,11 @@ jobs:
     timeout-minutes: 20
     env:
       OPENBLAS_NUM_THREADS: "1"
-      POWER_MACHINE_OUTPUT_DIR: ${{ runner.temp }}/power-machine-output
     steps:
       - uses: actions/checkout@v4
+      - name: Set output directory
+        shell: bash
+        run: echo "POWER_MACHINE_OUTPUT_DIR=$RUNNER_TEMP/power-machine-output" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -83,9 +87,11 @@ jobs:
     timeout-minutes: 60
     env:
       OPENBLAS_NUM_THREADS: "1"
-      POWER_MACHINE_OUTPUT_DIR: ${{ runner.temp }}/power-machine-validation-output
     steps:
       - uses: actions/checkout@v4
+      - name: Set output directory
+        shell: bash
+        run: echo "POWER_MACHINE_OUTPUT_DIR=$RUNNER_TEMP/power-machine-validation-output" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
